@@ -1,7 +1,7 @@
 # Личный проект «Киноман» [![Build status][travis-image]][travis-url]
 
 * Студент: [Илья Колмаков](https://up.htmlacademy.ru/ecmascript/9/user/508859).
-* Наставник: `Неизвестно`.
+* Наставник: [Слава Милин](https://up.htmlacademy.ru/ecmascript/9/user/186764).
 
 ---
 
