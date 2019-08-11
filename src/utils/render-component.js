@@ -1,5 +1,3 @@
-export const renderComponent = (wrapper, component) => {
-  const container = document.createElement(`template`);
-  container.innerHTML = component;
-  wrapper.appendChild(container.content.cloneNode(true));
+export const renderComponent = (wrapper, component, position = `beforeend`) => {
+  wrapper.insertAdjacentHTML(position, component);
 };
