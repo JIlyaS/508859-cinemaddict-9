@@ -121,3 +121,79 @@ export const dataFilmDetails = {
     {emoji: `./images/emoji/angry.png`, comment: `Almost two hours? Seriously?`, author: `John Doe`, day: `Today`},
   ]
 };
+
+export const FILM_GENRES = [
+  `Drama`,
+  `Musical`,
+  `Western`,
+  `Comedy`,
+  `Cartoon`,
+  `Mystery`,
+  `Thriller`,
+  `Fighter`,
+  `Horror`,
+  `Melodrama`
+];
+
+export const FILM_NAMES = [
+  `Once Upon a Time ... in Hollywood`,
+  `The Lion King`,
+  `Interstellar`,
+  `The Dark Knight`,
+  `The Dark Knight Rises`,
+  `The Martian`,
+  `Passengers`,
+  `The Fast and the Furious`,
+  `Step Up`,
+  `Joker`,
+  `Silent Hill`,
+  `Intouchables`,
+  `The Prestige`,
+  `The Lord of the Rings: The Return of the King`,
+  `Saving Private Ryan`,
+  `The Hobbit: An Unexpected Journey`,
+  `The Terminal`,
+  `Sherlock Holmes`
+];
+
+export const POSTER_LINKS = [
+  `once-upon-time-hollywood.jpg`,
+  `the-lion-king.jpg`,
+  `interstellat.jpg`,
+  `the-dark-knight.jpg`,
+  `the-dark-knight-rises.jpg`,
+  `the-martian.jpg`,
+  `passenger.jpg`,
+  `the-fast-and-thr-furious.jpg`,
+  `step-up.jpg`,
+  `joker.jpg`,
+  `silent-hill.jpg`,
+  `intouchables.jpg`,
+  `the-prestige.jpg`,
+  `the-return-of-the-king.jpg`,
+  `saving-private-ryan.jpg`,
+  `the-hobbit-an-unexpected-journey.jpg`,
+  `the-terminal.jpg`,
+  `sherlock-holmes.jpg`
+];
+
+export const DESCRIPTIONS = [
+  `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
+  `Cras aliquet varius magna, non porta ligula feugiat eget.`,
+  `Fusce tristique felis at fermentum pharetra.`,
+  `Aliquam id orci ut lectus varius viverra.`, `Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.`,
+  `Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum.`,
+  `Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui.`,
+  `Sed sed nisi sed augue convallis suscipit in sed felis.`,
+  `Aliquam erat volutpat.`,
+  `Nunc fermentum tortor ac porta dapibus.`,
+  `In rutrum ac purus sit amet tempus.`
+];
+
+export const AGE_RESTRICTIONS = [`0+`, `6+`, `12+`, `18+`];
+
+export const MAX_HOURS = 3;
+export const MIN_MINUTES = 30;
+export const MAX_MINUTES = 29;
+export const HOUR = 60;
+export const COUNT_FILM_CARDS = 15;
