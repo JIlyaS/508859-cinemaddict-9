@@ -1,6 +1,6 @@
 import {getFilmCards} from './film-cards';
 import {getShowBtn} from './show-btn';
-import {dataFilmCard, dataRatedFilms, dataCommentedFilms} from '../utils/constants';
+import {dataRatedFilms, dataCommentedFilms} from '../utils/constants';
 import {dataFilmCards} from './data';
 
 export const getFilmListWrapper = () => {
@@ -9,7 +9,7 @@ export const getFilmListWrapper = () => {
       <h2 class="films-list__title visually-hidden">All movies. Upcoming</h2>
 
       <div class="films-list__container">
-        ${getFilmCards(dataFilmCard)}
+        ${getFilmCards(dataFilmCards)}
       </div>
       ${getShowBtn()}
     </section>

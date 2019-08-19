@@ -7,7 +7,7 @@ export const getFilmCard = (card) => {
       <span class="film-card__duration">${card.duration}</span>
       <span class="film-card__genre">${card.genre}</span>
     </p>
-    <img src="${card.poster}" alt="" class="film-card__poster">
+    <img src="./images/posters/${card.poster}" alt="" class="film-card__poster">
     <p class="film-card__description">${card.description}</p>
     <a class="film-card__comments">${card.countComments} comments</a>
     <form class="film-card__controls">
