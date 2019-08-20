@@ -4,11 +4,11 @@ export const getFilmCard = (card) => {
     <p class="film-card__rating">${card.rating.toFixed(1)}</p>
     <p class="film-card__info">
       <span class="film-card__year">${card.year}</span>
-      <span class="film-card__duration">${card.duration}</span>
+      <span class="film-card__duration">${card.runtime}</span>
       <span class="film-card__genre">${card.genre}</span>
     </p>
     <img src="./images/posters/${card.poster}" alt="" class="film-card__poster">
-    <p class="film-card__description">${card.description}</p>
+    <p class="film-card__description">${card.shortDescription}</p>
     <a class="film-card__comments">${card.countComments} comments</a>
     <form class="film-card__controls">
       <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist">Add to watchlist</button>

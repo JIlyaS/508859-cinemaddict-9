@@ -1,4 +1,4 @@
-import {MILLISECONDS_DAY} from './constants';
+import {MILLISECONDS_DAY, MONTHS} from './constants';
 
 export const renderComponent = (wrapper, component, position = `beforeend`) => {
   wrapper.insertAdjacentHTML(position, component);
@@ -8,40 +8,22 @@ export const getRandomArray = (elements) => {
   return shuffleElements(elements).pop();
 };
 
-export const getRandomValue = (min = 0, max = 1) => {
+export const getRandomValue = (max = 1, min = 0) => {
   return Math.round(Math.random() * max + min);
 };
 
-export const getRandomFloorValue = (min = 0, max = 1) => {
-  return Math.floor(Math.random() * max + min);
-};
-
 export const getRandomTime = (maxHours, minMinutes, maxMinutes) => {
-  const randomHours = getRandomFloorValue(0, maxHours);
-  const randomMinutes = getRandomFloorValue(minMinutes, maxMinutes);
+  const randomHours = getRandomValue(maxHours);
+  const randomMinutes = getRandomValue(maxMinutes, minMinutes);
   return randomHours !== `0` ? `${randomHours}h ${randomMinutes}m` : `${randomMinutes}m`;
 };
 
-const putToCache = (elem, cache) => {
-  if (cache.indexOf(elem) !== -1) {
-    return;
+export const shuffleElements = (array) => {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
   }
-  const randomValue = Math.floor(Math.random() * (cache.length + 1));
-  cache.splice(randomValue, 0, elem);
-};
-
-const getComparator = () => {
-  const cache = [];
-  return (prevElement, nextElement) => {
-    putToCache(prevElement, cache);
-    putToCache(nextElement, cache);
-    return cache.indexOf(nextElement) - cache.indexOf(prevElement);
-  };
-};
-
-export const shuffleElements = (sortedElements) => {
-  const compare = getComparator();
-  return sortedElements.sort(compare);
+  return array;
 };
 
 export const getReleaseDate = () => {
@@ -89,4 +71,15 @@ export const getDataFilter = (filterName, dataFilms) => {
     title: filterName,
     count: filteredData.length
   };
+};
+
+export const convertDataDetails = (details) => {
+  const newDetails = details.map((detail) => {
+    if (detail.term === `Release Date`) {
+      detail.cell = `${new Date(detail.cell).getDay()} ${MONTHS[new Date(detail.cell).getMonth()]} ${new Date(detail.cell).getFullYear()}`;
+    }
+
+    return detail;
+  });
+  return newDetails;
 };

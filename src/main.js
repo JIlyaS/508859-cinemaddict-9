@@ -4,8 +4,8 @@ import {getProfile} from './components/profile';
 import {getMenu} from './components/menu';
 import {getFilmListWrapper} from './components/film-list-wrapper';
 import {getFilmDetailsPopup} from './components/film-details-popup';
-import {dataFilmDetails, WATCHED_MOVIES} from './utils/constants';
-import {dataFilters} from './components/data';
+import {WATCHED_MOVIES} from './utils/constants';
+import {dataFilters, getDataFilmCard} from './components/data';
 
 const headerWrapper = document.querySelector(`.header`);
 const mainWrapper = document.querySelector(`.main`);
@@ -16,4 +16,4 @@ renderComponent(headerWrapper, getProfile(getRang(WATCHED_MOVIES)));
 renderComponent(mainWrapper, getMenu(dataFilters));
 renderComponent(mainWrapper, getFilmListWrapper());
 
-// renderComponent(footerWrapper, getFilmDetailsPopup(dataFilmDetails), `afterend`);
+renderComponent(footerWrapper, getFilmDetailsPopup(getDataFilmCard()), `afterend`);

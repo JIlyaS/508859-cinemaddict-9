@@ -1,7 +1,6 @@
 import {getFilmCards} from './film-cards';
 import {getShowBtn} from './show-btn';
-import {dataRatedFilms, dataCommentedFilms} from '../utils/constants';
-import {dataFilmCards} from './data';
+import {dataFilmCards, dataRatedFilms, dataCommentedFilms} from './data';
 
 export const getFilmListWrapper = () => {
   return `<section class="films">

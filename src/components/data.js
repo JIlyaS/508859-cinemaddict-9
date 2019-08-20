@@ -19,53 +19,45 @@ import {
   COMMENT_DAY,
   NAME_FILTERS
 } from '../utils/constants';
-import {getRandomArray, getRandomValue, getRandomFloorValue, getRandomTime, shuffleElements, getReleaseDate, getDataFilter} from '../utils/functions';
+import {getRandomArray, getRandomValue, getRandomTime, shuffleElements, getReleaseDate, getDataFilter} from '../utils/functions';
+
+export const getDataComments = () => ({
+  emoji: EMOJI[getRandomValue(EMOJI.length - 1)],
+  description: COMMENTS[getRandomValue(COMMENTS.length - 1)],
+  author: COMMENT_AUTHORS[getRandomValue(COMMENT_AUTHORS.length - 1)],
+  dayComment: COMMENT_DAY[getRandomValue(COMMENT_DAY.length - 1)]
+});
+
+export const dataFilmComments = new Array(10).fill().map(() => getDataComments());
 
 export const getDataFilmCard = () => ({
   title: getRandomArray(FILM_NAMES),
+  titleOriginal: getRandomArray(FULL_FILM_NAMES),
   poster: getRandomArray(POSTER_LINKS),
-  description: DESCRIPTIONS.slice(0, getRandomFloorValue(1, 3)),
-  rating: parseFloat(getRandomValue(10, 90) / 10),
-  year: getRandomValue(1990, 29),
-  genre: FILM_GENRES[getRandomFloorValue(0, FILM_GENRES.length)],
+  shortDescription: DESCRIPTIONS.slice(0, getRandomValue(3, 1)),
+  rating: parseFloat(getRandomValue(90, 10) / 10),
+  year: getRandomValue(29, 1990),
+  genre: FILM_GENRES[getRandomValue(FILM_GENRES.length - 1)],
   runtime: getRandomTime(MAX_HOURS, MIN_MINUTES, MAX_MINUTES),
-  countComments: getRandomValue(0, 500),
+  details: [
+    {term: `Director`, cell: DIRECTORS[getRandomValue(DIRECTORS.length - 1)]},
+    {term: `Writers`, cell: shuffleElements(WRITERS).slice(0, getRandomValue(3, 1))},
+    {term: `Actors`, cell: shuffleElements(ACTORS).slice(0, getRandomValue(3, 1))},
+    {term: `Release Date`, cell: getReleaseDate()},
+    {term: `Runtime`, cell: getRandomTime(MAX_HOURS, MIN_MINUTES, MAX_MINUTES)},
+    {term: `Country`, cell: shuffleElements(COUNTRIES).slice(0, getRandomValue(0, 1))},
+    {term: `Genres`, cell: shuffleElements(FILM_GENRES).slice(0, getRandomValue(2, 1))},
+  ],
+  ageRestrictions: AGE_RESTRICTIONS[getRandomValue(AGE_RESTRICTIONS.length - 1)],
+  fullDescription: DESCRIPTIONS.slice(0, getRandomValue(10, 5)),
   isFavorite: Boolean(getRandomValue()),
   isWatchlist: Boolean(getRandomValue()),
-  isViewed: Boolean(getRandomValue())
+  isViewed: Boolean(getRandomValue()),
+  countComments: getRandomValue(500),
+  comments: dataFilmComments
 });
 
 export const dataFilmCards = new Array(COUNT_FILM_CARDS).fill().map(() => getDataFilmCard());
-
-export const getDataDetailsCard = () => ({
-  title: getRandomArray(FILM_NAMES),
-  titleOriginal: getRandomArray(FULL_FILM_NAMES),
-  poster: getRandomArray(POSTER_LINKS),
-  details: [
-    {term: `Director`, cell: DIRECTORS[getRandomFloorValue(0, DIRECTORS.length)]},
-    {term: `Writers`, cell: shuffleElements(WRITERS).slice(0, getRandomValue(0, 3))},
-    {term: `Actors`, cell: shuffleElements(ACTORS).slice(0, getRandomValue(0, 3))},
-    {term: `Release Date`, cell: `${getReleaseDate().getDay()} ${getReleaseDate().getMonth()} ${getReleaseDate().getFullYear()}`},
-    {term: `Runtime`, cell: getRandomTime(MAX_HOURS, MIN_MINUTES, MAX_MINUTES)},
-    {term: `Country`, cell: shuffleElements(COUNTRIES).slice(0, getRandomValue(0, 2))},
-    {term: `Genres`, cell: shuffleElements(FILM_GENRES).slice(0, getRandomValue(0, 3))},
-  ],
-  ageRestrictions: AGE_RESTRICTIONS[getRandomFloorValue(0, AGE_RESTRICTIONS.length)],
-  description: DESCRIPTIONS.slice(0, getRandomFloorValue(1, 3)),
-  isFavorite: Boolean(getRandomValue()),
-  isWatchlist: Boolean(getRandomValue()),
-  isViewed: Boolean(getRandomValue())
-});
-
-export const getDataComments = () => ({
-  emoji: EMOJI[getRandomFloorValue(0, EMOJI.length)],
-  description: COMMENTS[getRandomFloorValue(0, COMMENTS.length)],
-  author: COMMENT_AUTHORS[getRandomFloorValue(0, COMMENT_AUTHORS.length)],
-  dayComment: COMMENT_DAY[getRandomFloorValue(0, COMMENT_DAY.length)]
-});
-
+export const dataRatedFilms = (dataFilmCards.filter((film) => film.rating > 7)).slice(0, 2);
+export const dataCommentedFilms = (dataFilmCards.filter((film) => film.countComments >= 200)).slice(0, 2);
 export const dataFilters = NAME_FILTERS.map((filter) => getDataFilter(filter, dataFilmCards));
-
-console.log(dataFilters);
-
-
