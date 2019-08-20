@@ -58,7 +58,7 @@ export const getFilmDetailsPopup = (card) => {
         <ul class="film-details__comments-list">
           ${card.comments.map((comment) => `<li class="film-details__comment">
           <span class="film-details__comment-emoji">
-            <img src="${comment.emoji}" width="55" height="55" alt="emoji">
+            <img src="./images/emoji/${comment.emoji}" width="55" height="55" alt="emoji">
           </span>
           <div>
             <p class="film-details__comment-text">${comment.description}</p>

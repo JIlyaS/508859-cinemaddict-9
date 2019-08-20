@@ -1,9 +1,19 @@
-export const EMOJI = [`./images/emoji/smile.png`, `./images/emoji/sleeping.png`, `./images/emoji/puke.png`, `./images/emoji/angry.png`];
+export const EMOJI = [`smile.png`, `sleeping.png`, `puke.png`, `angry.png`];
 export const COMMENTS = [`Interesting setting and a good cast`, `Booooooooooring`, `Very very old. Meh`, `Almost two hours? Seriously?`];
 export const COMMENT_AUTHORS = [`Tim Macoveev`, `John Doe`, `Ilya Kolmakov`];
 export const COMMENT_DAY = [`3 days ago`, `2 days ago`, `1 days ago`, `Today`];
-
 export const MONTHS = [`January`, `February`, `March`, `April`, `May`, `June`, `July`, `August`, `September`, `October`, `November`, `December`];
+export const NAME_FILTERS = [`All movies`, `Watchlist`, `History`, `Favorites`, `Stats`];
+export const AGE_RESTRICTIONS = [`0+`, `6+`, `12+`, `18+`];
+export const MAX_HOURS = 3;
+export const MIN_MINUTES = 30;
+export const MAX_MINUTES = 29;
+export const HOUR = 60;
+export const COUNT_FILM_CARDS = 15;
+export const MILLISECONDS_DAY = 24 * 60 * 60 * 1000;
+export const WATCHED_MOVIES = 9;
+export const COUNT_FILMS = 21;
+export const START_COUNT_CARDS = 15;
 
 export const FILM_GENRES = [
   `Drama`,
@@ -29,7 +39,10 @@ export const WRITERS = [
   `Duane Adler`,
   `Roger Avary`,
   `Fran Walsh`,
-  `Jonathan Nolan`
+  `Jonathan Nolan`,
+  `J.J. Abrams`,
+  `Ted Elliott`,
+  `Bob Peterson`
 ];
 
 export const ACTORS = [
@@ -50,7 +63,16 @@ export const ACTORS = [
   `Martin Freeman`,
   `Ian McKellen`,
   `Christian Bale`,
-  `Heath Ledger`
+  `Heath Ledger`,
+  `Daisy Ridley`,
+  `Oscar Isaac`,
+  `Adam Driver`,
+  `Orlando Bloom`,
+  `Johnny Depp`,
+  `Keira Knightley`,
+  `Alan Rickman`,
+  `Bruce Willis`,
+  `Daniel Radcliffe`
 ];
 
 export const COUNTRIES = [
@@ -80,7 +102,13 @@ export const FILM_NAMES = [
   `Saving Private Ryan`,
   `The Hobbit: An Unexpected Journey`,
   `The Terminal`,
-  `Sherlock Holmes`
+  `Sherlock Holmes`,
+  `Die Hard`,
+  `Harry Potter and the Deathly Hallows: Part 2`,
+  `Pirates of the Caribbean: At World's End`,
+  `Inception`,
+  `Up`,
+  `Star Wars: The Rise of Skywalker`
 ];
 
 export const FULL_FILM_NAMES = [
@@ -101,7 +129,13 @@ export const FULL_FILM_NAMES = [
   `Saving Private Ryan`,
   `The Hobbit: An Unexpected Journey`,
   `The Terminal`,
-  `Sherlock Holmes`
+  `Sherlock Holmes`,
+  `Die Hard`,
+  `Harry Potter and the Deathly Hallows: Part 2`,
+  `Pirates of the Caribbean: At World's End`,
+  `Inception`,
+  `Up`,
+  `Star Wars: The Rise of Skywalker`
 ];
 
 export const POSTER_LINKS = [
@@ -122,7 +156,13 @@ export const POSTER_LINKS = [
   `saving-private-ryan.jpg`,
   `the-hobbit-an-unexpected-journey.jpg`,
   `the-terminal.jpg`,
-  `sherlock-holmes.jpg`
+  `sherlock-holmes.jpg`,
+  `die-hard-4.jpg`,
+  `harry-potter-part2.jpg`,
+  `inception.jpg`,
+  `pirates-caribbean-world-end.jpg`,
+  `star-wars-9.jpg`,
+  `up.jpg`
 ];
 
 export const DESCRIPTIONS = [
@@ -151,17 +191,10 @@ export const DIRECTORS = [
   `Peter Jackson`,
   `Rob Cohen`,
   `Steven Spielberg`,
-  `Olivier Nakache`
+  `Olivier Nakache`,
+  `J.J. Abrams`,
+  `Gore Verbinski`,
+  `Pete Docter`,
+  `John McTiernan`,
+  `David Yates`
 ];
-
-export const NAME_FILTERS = [`All movies`, `Watchlist`, `History`, `Favorites`, `Stats`];
-
-export const AGE_RESTRICTIONS = [`0+`, `6+`, `12+`, `18+`];
-
-export const MAX_HOURS = 3;
-export const MIN_MINUTES = 30;
-export const MAX_MINUTES = 29;
-export const HOUR = 60;
-export const COUNT_FILM_CARDS = 15;
-export const MILLISECONDS_DAY = 24 * 60 * 60 * 1000;
-export const WATCHED_MOVIES = 9;

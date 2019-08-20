@@ -5,7 +5,7 @@ export const renderComponent = (wrapper, component, position = `beforeend`) => {
 };
 
 export const getRandomArray = (elements) => {
-  return shuffleElements(elements).pop();
+  return shuffleElements(elements)[0];
 };
 
 export const getRandomValue = (max = 1, min = 0) => {
