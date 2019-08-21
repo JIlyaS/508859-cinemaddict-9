@@ -1,5 +1,7 @@
+import {convertDataDetails} from '../utils/functions';
+
 export const getFilmDetailsPopup = (card) => {
-  return `<section class="film-details">
+  return `<section class="film-details visually-hidden">
   <form class="film-details__inner" action="" method="get">
     <div class="form-details__top-container">
       <div class="film-details__close">
@@ -7,9 +9,9 @@ export const getFilmDetailsPopup = (card) => {
       </div>
       <div class="film-details__info-wrap">
         <div class="film-details__poster">
-          <img class="film-details__poster-img" src="${card.poster}" alt="">
+          <img class="film-details__poster-img" src="./images/posters/${card.poster}" alt="">
 
-          <p class="film-details__age">${card.age}</p>
+          <p class="film-details__age">${card.ageRestrictions}</p>
         </div>
 
         <div class="film-details__info">
@@ -23,28 +25,28 @@ export const getFilmDetailsPopup = (card) => {
               <p class="film-details__total-rating">${card.rating}</p>
             </div>
           </div>
-
           <table class="film-details__table">
-            ${card.details.map((detail) => `<tr class="film-details__row">
+            ${convertDataDetails(card.details).map((detail) => `<tr class="film-details__row">
                 <td class="film-details__term">${detail.term}</td>
-                <td class="film-details__cell">${Array.isArray(detail.cell) ? detail.cell.map((cell) => cell).join(` `) : detail.cell}</td>
+                <td class="film-details__cell">
+                  ${Array.isArray(detail.cell) ? detail.cell.map((cell) => cell).join(`, `) : detail.cell}</td>
               </tr>`).join(` `)}
           </table>
 
           <p class="film-details__film-description">
-            ${card.description}
+            ${card.fullDescription.join(` `)}
           </p>
         </div>
       </div>
 
       <section class="film-details__controls">
-        <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist">
+        <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist" ${card.isWatchlist && `checked`}>
         <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
 
-        <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched">
+        <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" ${card.isViewed && `checked`}>
         <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
 
-        <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite">
+        <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite" ${card.isFavorite && `checked`}>
         <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
       </section>
     </div>
@@ -56,13 +58,13 @@ export const getFilmDetailsPopup = (card) => {
         <ul class="film-details__comments-list">
           ${card.comments.map((comment) => `<li class="film-details__comment">
           <span class="film-details__comment-emoji">
-            <img src="${comment.emoji}" width="55" height="55" alt="emoji">
+            <img src="./images/emoji/${comment.emoji}" width="55" height="55" alt="emoji">
           </span>
           <div>
-            <p class="film-details__comment-text">${comment.comment}</p>
+            <p class="film-details__comment-text">${comment.description}</p>
             <p class="film-details__comment-info">
               <span class="film-details__comment-author">${comment.author}</span>
-              <span class="film-details__comment-day">${comment.day}</span>
+              <span class="film-details__comment-day">${comment.dayComment}</span>
               <button class="film-details__comment-delete">Delete</button>
             </p>
           </div>
