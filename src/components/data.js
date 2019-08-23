@@ -8,7 +8,6 @@ import {
   MAX_HOURS,
   MIN_MINUTES,
   MAX_MINUTES,
-  COUNT_FILM_CARDS,
   DIRECTORS,
   WRITERS,
   ACTORS,
@@ -17,14 +16,13 @@ import {
   COMMENTS,
   COMMENT_AUTHORS,
   COMMENT_DAY,
-  NAME_FILTERS,
   MINUS_INDEX,
   COUNT_COMMENTS,
   RANDOM_COUNT_COMMENTS,
   RANDOM_YEAR_START,
   RANDOM_YEAR_DURATION
-} from '../utils/constants';
-import {getRandomArray, getRandomValue, getRandomTime, shuffleElements, getReleaseDate, getDataFilter} from '../utils/functions';
+} from '../constants';
+import {getRandomArray, getRandomValue, getRandomTime, shuffleElements, getReleaseDate} from '../utils';
 
 export const getDataComments = () => ({
   emoji: EMOJI[getRandomValue(EMOJI.length - MINUS_INDEX)],
@@ -62,7 +60,46 @@ export const getDataFilmCard = () => ({
   comments: dataFilmComments
 });
 
-export const dataFilmCards = new Array(COUNT_FILM_CARDS).fill().map(() => getDataFilmCard());
-export const dataRatedFilms = (dataFilmCards.filter((film) => film.rating > 7)).slice(0, 2);
-export const dataCommentedFilms = (dataFilmCards.filter((film) => film.countComments >= 200)).slice(0, 2);
-export const dataFilters = NAME_FILTERS.map((filter) => getDataFilter(filter, dataFilmCards));
+export const getRang = (countFilms) => {
+  let rangs;
+  if (countFilms === 0) {
+    rangs = ``;
+  } else if (countFilms >= 1 && countFilms <= 10) {
+    rangs = `Novice`;
+  } else if (countFilms >= 11 && countFilms <= 20) {
+    rangs = `Fan`;
+  } else if (countFilms >= 21) {
+    rangs = `Movie Buff`;
+  } else {
+    rangs = ``;
+  }
+
+  return rangs;
+};
+
+export const getDataFilter = (filterName, dataFilms) => {
+  let filteredData;
+  switch (filterName) {
+    case `All movies`:
+      filteredData = dataFilms;
+      break;
+    case `Watchlist`:
+      filteredData = dataFilms.filter((task) => task.isWatchlist === true);
+      break;
+    case `History`:
+      filteredData = dataFilms.filter((task) => task.isViewed === true);
+      break;
+    case `Favorites`:
+      filteredData = dataFilms.filter((task) => task.isFavorite === true);
+      break;
+    default:
+      filteredData = 0;
+      break;
+  }
+
+  return {
+    title: filterName,
+    count: filteredData.length
+  };
+};
+

@@ -19,6 +19,10 @@ export const COUNT_COMMENTS = 10;
 export const RANDOM_COUNT_COMMENTS = 500;
 export const RANDOM_YEAR_START = 1990;
 export const RANDOM_YEAR_DURATION = 29;
+export const Position = {
+  AFTERBEGIN: `afterbegin`,
+  BEFOREEND: `beforeend`
+};
 
 export const FILM_GENRES = [
   `Drama`,

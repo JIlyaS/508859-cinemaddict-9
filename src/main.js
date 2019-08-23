@@ -1,42 +1,112 @@
-import {renderComponent, getRang} from './utils/functions';
-import {getMoreFilms} from './utils/actions';
-import {getSearch} from './components/search';
-import {getProfile} from './components/profile';
-import {getMenu} from './components/menu';
-import {getFilmListWrapper} from './components/film-list-wrapper';
-import {getFilmDetailsPopup} from './components/film-details-popup';
-import {WATCHED_MOVIES, COUNT_FILMS} from './utils/constants';
-import {dataFilters, getDataFilmCard} from './components/data';
+import Search from './components/search';
+import Profile from './components/profile';
+import Menu from './components/menu';
+import FilmCard from './components/film-card';
+import DetailsPopup from './components/details-popup';
+import ShowButton from './components/show-button';
+import {render, unrender} from './utils';
+import {WATCHED_MOVIES, COUNT_FILM_CARDS, NAME_FILTERS, COUNT_FILMS, Position} from './constants';
+import {getRang, getDataFilmCard, getDataFilter} from './components/data';
 
 const headerWrapper = document.querySelector(`.header`);
 const mainWrapper = document.querySelector(`.main`);
+const filmsListWrapper = document.querySelector(`.films-list`);
+const filmsWrapper = document.querySelector(`.films-list .films-list__container`);
+const filmsRated = document.querySelector(`.films-list--extra .films-list__container`);
+const filmsCommented = document.querySelector(`.films-list--extra:last-child .films-list__container`);
 const footerWrapper = document.querySelector(`.footer`);
-
-renderComponent(headerWrapper, getSearch());
-renderComponent(headerWrapper, getProfile(getRang(WATCHED_MOVIES)));
-renderComponent(mainWrapper, getMenu(dataFilters));
-renderComponent(mainWrapper, getFilmListWrapper());
-
-renderComponent(footerWrapper, getFilmDetailsPopup(getDataFilmCard()), `afterend`);
-
-const filmCardBlock = document.querySelectorAll(`.film-card`);
-const filmDetailsBlock = document.querySelector(`.film-details`);
-const filmDetailsCloseBtn = document.querySelector(`.film-details__close-btn`);
 const footerFilmCountBlock = document.querySelector(`.footer__statistics p`);
-const showMoreBtn = document.querySelector(`.films-list__show-more`);
-const filmListBlock = document.querySelector(`.films-list__container`);
-footerFilmCountBlock.textContent = `${COUNT_FILMS} movies inside`;
 
-filmCardBlock.forEach((card) => {
-  card.addEventListener(`click`, () => {
-    filmDetailsBlock.classList.remove(`visually-hidden`);
+const renderSearch = () => {
+  const search = new Search();
+  render(headerWrapper, search.getElement());
+};
+
+const renderProfile = (rang) => {
+  const profile = new Profile(rang);
+  render(headerWrapper, profile.getElement());
+};
+
+const renderMenu = (filters) => {
+  const menu = new Menu(filters);
+  render(mainWrapper, menu.getElement(), Position.AFTERBEGIN);
+};
+
+const renderFilmCard = (film, wrapper) => {
+  const filmCard = new FilmCard(film);
+  const detailsPopup = new DetailsPopup(film);
+
+  const onEscKeyDown = (evt) => {
+    if (evt.key === `Escape` || evt.key === `Esc`) {
+      unrender(detailsPopup.getElement());
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    }
+  };
+
+  filmCard.getElement()
+  .querySelector(`.film-card__poster`)
+  .addEventListener(`click`, () => {
+    render(footerWrapper, detailsPopup.getElement(), Position.AFTERBEGIN);
+    document.addEventListener(`keydown`, onEscKeyDown);
   });
-});
 
-filmDetailsCloseBtn.addEventListener(`click`, () => {
-  filmDetailsBlock.classList.add(`visually-hidden`);
-});
+  filmCard.getElement()
+    .querySelector(`.film-card__title`)
+    .addEventListener(`click`, () => {
+      render(footerWrapper, detailsPopup.getElement(), Position.AFTERBEGIN);
+      document.addEventListener(`keydown`, onEscKeyDown);
+    });
 
-showMoreBtn.addEventListener(`click`, (evt) => getMoreFilms(evt, filmListBlock));
+  filmCard.getElement()
+    .querySelector(`.film-card__comments`)
+    .addEventListener(`click`, () => {
+      render(footerWrapper, detailsPopup.getElement(), Position.AFTERBEGIN);
+      document.addEventListener(`keydown`, onEscKeyDown);
+    });
 
+  detailsPopup.getElement().querySelector(`.film-details__close-btn`)
+    .addEventListener(`click`, () => {
+      unrender(detailsPopup.getElement());
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    });
 
+  render(wrapper, filmCard.getElement());
+};
+
+const renderShowButton = () => {
+  const showButton = new ShowButton();
+  // getMoreFilms(evt, filmListBlock)
+  // (evt, wrapper, count = 5)
+  showButton.getElement().addEventListener(`click`, (evt) => {
+    evt.preventDefault();
+    console.log('123');
+    // countFilmCards += count;
+    // wrapper.innerHTML = ``;
+    // if (COUNT_FILMS < countFilmCards) {
+    //   const restCount = COUNT_FILMS - countFilmCards - count;
+    //   countFilmCards = restCount + countFilmCards + count;
+    //   evt.target.style.display = `none`;
+    // }
+
+    // new Array(countFilmCards).fill().forEach(() => {
+    //   renderComponent(wrapper, getFilmCard(getDataFilmCard()));
+    // });
+  });
+
+  render(filmsListWrapper, showButton.getElement());
+};
+
+export const dataFilmCards = new Array(COUNT_FILM_CARDS).fill().map(() => getDataFilmCard());
+export const dataRatedFilms = (dataFilmCards.filter((film) => film.rating > 7)).slice(0, 2);
+export const dataCommentedFilms = (dataFilmCards.filter((film) => film.countComments >= 200)).slice(0, 2);
+export const dataFilters = NAME_FILTERS.map((filter) => getDataFilter(filter, dataFilmCards));
+
+renderSearch();
+renderProfile(getRang(WATCHED_MOVIES));
+renderMenu(dataFilters);
+dataFilmCards.forEach((filmCard) => renderFilmCard(filmCard, filmsWrapper));
+renderShowButton();
+dataRatedFilms.forEach((filmCard) => renderFilmCard(filmCard, filmsRated));
+dataCommentedFilms.forEach((filmCard) => renderFilmCard(filmCard, filmsCommented));
+
+footerFilmCountBlock.textContent = `${COUNT_FILMS} movies inside`;
