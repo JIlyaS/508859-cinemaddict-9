@@ -19,6 +19,7 @@ export const COUNT_COMMENTS = 10;
 export const RANDOM_COUNT_COMMENTS = 500;
 export const RANDOM_YEAR_START = 1990;
 export const RANDOM_YEAR_DURATION = 29;
+export const ADD_MORE_CARD = 5;
 export const Position = {
   AFTERBEGIN: `afterbegin`,
   BEFOREEND: `beforeend`

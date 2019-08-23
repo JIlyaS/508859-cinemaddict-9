@@ -5,7 +5,7 @@ import FilmCard from './components/film-card';
 import DetailsPopup from './components/details-popup';
 import ShowButton from './components/show-button';
 import {render, unrender} from './utils';
-import {WATCHED_MOVIES, COUNT_FILM_CARDS, NAME_FILTERS, COUNT_FILMS, Position} from './constants';
+import {WATCHED_MOVIES, COUNT_FILM_CARDS, NAME_FILTERS, COUNT_FILMS, ADD_MORE_CARD, Position} from './constants';
 import {getRang, getDataFilmCard, getDataFilter} from './components/data';
 
 const headerWrapper = document.querySelector(`.header`);
@@ -16,6 +16,11 @@ const filmsRated = document.querySelector(`.films-list--extra .films-list__conta
 const filmsCommented = document.querySelector(`.films-list--extra:last-child .films-list__container`);
 const footerWrapper = document.querySelector(`.footer`);
 const footerFilmCountBlock = document.querySelector(`.footer__statistics p`);
+
+export const dataFilmCards = new Array(COUNT_FILM_CARDS).fill().map(() => getDataFilmCard());
+export const dataRatedFilms = (dataFilmCards.filter((film) => film.rating > 7)).slice(0, 2);
+export const dataCommentedFilms = (dataFilmCards.filter((film) => film.countComments >= 200)).slice(0, 2);
+export const dataFilters = NAME_FILTERS.map((filter) => getDataFilter(filter, dataFilmCards));
 
 const renderSearch = () => {
   const search = new Search();
@@ -75,31 +80,26 @@ const renderFilmCard = (film, wrapper) => {
 
 const renderShowButton = () => {
   const showButton = new ShowButton();
-  // getMoreFilms(evt, filmListBlock)
-  // (evt, wrapper, count = 5)
+  let countFilmCards = COUNT_FILM_CARDS;
+  let newCountFilm = ADD_MORE_CARD;
   showButton.getElement().addEventListener(`click`, (evt) => {
     evt.preventDefault();
-    console.log('123');
-    // countFilmCards += count;
-    // wrapper.innerHTML = ``;
-    // if (COUNT_FILMS < countFilmCards) {
-    //   const restCount = COUNT_FILMS - countFilmCards - count;
-    //   countFilmCards = restCount + countFilmCards + count;
-    //   evt.target.style.display = `none`;
-    // }
+    countFilmCards += ADD_MORE_CARD;
 
-    // new Array(countFilmCards).fill().forEach(() => {
-    //   renderComponent(wrapper, getFilmCard(getDataFilmCard()));
-    // });
+    if (COUNT_FILMS < countFilmCards) {
+      newCountFilm = COUNT_FILMS - (countFilmCards - ADD_MORE_CARD);
+      countFilmCards = newCountFilm + countFilmCards + ADD_MORE_CARD;
+      evt.target.style.display = `none`;
+    }
+
+    const newFilmCards = new Array(newCountFilm).fill().map(() => getDataFilmCard());
+    newFilmCards.forEach((dataFilm) => {
+      renderFilmCard(dataFilm, filmsWrapper);
+    });
   });
 
   render(filmsListWrapper, showButton.getElement());
 };
-
-export const dataFilmCards = new Array(COUNT_FILM_CARDS).fill().map(() => getDataFilmCard());
-export const dataRatedFilms = (dataFilmCards.filter((film) => film.rating > 7)).slice(0, 2);
-export const dataCommentedFilms = (dataFilmCards.filter((film) => film.countComments >= 200)).slice(0, 2);
-export const dataFilters = NAME_FILTERS.map((filter) => getDataFilter(filter, dataFilmCards));
 
 renderSearch();
 renderProfile(getRang(WATCHED_MOVIES));
