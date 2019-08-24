@@ -123,7 +123,7 @@ renderSearch();
 renderProfile(getRang(WATCHED_MOVIES));
 renderMenu(dataFilters);
 
-if (isNoResult(COUNT_FILMS)) {
+if (isNoResult(dataFilmCards.length)) {
   renderEmptyResult();
 }
 
