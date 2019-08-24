@@ -51,21 +51,21 @@ const renderFilmCard = (film, wrapper) => {
   filmCard.getElement()
   .querySelector(`.film-card__poster`)
   .addEventListener(`click`, () => {
-    render(footerWrapper, detailsPopup.getElement(), Position.AFTERBEGIN);
+    render(footerWrapper, detailsPopup.getElement(), Position.AFTEREND);
     document.addEventListener(`keydown`, onEscKeyDown);
   });
 
   filmCard.getElement()
     .querySelector(`.film-card__title`)
     .addEventListener(`click`, () => {
-      render(footerWrapper, detailsPopup.getElement(), Position.AFTERBEGIN);
+      render(footerWrapper, detailsPopup.getElement(), Position.AFTEREND);
       document.addEventListener(`keydown`, onEscKeyDown);
     });
 
   filmCard.getElement()
     .querySelector(`.film-card__comments`)
     .addEventListener(`click`, () => {
-      render(footerWrapper, detailsPopup.getElement(), Position.AFTERBEGIN);
+      render(footerWrapper, detailsPopup.getElement(), Position.AFTEREND);
       document.addEventListener(`keydown`, onEscKeyDown);
     });
 

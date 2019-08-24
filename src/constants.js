@@ -22,7 +22,8 @@ export const RANDOM_YEAR_DURATION = 29;
 export const ADD_MORE_CARD = 5;
 export const Position = {
   AFTERBEGIN: `afterbegin`,
-  BEFOREEND: `beforeend`
+  BEFOREEND: `beforeend`,
+  AFTEREND: `afterend`
 };
 
 export const FILM_GENRES = [
