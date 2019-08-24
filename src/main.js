@@ -4,12 +4,14 @@ import Menu from './components/menu';
 import FilmCard from './components/film-card';
 import DetailsPopup from './components/details-popup';
 import ShowButton from './components/show-button';
-import {render, unrender} from './utils';
+import EmptyResult from './components/empty-result';
+import {render, unrender, isNoResult} from './utils';
 import {WATCHED_MOVIES, COUNT_FILM_CARDS, NAME_FILTERS, COUNT_FILMS, ADD_MORE_CARD, Position} from './constants';
 import {getRang, getDataFilmCard, getDataFilter} from './components/data';
 
 const headerWrapper = document.querySelector(`.header`);
 const mainWrapper = document.querySelector(`.main`);
+const allFilmsContainer = document.querySelector(`.films`);
 const filmsListWrapper = document.querySelector(`.films-list`);
 const filmsWrapper = document.querySelector(`.films-list .films-list__container`);
 const filmsRated = document.querySelector(`.films-list--extra .films-list__container`);
@@ -75,6 +77,16 @@ const renderFilmCard = (film, wrapper) => {
       document.removeEventListener(`keydown`, onEscKeyDown);
     });
 
+  detailsPopup.getElement().querySelector(`.film-details__comment-input`)
+    .addEventListener(`focus`, () => {
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    });
+
+  detailsPopup.getElement().querySelector(`.film-details__comment-input`)
+    .addEventListener(`blur`, () => {
+      document.addEventListener(`keydown`, onEscKeyDown);
+    });
+
   render(wrapper, filmCard.getElement());
 };
 
@@ -101,9 +113,20 @@ const renderShowButton = () => {
   render(filmsListWrapper, showButton.getElement());
 };
 
+const renderEmptyResult = () => {
+  const emptyResult = new EmptyResult();
+  allFilmsContainer.innerHTML = ``;
+  render(allFilmsContainer, emptyResult.getElement());
+};
+
 renderSearch();
 renderProfile(getRang(WATCHED_MOVIES));
 renderMenu(dataFilters);
+
+if (isNoResult(COUNT_FILMS)) {
+  renderEmptyResult();
+}
+
 dataFilmCards.forEach((filmCard) => renderFilmCard(filmCard, filmsWrapper));
 renderShowButton();
 dataRatedFilms.forEach((filmCard) => renderFilmCard(filmCard, filmsRated));

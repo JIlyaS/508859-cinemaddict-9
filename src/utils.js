@@ -62,3 +62,7 @@ export const convertDataDetails = (details) => {
   });
   return newDetails;
 };
+
+export const isNoResult = (count) => {
+  return count === 0;
+};
