@@ -5,8 +5,8 @@ import FilmCard from './components/film-card';
 import DetailsPopup from './components/details-popup';
 import ShowButton from './components/show-button';
 import EmptyResult from './components/empty-result';
-import {render, unrender, isNoResult} from './utils';
-import {WATCHED_MOVIES, COUNT_FILM_CARDS, NAME_FILTERS, COUNT_FILMS, ADD_MORE_CARD, Position} from './constants';
+import {render, unrender, isNoResult, isMoreResult, getCountFilms} from './utils';
+import {WATCHED_MOVIES, COUNT_FILM_CARDS, NAME_FILTERS, COUNT_FILMS, ADD_MORE_CARD, MORE_RATED, MORE_COMMENTED, Position} from './constants';
 import {getRang, getDataFilmCard, getDataFilter} from './components/data';
 
 const headerWrapper = document.querySelector(`.header`);
@@ -19,9 +19,9 @@ const filmsCommented = document.querySelector(`.films-list--extra:last-child .fi
 const footerWrapper = document.querySelector(`.footer`);
 const footerFilmCountBlock = document.querySelector(`.footer__statistics p`);
 
-export const dataFilmCards = new Array(COUNT_FILM_CARDS).fill().map(() => getDataFilmCard());
-export const dataRatedFilms = (dataFilmCards.filter((film) => film.rating > 7)).slice(0, 2);
-export const dataCommentedFilms = (dataFilmCards.filter((film) => film.countComments >= 200)).slice(0, 2);
+export const dataFilmCards = new Array(getCountFilms(COUNT_FILM_CARDS)).fill().map(() => getDataFilmCard());
+export const dataRatedFilms = (dataFilmCards.filter((film) => film.rating > MORE_RATED)).slice(0, 2);
+export const dataCommentedFilms = (dataFilmCards.filter((film) => film.countComments >= MORE_COMMENTED)).slice(0, 2);
 export const dataFilters = NAME_FILTERS.map((filter) => getDataFilter(filter, dataFilmCards));
 
 const renderSearch = () => {
@@ -101,7 +101,7 @@ const renderShowButton = () => {
     if (COUNT_FILMS < countFilmCards) {
       newCountFilm = COUNT_FILMS - (countFilmCards - ADD_MORE_CARD);
       countFilmCards = newCountFilm + countFilmCards + ADD_MORE_CARD;
-      evt.target.style.display = `none`;
+      evt.target.classList.add(`visually-hidden`);
     }
 
     const newFilmCards = new Array(newCountFilm).fill().map(() => getDataFilmCard());
@@ -128,7 +128,11 @@ if (isNoResult(dataFilmCards.length)) {
 }
 
 dataFilmCards.forEach((filmCard) => renderFilmCard(filmCard, filmsWrapper));
-renderShowButton();
+
+if (isMoreResult(dataFilmCards.length)) {
+  renderShowButton();
+}
+
 dataRatedFilms.forEach((filmCard) => renderFilmCard(filmCard, filmsRated));
 dataCommentedFilms.forEach((filmCard) => renderFilmCard(filmCard, filmsCommented));
 
