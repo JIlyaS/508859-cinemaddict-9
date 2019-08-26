@@ -5,7 +5,7 @@ import FilmCard from './components/film-card';
 import DetailsPopup from './components/details-popup';
 import ShowButton from './components/show-button';
 import EmptyResult from './components/empty-result';
-import {render, unrender, isNoResult, isMoreResult, getCountFilms} from './utils';
+import {render, unrender, getCountFilmsToRender} from './utils';
 import {WATCHED_MOVIES, COUNT_FILM_CARDS, NAME_FILTERS, COUNT_FILMS, ADD_MORE_CARD, MORE_RATED, MORE_COMMENTED, Position} from './constants';
 import {getRang, getDataFilmCard, getDataFilter} from './components/data';
 
@@ -19,7 +19,7 @@ const filmsCommented = document.querySelector(`.films-list--extra:last-child .fi
 const footerWrapper = document.querySelector(`.footer`);
 const footerFilmCountBlock = document.querySelector(`.footer__statistics p`);
 
-export const dataFilmCards = new Array(getCountFilms(COUNT_FILM_CARDS)).fill().map(() => getDataFilmCard());
+export const dataFilmCards = new Array(getCountFilmsToRender(COUNT_FILM_CARDS)).fill().map(() => getDataFilmCard());
 export const dataRatedFilms = (dataFilmCards.filter((film) => film.rating > MORE_RATED)).slice(0, 2);
 export const dataCommentedFilms = (dataFilmCards.filter((film) => film.countComments >= MORE_COMMENTED)).slice(0, 2);
 export const dataFilters = NAME_FILTERS.map((filter) => getDataFilter(filter, dataFilmCards));
@@ -123,13 +123,13 @@ renderSearch();
 renderProfile(getRang(WATCHED_MOVIES));
 renderMenu(dataFilters);
 
-if (isNoResult(dataFilmCards.length)) {
+if (dataFilmCards.length === 0) {
   renderEmptyResult();
 }
 
 dataFilmCards.forEach((filmCard) => renderFilmCard(filmCard, filmsWrapper));
 
-if (isMoreResult(dataFilmCards.length)) {
+if (COUNT_FILMS > dataFilmCards.length) {
   renderShowButton();
 }
 

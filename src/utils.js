@@ -65,15 +65,7 @@ export const convertDataDetails = (details) => {
   return newDetails;
 };
 
-export const isNoResult = (count) => {
-  return count === 0;
-};
-
-export const isMoreResult = (count) => {
-  return COUNT_FILMS > count;
-};
-
-export const getCountFilms = (count) => {
+export const getCountFilmsToRender = (count) => {
   if (COUNT_FILMS < count) {
     return COUNT_FILM_CARDS - (count - COUNT_FILMS);
   }
