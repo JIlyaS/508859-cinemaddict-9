@@ -1,4 +1,4 @@
-import {MILLISECONDS_DAY, MONTHS, Position} from './constants';
+import {MILLISECONDS_DAY, MONTHS, COUNT_FILMS, COUNT_FILM_CARDS, Position} from './constants';
 
 export const createElement = (template) => {
   const newElement = document.createElement(`div`);
@@ -17,6 +17,8 @@ export const render = (container, element, place = Position.BEFOREEND) => {
     case Position.AFTEREND:
       container.after(element);
       break;
+    default:
+      throw new Error(`Add the corresponding position value of the DOM element.`);
   }
 };
 
@@ -49,7 +51,7 @@ export const shuffleElements = (array) => {
 };
 
 export const getReleaseDate = () => {
-  return Date.now() + 1 + Math.floor(Math.random() * getRandomValue(0, -29) * MILLISECONDS_DAY);
+  return Date.now() + Math.floor(Math.random() * getRandomValue(0, -29) * MILLISECONDS_DAY);
 };
 
 export const convertDataDetails = (details) => {
@@ -62,3 +64,12 @@ export const convertDataDetails = (details) => {
   });
   return newDetails;
 };
+
+export const getCountFilmsToRender = (count) => {
+  if (COUNT_FILMS < count) {
+    return COUNT_FILM_CARDS - (count - COUNT_FILMS);
+  }
+
+  return count;
+};
+

@@ -61,20 +61,15 @@ export const getDataFilmCard = () => ({
 });
 
 export const getRang = (countFilms) => {
-  let rangs;
-  if (countFilms === 0) {
-    rangs = ``;
-  } else if (countFilms >= 1 && countFilms <= 10) {
-    rangs = `Novice`;
+  if (countFilms >= 1 && countFilms <= 10) {
+    return `Novice`;
   } else if (countFilms >= 11 && countFilms <= 20) {
-    rangs = `Fan`;
+    return `Fan`;
   } else if (countFilms >= 21) {
-    rangs = `Movie Buff`;
-  } else {
-    rangs = ``;
+    return `Movie Buff`;
   }
 
-  return rangs;
+  return ``;
 };
 
 export const getDataFilter = (filterName, dataFilms) => {
