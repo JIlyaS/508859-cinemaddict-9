@@ -1,7 +1,9 @@
-import {createElement, convertDataDetails} from '../utils';
+import AbstractComponent from './abstract-component';
+import {convertDataDetails} from '../utils';
 
-class DetailsPopup {
+class DetailsPopup extends AbstractComponent {
   constructor(card) {
+    super();
     this._poster = card.poster;
     this._ageRestrictions = card.ageRestrictions;
     this._title = card.title;
@@ -14,19 +16,6 @@ class DetailsPopup {
     this._isFavorite = card.isFavorite;
     this._countComments = card.countComments;
     this._comments = card.comments;
-    this._element = null;
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 
   getTemplate() {
