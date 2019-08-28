@@ -6,9 +6,11 @@ import FilmCard from '../components/film-card';
 import ShowButton from '../components/show-button';
 import DetailsPopup from '../components/details-popup';
 import EmptyResult from '../components/empty-result';
+import Menu from '../components/menu';
+import Sort from '../components/sort';
 import {render, unrender} from '../utils';
-import {MORE_RATED, MORE_COMMENTED, COUNT_FILM_CARDS, ADD_MORE_CARD, COUNT_FILMS, Position} from '../constants';
-import {getDataFilmCard} from '../components/data';
+import {MORE_RATED, MORE_COMMENTED, COUNT_FILM_CARDS, ADD_MORE_CARD, COUNT_FILMS, NAME_FILTERS, Position, Sorted} from '../constants';
+import {getDataFilmCard, getDataFilter} from '../components/data';
 
 class PageController {
   constructor(container, popupContainer, filmCards) {
@@ -17,6 +19,9 @@ class PageController {
     this._filmCards = filmCards;
     this._dataRatedFilms = (this._filmCards.filter((film) => film.rating > MORE_RATED)).slice(0, 2);
     this._dataCommentedFilms = (this._filmCards.filter((film) => film.countComments >= MORE_COMMENTED)).slice(0, 2);
+    this._dataFilters = NAME_FILTERS.map((filter) => getDataFilter(filter, filmCards));
+    this._menu = new Menu(this._dataFilters);
+    this._sortBlock = new Sort();
     this._filmsWrapper = new FilmsWrapper();
     this._filmsList = new FilmsList();
     this._ratedList = new RatedList();
@@ -24,6 +29,8 @@ class PageController {
   }
 
   init() {
+    render(this._container, this._menu.getElement());
+    this._renderSort();
     render(this._container, this._filmsWrapper.getElement());
     render(this._filmsWrapper.getElement(), this._filmsList.getElement());
     render(this._filmsWrapper.getElement(), this._ratedList.getElement());
@@ -109,6 +116,7 @@ class PageController {
 
       const newFilmCards = new Array(newCountFilm).fill().map(() => getDataFilmCard());
       newFilmCards.forEach((film) => this._renderFilmsCard(film, this._filmsList));
+      this._filmCards.push(...newFilmCards);
     });
     render(this._filmsList.getElement(), showButton.getElement());
   }
@@ -118,6 +126,43 @@ class PageController {
     this._filmsWrapper.getElement().innerHTML = ``;
     render(this._filmsWrapper.getElement(), emptyResult.getElement());
   }
+
+  _renderSort() {
+    this._sortBlock.getElement().addEventListener(`click`, (evt) => {
+      evt.preventDefault();
+
+      if (evt.target.tagName !== `A`) {
+        return;
+      }
+
+      const sortButtons = this._sortBlock.getElement().querySelectorAll(`.sort__button`);
+      sortButtons.forEach((sortButton) => {
+        sortButton.classList.remove(`sort__button--active`);
+      });
+      evt.target.classList.add(`sort__button--active`);
+
+      this._filmsList.getElement().querySelector(`.films-list__container`).innerHTML = ``;
+
+      switch (evt.target.dataset.sortType) {
+        case Sorted.DATE:
+          const sortedByDateUpFilms = this._filmCards.slice().sort((a, b) => a.year - b.year);
+          sortedByDateUpFilms.forEach((filmCard) => this._renderFilmsCard(filmCard, this._filmsList));
+          break;
+        case Sorted.RATING:
+          const sortedByRatingsFilms = this._filmCards.slice().sort((a, b) => b.rating - a.rating);
+          sortedByRatingsFilms.forEach((filmCard) => this._renderFilmsCard(filmCard, this._filmsList));
+          break;
+        case Sorted.DEFAULT:
+          this._filmCards.forEach((filmCard) => this._renderFilmsCard(filmCard, this._filmsList));
+          break;
+        default:
+          throw new Error(`Incorrect dataset`);
+      }
+
+    });
+    render(this._container, this._sortBlock.getElement());
+  }
+
 }
 
 export default PageController;
