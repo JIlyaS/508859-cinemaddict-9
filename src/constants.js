@@ -26,6 +26,11 @@ export const Position = {
   BEFOREEND: `beforeend`,
   AFTEREND: `afterend`
 };
+export const Sorted = {
+  DATE: `date`,
+  RATING: `rating`,
+  DEFAULT: `default`
+};
 
 export const FILM_GENRES = [
   `Drama`,
