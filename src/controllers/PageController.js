@@ -2,20 +2,18 @@ import FilmsWrapper from '../components/films-wrapper';
 import FilmsList from '../components/films-list';
 import RatedList from '../components/rated-list';
 import CommentedList from '../components/commented-list';
-import FilmCard from '../components/film-card';
 import ShowButton from '../components/show-button';
-import DetailsPopup from '../components/details-popup';
 import EmptyResult from '../components/empty-result';
 import Menu from '../components/menu';
 import Sort from '../components/sort';
+import MovieController from './MovieController';
 import {render, unrender} from '../utils';
 import {MORE_RATED, MORE_COMMENTED, COUNT_FILM_CARDS, ADD_MORE_CARD, COUNT_FILMS, NAME_FILTERS, Position, Sorted} from '../constants';
 import {getDataFilmCard, getDataFilter} from '../components/data';
 
 class PageController {
-  constructor(container, popupContainer, filmCards) {
+  constructor(container, filmCards) {
     this._container = container;
-    this._popupContainer = popupContainer;
     this._filmCards = filmCards;
     this._dataRatedFilms = (this._filmCards.filter((film) => film.rating > MORE_RATED)).slice(0, 2);
     this._dataCommentedFilms = (this._filmCards.filter((film) => film.countComments >= MORE_COMMENTED)).slice(0, 2);
@@ -26,6 +24,8 @@ class PageController {
     this._filmsList = new FilmsList();
     this._ratedList = new RatedList();
     this._commentedList = new CommentedList();
+
+    this._onDataChange = this._onDataChange.bind(this);
   }
 
   init() {
@@ -44,60 +44,29 @@ class PageController {
       return this._renderEmptyResult();
     }
 
-    this._filmCards.forEach((film) => this._renderFilmsCard(film, this._filmsList));
-    this._dataRatedFilms.forEach((film) => this._renderFilmsCard(film, this._ratedList));
-    return this._dataCommentedFilms.forEach((film) => this._renderFilmsCard(film, this._commentedList));
+    return this._filmCards.forEach((film) => this._renderFilmsCard(film, this._filmsList));
+    // this._filmsList
+    // this._dataRatedFilms.forEach((film) => this._renderFilmsCard(film, this._ratedList));
+    // return this._dataCommentedFilms.forEach((film) => this._renderFilmsCard(film, this._commentedList));
   }
 
   _renderFilmsCard(film, container) {
-    const filmCard = new FilmCard(film);
-    const detailsPopup = new DetailsPopup(film);
+    const movieController = new MovieController(container, film, this._onDataChange, this._onChangeView);
+    movieController.init();
+  }
 
-    const onEscKeyDown = (evt) => {
-      if (evt.key === `Escape` || evt.key === `Esc`) {
-        unrender(detailsPopup.getElement());
-        document.removeEventListener(`keydown`, onEscKeyDown);
-      }
-    };
+  _onDataChange(newData, oldData) {
+    this._filmCards[this._filmCards.findIndex((it) => it === oldData)] = newData;
 
-    filmCard.getElement()
-    .querySelector(`.film-card__poster`)
-    .addEventListener(`click`, () => {
-      render(this._popupContainer, detailsPopup.getElement(), Position.AFTEREND);
-      document.addEventListener(`keydown`, onEscKeyDown);
-    });
+    this._renderFilmsList(this._filmCards);
+  }
 
-    filmCard.getElement()
-      .querySelector(`.film-card__title`)
-      .addEventListener(`click`, () => {
-        render(this._popupContainer, detailsPopup.getElement(), Position.AFTEREND);
-        document.addEventListener(`keydown`, onEscKeyDown);
-      });
+  _renderFilmsList(films) {
+    unrender(this._filmsList.getElement());
 
-    filmCard.getElement()
-      .querySelector(`.film-card__comments`)
-      .addEventListener(`click`, () => {
-        render(this._popupContainer, detailsPopup.getElement(), Position.AFTEREND);
-        document.addEventListener(`keydown`, onEscKeyDown);
-      });
-
-    detailsPopup.getElement().querySelector(`.film-details__close-btn`)
-      .addEventListener(`click`, () => {
-        unrender(detailsPopup.getElement());
-        document.removeEventListener(`keydown`, onEscKeyDown);
-      });
-
-    detailsPopup.getElement().querySelector(`.film-details__comment-input`)
-      .addEventListener(`focus`, () => {
-        document.removeEventListener(`keydown`, onEscKeyDown);
-      });
-
-    detailsPopup.getElement().querySelector(`.film-details__comment-input`)
-      .addEventListener(`blur`, () => {
-        document.addEventListener(`keydown`, onEscKeyDown);
-      });
-
-    render(container.getElement().querySelector(`.films-list__container`), filmCard.getElement());
+    this._filmsList.removeElement();
+    render(this._filmsWrapper.getElement(), this._filmsList.getElement(), Position.AFTERBEGIN);
+    films.forEach((taskMock) => this._renderFilmsCard(taskMock, this._filmsList));
   }
 
   _renderShowButton() {
