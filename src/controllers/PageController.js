@@ -128,38 +128,35 @@ class PageController {
   }
 
   _renderSort() {
-    this._sortBlock.getElement().addEventListener(`click`, (evt) => {
-      evt.preventDefault();
+    this._sortBlock.getElement().querySelectorAll(`.sort__button`).forEach((elem) => {
+      elem.addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+        const sortButtons = this._sortBlock.getElement().querySelectorAll(`.sort__button`);
+        sortButtons.forEach((sortButton) => {
+          sortButton.classList.remove(`sort__button--active`);
+        });
+        evt.target.classList.add(`sort__button--active`);
 
-      if (evt.target.tagName !== `A`) {
-        return;
-      }
+        this._filmsList.getElement().querySelector(`.films-list__container`).innerHTML = ``;
 
-      const sortButtons = this._sortBlock.getElement().querySelectorAll(`.sort__button`);
-      sortButtons.forEach((sortButton) => {
-        sortButton.classList.remove(`sort__button--active`);
+        switch (evt.target.dataset.sortType) {
+          case Sorted.DATE:
+            const sortedByDateUpFilms = this._filmCards.slice().sort((a, b) => a.year - b.year);
+            sortedByDateUpFilms.forEach((filmCard) => this._renderFilmsCard(filmCard, this._filmsList));
+            break;
+          case Sorted.RATING:
+            const sortedByRatingsFilms = this._filmCards.slice().sort((a, b) => b.rating - a.rating);
+            sortedByRatingsFilms.forEach((filmCard) => this._renderFilmsCard(filmCard, this._filmsList));
+            break;
+          case Sorted.DEFAULT:
+            this._filmCards.forEach((filmCard) => this._renderFilmsCard(filmCard, this._filmsList));
+            break;
+          default:
+            throw new Error(`Incorrect dataset`);
+        }
       });
-      evt.target.classList.add(`sort__button--active`);
-
-      this._filmsList.getElement().querySelector(`.films-list__container`).innerHTML = ``;
-
-      switch (evt.target.dataset.sortType) {
-        case Sorted.DATE:
-          const sortedByDateUpFilms = this._filmCards.slice().sort((a, b) => a.year - b.year);
-          sortedByDateUpFilms.forEach((filmCard) => this._renderFilmsCard(filmCard, this._filmsList));
-          break;
-        case Sorted.RATING:
-          const sortedByRatingsFilms = this._filmCards.slice().sort((a, b) => b.rating - a.rating);
-          sortedByRatingsFilms.forEach((filmCard) => this._renderFilmsCard(filmCard, this._filmsList));
-          break;
-        case Sorted.DEFAULT:
-          this._filmCards.forEach((filmCard) => this._renderFilmsCard(filmCard, this._filmsList));
-          break;
-        default:
-          throw new Error(`Incorrect dataset`);
-      }
-
     });
+
     render(this._container, this._sortBlock.getElement());
   }
 
