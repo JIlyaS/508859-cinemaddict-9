@@ -1,7 +1,7 @@
 import FilmCard from '../components/film-card';
 import DetailsPopup from '../components/details-popup';
-import {render, unrender} from '../utils';
-import {Position} from '../constants';
+import {render, unrender, getRandomValue} from '../utils';
+import {COMMENT_AUTHORS, MINUS_INDEX, COMMENT_DAY, Position} from '../constants';
 
 class MovieController {
   constructor(container, dataFilm, onDataChange, onChangeView) {
@@ -22,11 +22,30 @@ class MovieController {
     };
   }
 
+  getFormData() {
+    const formData = new FormData(this._detailsPopup.getElement().querySelector(`.film-details__inner`));
+    return {
+      emoji: formData.get(`comment-emoji`),
+      description: formData.get(`comment`),
+      author: COMMENT_AUTHORS[getRandomValue(COMMENT_AUTHORS.length - MINUS_INDEX)],
+      dayComment: COMMENT_DAY[getRandomValue(COMMENT_DAY.length - MINUS_INDEX)]
+    };
+  }
+
   init() {
     const onEscKeyDown = (evt) => {
       if (evt.key === `Escape` || evt.key === `Esc`) {
         unrender(this._detailsPopup.getElement());
         document.removeEventListener(`keydown`, onEscKeyDown);
+      }
+    };
+
+    const onAddComment = (evt) => {
+      if (evt.ctrlKey && evt.keyCode === 13) {
+        // const newState = Object.assign({}, this.getState(), this.getFormData());
+        this._dataFilm.comments.push(this.getFormData());
+        const data = Object.assign({}, this._dataFilm, this.getState());
+        this._onDataChange(data, this._dataFilm);
       }
     };
 
@@ -91,7 +110,42 @@ class MovieController {
         document.addEventListener(`keydown`, onEscKeyDown);
       });
 
-    // this._detailsPopup.getElement().querySelector(``)
+    this._detailsPopup.getElement().querySelector(`.film-details__control-label--watchlist`)
+      .addEventListener(`click`, () => {
+        const newState = Object.assign({}, this.getState(), {isWatchlist: !this._dataFilm.isWatchlist});
+        const data = Object.assign({}, this._dataFilm, newState);
+        this._onDataChange(data, this._dataFilm);
+      });
+
+    this._detailsPopup.getElement().querySelector(`.film-details__control-label--watched`)
+      .addEventListener(`click`, () => {
+        const newState = Object.assign({}, this.getState(), {isViewed: !this._dataFilm.isViewed});
+        const data = Object.assign({}, this._dataFilm, newState);
+        this._onDataChange(data, this._dataFilm);
+      });
+
+    this._detailsPopup.getElement().querySelector(`.film-details__control-label--favorite`)
+      .addEventListener(`click`, () => {
+        const newState = Object.assign({}, this.getState(), {isFavorite: !this._dataFilm.isFavorite});
+        const data = Object.assign({}, this._dataFilm, newState);
+        this._onDataChange(data, this._dataFilm);
+      });
+
+    this._detailsPopup.getElement().querySelector(`.film-details__comment-input`)
+      .addEventListener(`focus`, () => {
+        document.addEventListener(`keydown`, onAddComment);
+      });
+
+    this._detailsPopup.getElement().querySelector(`.film-details__comment-input`)
+      .addEventListener(`blur`, () => {
+        document.removeEventListener(`keydown`, onAddComment);
+      });
+
+    this._detailsPopup.getElement().querySelectorAll(`.film-details__emoji-item`).forEach((elem) => {
+      elem.addEventListener(`click`, (evt) => {
+        document.querySelector(`.film-details__add-emoji-label`).innerHTML = `<img src="images/emoji/${evt.target.value}.png" width="55" height="55" alt="emoji">`;
+      });
+    });
 
     render(this._container.getElement().querySelector(`.films-list__container`), this._filmCard.getElement());
   }
