@@ -58,6 +58,22 @@ class MovieController {
         const data = Object.assign({}, this._dataFilm, newState);
         this._onDataChange(data, this._dataFilm);
       });
+    this._filmCard.getElement()
+      .querySelector(`.film-card__controls-item--mark-as-watched`)
+      .addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+        const newState = Object.assign({}, this.getState(), {isViewed: !this._dataFilm.isViewed});
+        const data = Object.assign({}, this._dataFilm, newState);
+        this._onDataChange(data, this._dataFilm);
+      });
+    this._filmCard.getElement()
+      .querySelector(`.film-card__controls-item--favorite`)
+      .addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+        const newState = Object.assign({}, this.getState(), {isFavorite: !this._dataFilm.isFavorite});
+        const data = Object.assign({}, this._dataFilm, newState);
+        this._onDataChange(data, this._dataFilm);
+      });
 
     this._detailsPopup.getElement().querySelector(`.film-details__close-btn`)
       .addEventListener(`click`, () => {
@@ -74,6 +90,8 @@ class MovieController {
       .addEventListener(`blur`, () => {
         document.addEventListener(`keydown`, onEscKeyDown);
       });
+
+    // this._detailsPopup.getElement().querySelector(``)
 
     render(this._container.getElement().querySelector(`.films-list__container`), this._filmCard.getElement());
   }
