@@ -74,15 +74,15 @@ class DetailsPopup extends AbstractComponent {
           <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${this._countComments}</span></h3>
 
           <ul class="film-details__comments-list">
-            ${this._comments.map((comment) => `<li class="film-details__comment">
+            ${this._comments.map(({emoji, description, author, dayComment}) => `<li class="film-details__comment">
             <span class="film-details__comment-emoji">
-              <img src="./images/emoji/${comment.emoji}.png" width="55" height="55" alt="emoji">
+              <img src="./images/emoji/${emoji}.png" width="55" height="55" alt="emoji">
             </span>
             <div>
-              <p class="film-details__comment-text">${comment.description}</p>
+              <p class="film-details__comment-text">${description}</p>
               <p class="film-details__comment-info">
-                <span class="film-details__comment-author">${comment.author}</span>
-                <span class="film-details__comment-day">${comment.dayComment}</span>
+                <span class="film-details__comment-author">${author}</span>
+                <span class="film-details__comment-day">${dayComment}</span>
                 <button class="film-details__comment-delete">Delete</button>
               </p>
             </div>

@@ -57,7 +57,8 @@ export const getDataFilmCard = () => ({
   isWatchlist: Boolean(getRandomValue()),
   isViewed: Boolean(getRandomValue()),
   countComments: getRandomValue(RANDOM_COUNT_COMMENTS),
-  comments: dataFilmComments
+  comments: dataFilmComments,
+  isFilmDetails: false
 });
 
 export const getRang = (countFilms) => {
