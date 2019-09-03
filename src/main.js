@@ -1,6 +1,6 @@
 import Search from './components/search';
 import Profile from './components/profile';
-import PageController from './controllers/PageController';
+import PageController from './controllers/page-controller';
 import {render, getCountFilmsToRender} from './utils';
 import {WATCHED_MOVIES, COUNT_FILM_CARDS, COUNT_FILMS} from './constants';
 import {getRang, getDataFilmCard} from './components/data';

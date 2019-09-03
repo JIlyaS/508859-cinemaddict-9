@@ -6,7 +6,7 @@ import ShowButton from '../components/show-button';
 import EmptyResult from '../components/empty-result';
 import Menu from '../components/menu';
 import Sort from '../components/sort';
-import MovieController from './MovieController';
+import MovieController from './movie-controller';
 import {render, unrender} from '../utils';
 import {MORE_RATED, MORE_COMMENTED, COUNT_FILM_CARDS, ADD_MORE_CARD, COUNT_FILMS, NAME_FILTERS, Position, Sorted} from '../constants';
 import {getDataFilmCard, getDataFilter} from '../components/data';
@@ -25,6 +25,8 @@ class PageController {
     this._ratedList = new RatedList();
     this._commentedList = new CommentedList();
 
+    this._subscriptions = [];
+    this._onChangeView = this._onChangeView.bind(this);
     this._onDataChange = this._onDataChange.bind(this);
   }
 
@@ -49,9 +51,14 @@ class PageController {
     return this._dataCommentedFilms.forEach((film) => this._renderFilmsCard(film, this._commentedList));
   }
 
+  _onChangeView() {
+    this._subscriptions.forEach((subscription) => subscription());
+  }
+
   _renderFilmsCard(film, container) {
     const movieController = new MovieController(container, film, this._onDataChange, this._onChangeView);
     movieController.init();
+    this._subscriptions.push(movieController.setDefaultView.bind(movieController));
   }
 
   _onDataChange(newData, oldData) {
