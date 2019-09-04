@@ -1,4 +1,4 @@
-export const EMOJI = [`smile.png`, `sleeping.png`, `puke.png`, `angry.png`];
+export const EMOJI = [`smile`, `sleeping`, `puke`, `angry`];
 export const COMMENTS = [`Interesting setting and a good cast`, `Booooooooooring`, `Very very old. Meh`, `Almost two hours? Seriously?`];
 export const COMMENT_AUTHORS = [`Tim Macoveev`, `John Doe`, `Ilya Kolmakov`];
 export const COMMENT_DAY = [`3 days ago`, `2 days ago`, `1 days ago`, `Today`];
@@ -31,6 +31,10 @@ export const Sorted = {
   RATING: `rating`,
   DEFAULT: `default`
 };
+
+// export const RATING_SCORE = {
+//   rating1: false
+// };
 
 export const FILM_GENRES = [
   `Drama`,
