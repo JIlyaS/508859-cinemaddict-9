@@ -75,21 +75,18 @@ class PageController {
     unrender(this._filmsList.getElement());
     unrender(this._ratedList.getElement());
     unrender(this._commentedList.getElement());
-    unrender(this._popupWrapper.getElement());
 
     this._filmsList.removeElement();
     this._ratedList.removeElement();
     this._commentedList.removeElement();
-    this._popupWrapper.removeElement();
 
-    render(this._footer, this._popupWrapper.getElement(), Position.AFTEREND);
     render(this._filmsWrapper.getElement(), this._commentedList.getElement(), Position.AFTERBEGIN);
     render(this._filmsWrapper.getElement(), this._ratedList.getElement(), Position.AFTERBEGIN);
     render(this._filmsWrapper.getElement(), this._filmsList.getElement(), Position.AFTERBEGIN);
     this._renderShowButton();
 
-    // films.filter((film) => film.rating > MORE_RATED).slice(0, 2).forEach((taskMock) => this._renderFilmsCard(taskMock, this._ratedList, this._popupWrapper));
-    // films.filter((film) => film.countComments >= MORE_COMMENTED).slice(0, 2).forEach((taskMock) => this._renderFilmsCard(taskMock, this._commentedList, this._popupWrapper));
+    films.filter((film) => film.rating > MORE_RATED).slice(0, 2).forEach((taskMock) => this._renderFilmsCard(taskMock, this._ratedList, this._popupWrapper));
+    films.filter((film) => film.countComments >= MORE_COMMENTED).slice(0, 2).forEach((taskMock) => this._renderFilmsCard(taskMock, this._commentedList, this._popupWrapper));
     films.forEach((taskMock) => this._renderFilmsCard(taskMock, this._filmsList, this._popupWrapper));
   }
 

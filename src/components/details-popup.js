@@ -16,6 +16,7 @@ class DetailsPopup extends AbstractComponent {
     this._isFavorite = card.isFavorite;
     this._countComments = card.countComments;
     this._comments = card.comments;
+    this._isFilmDetails = card.isFilmDetails;
   }
 
   getTemplate() {

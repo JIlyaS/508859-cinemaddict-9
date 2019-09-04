@@ -1,15 +1,15 @@
 import FilmCard from '../components/film-card';
 import DetailsPopup from '../components/details-popup';
 import {render, unrender, getRandomValue} from '../utils';
-import {COMMENT_AUTHORS, MINUS_INDEX, COMMENT_DAY} from '../constants';
+import {COMMENT_AUTHORS, MINUS_INDEX, COMMENT_DAY, Position} from '../constants';
 
 class MovieController {
   constructor(container, dataFilm, popupContainer, onDataChange, onChangeView) {
     this._container = container;
     this._dataFilm = dataFilm;
+    this._popupContainer = popupContainer;
     this._onDataChange = onDataChange;
     this._onChangeView = onChangeView;
-    this._popupContainer = popupContainer;
     this._filmCard = new FilmCard(this._dataFilm);
     this._detailsPopup = new DetailsPopup(this._dataFilm);
   }
@@ -46,10 +46,12 @@ class MovieController {
   init() {
     const onEscKeyDown = (evt) => {
       if (evt.key === `Escape` || evt.key === `Esc`) {
-        this._filmsList.removeElement();
         const newState = Object.assign(this.getState(), {isFilmDetails: !this._dataFilm.isFilmDetails});
         const data = Object.assign(this._dataFilm, newState);
         this._onDataChange(data, this._dataFilm);
+
+        unrender(this._detailsPopup.getElement());
+        this._detailsPopup.removeElement();
         document.removeEventListener(`keydown`, onEscKeyDown);
       }
     };
@@ -70,6 +72,7 @@ class MovieController {
       const newState = Object.assign(this.getState(), {isFilmDetails: !this._dataFilm.isFilmDetails});
       const data = Object.assign(this._dataFilm, newState);
       this._onDataChange(data, this._dataFilm);
+      render(this._popupContainer.getElement(), this._detailsPopup.getElement(), Position.AFTEREND);
       document.addEventListener(`keydown`, onEscKeyDown);
     });
 
@@ -80,6 +83,7 @@ class MovieController {
         const newState = Object.assign(this.getState(), {isFilmDetails: !this._dataFilm.isFilmDetails});
         const data = Object.assign(this._dataFilm, newState);
         this._onDataChange(data, this._dataFilm);
+        render(this._popupContainer.getElement(), this._detailsPopup.getElement(), Position.AFTEREND);
         document.addEventListener(`keydown`, onEscKeyDown);
       });
 
@@ -90,6 +94,7 @@ class MovieController {
         const newState = Object.assign(this.getState(), {isFilmDetails: !this._dataFilm.isFilmDetails});
         const data = Object.assign(this._dataFilm, newState);
         this._onDataChange(data, this._dataFilm);
+        render(this._popupContainer.getElement(), this._detailsPopup.getElement(), Position.AFTEREND);
         document.addEventListener(`keydown`, onEscKeyDown);
       });
 
@@ -199,7 +204,7 @@ class MovieController {
     }
 
     if (this._dataFilm.isFilmDetails) {
-      render(this._popupContainer.getElement(), this._detailsPopup.getElement());
+      // render(this._popupContainer.getElement(), this._detailsPopup.getElement());
     }
 
     render(this._container.getElement().querySelector(`.films-list__container`), this._filmCard.getElement());
