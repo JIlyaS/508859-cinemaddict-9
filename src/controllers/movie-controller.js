@@ -1,15 +1,15 @@
 import FilmCard from '../components/film-card';
 import DetailsPopup from '../components/details-popup';
 import {render, unrender, getRandomValue} from '../utils';
-import {COMMENT_AUTHORS, MINUS_INDEX, COMMENT_DAY, Position} from '../constants';
+import {COMMENT_AUTHORS, MINUS_INDEX, COMMENT_DAY} from '../constants';
 
 class MovieController {
-  constructor(container, dataFilm, onDataChange, onChangeView) {
+  constructor(container, dataFilm, popupContainer, onDataChange, onChangeView) {
     this._container = container;
     this._dataFilm = dataFilm;
     this._onDataChange = onDataChange;
     this._onChangeView = onChangeView;
-    this._popupContainer = document.querySelector(`.footer`);
+    this._popupContainer = popupContainer;
     this._filmCard = new FilmCard(this._dataFilm);
     this._detailsPopup = new DetailsPopup(this._dataFilm);
   }
@@ -19,7 +19,7 @@ class MovieController {
       isWatchlist: this._dataFilm.isWatchlist,
       isViewed: this._dataFilm.isViewed,
       isFavorite: this._dataFilm.isFavorite,
-      isFilmDetails: false
+      isFilmDetails: this._dataFilm.isFilmDetails
     };
   }
 
@@ -37,8 +37,9 @@ class MovieController {
   }
 
   setDefaultView() {
-    if (this._container.getElement().contains(this._detailsPopup.getElement())) {
-      this._container.getElement().replaceChild(this._filmCard.getElement(), this._detailsPopup.getElement());
+    if (this._popupContainer.getElement().contains(this._detailsPopup.getElement())) {
+      unrender(this._detailsPopup.getElement());
+      this._detailsPopup.removeElement();
     }
   }
 
@@ -59,10 +60,6 @@ class MovieController {
         this._dataFilm.comments.push(formData.comment);
         const data = Object.assign(this._dataFilm, this.getState());
         this._onDataChange(data, this._dataFilm);
-
-        unrender(this._detailsPopup.getElement());
-        this._detailsPopup.removeElement();
-        render(this._popupContainer, this._detailsPopup.getElement(), Position.AFTEREND);
       }
     };
 
@@ -70,7 +67,6 @@ class MovieController {
     .querySelector(`.film-card__poster`)
     .addEventListener(`click`, () => {
       this._onChangeView();
-      render(this._popupContainer, this._detailsPopup.getElement(), Position.AFTEREND);
       const newState = Object.assign(this.getState(), {isFilmDetails: !this._dataFilm.isFilmDetails});
       const data = Object.assign(this._dataFilm, newState);
       this._onDataChange(data, this._dataFilm);
@@ -81,7 +77,6 @@ class MovieController {
       .querySelector(`.film-card__title`)
       .addEventListener(`click`, () => {
         this._onChangeView();
-        render(this._popupContainer, this._detailsPopup.getElement(), Position.AFTEREND);
         const newState = Object.assign(this.getState(), {isFilmDetails: !this._dataFilm.isFilmDetails});
         const data = Object.assign(this._dataFilm, newState);
         this._onDataChange(data, this._dataFilm);
@@ -92,7 +87,6 @@ class MovieController {
       .querySelector(`.film-card__comments`)
       .addEventListener(`click`, () => {
         this._onChangeView();
-        render(this._popupContainer, this._detailsPopup.getElement(), Position.AFTEREND);
         const newState = Object.assign(this.getState(), {isFilmDetails: !this._dataFilm.isFilmDetails});
         const data = Object.assign(this._dataFilm, newState);
         this._onDataChange(data, this._dataFilm);
@@ -149,7 +143,6 @@ class MovieController {
 
     this._detailsPopup.getElement().querySelector(`.film-details__control-label--watchlist`)
       .addEventListener(`click`, () => {
-
         const newState = Object.assign(this.getState(), {isWatchlist: !this._dataFilm.isWatchlist});
         const data = Object.assign(this._dataFilm, newState);
         this._onDataChange(data, this._dataFilm);
@@ -162,9 +155,6 @@ class MovieController {
         const newState = Object.assign(this.getState(), {isViewed});
         const data = Object.assign(this._dataFilm, newState);
         this._onDataChange(data, this._dataFilm);
-
-        unrender(this._detailsPopup.getElement());
-        render(this._popupContainer, this._detailsPopup.getElement(), Position.AFTEREND);
       });
 
     this._detailsPopup.getElement().querySelector(`.film-details__control-label--favorite`)
@@ -206,6 +196,10 @@ class MovieController {
         const data = Object.assign(this._dataFilm, newState);
         this._onDataChange(data, this._dataFilm);
       });
+    }
+
+    if (this._dataFilm.isFilmDetails) {
+      render(this._popupContainer.getElement(), this._detailsPopup.getElement());
     }
 
     render(this._container.getElement().querySelector(`.films-list__container`), this._filmCard.getElement());

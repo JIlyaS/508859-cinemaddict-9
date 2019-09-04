@@ -7,6 +7,7 @@ import EmptyResult from '../components/empty-result';
 import Menu from '../components/menu';
 import Sort from '../components/sort';
 import MovieController from './movie-controller';
+import PopupWrapper from '../components/popup-wrapper';
 import {render, unrender} from '../utils';
 import {MORE_RATED, MORE_COMMENTED, COUNT_FILM_CARDS, ADD_MORE_CARD, COUNT_FILMS, NAME_FILTERS, Position, Sorted} from '../constants';
 import {getDataFilmCard, getDataFilter} from '../components/data';
@@ -24,6 +25,8 @@ class PageController {
     this._filmsList = new FilmsList();
     this._ratedList = new RatedList();
     this._commentedList = new CommentedList();
+    this._popupWrapper = new PopupWrapper();
+    this._footer = document.querySelector(`.footer`);
 
     this._subscriptions = [];
     this._onChangeView = this._onChangeView.bind(this);
@@ -37,6 +40,7 @@ class PageController {
     render(this._filmsWrapper.getElement(), this._filmsList.getElement());
     render(this._filmsWrapper.getElement(), this._ratedList.getElement());
     render(this._filmsWrapper.getElement(), this._commentedList.getElement());
+    render(this._footer, this._popupWrapper.getElement(), Position.AFTEREND);
 
     if (COUNT_FILMS > this._filmCards.length) {
       this._renderShowButton();
@@ -46,17 +50,17 @@ class PageController {
       return this._renderEmptyResult();
     }
 
-    this._filmCards.forEach((film) => this._renderFilmsCard(film, this._filmsList));
-    this._dataRatedFilms.forEach((film) => this._renderFilmsCard(film, this._ratedList));
-    return this._dataCommentedFilms.forEach((film) => this._renderFilmsCard(film, this._commentedList));
+    this._filmCards.forEach((film) => this._renderFilmsCard(film, this._filmsList, this._popupWrapper));
+    this._dataRatedFilms.forEach((film) => this._renderFilmsCard(film, this._ratedList, this._popupWrapper));
+    return this._dataCommentedFilms.forEach((film) => this._renderFilmsCard(film, this._commentedList, this._popupWrapper));
   }
 
   _onChangeView() {
     this._subscriptions.forEach((subscription) => subscription());
   }
 
-  _renderFilmsCard(film, container) {
-    const movieController = new MovieController(container, film, this._onDataChange, this._onChangeView);
+  _renderFilmsCard(film, container, popupContainer) {
+    const movieController = new MovieController(container, film, popupContainer, this._onDataChange, this._onChangeView);
     movieController.init();
     this._subscriptions.push(movieController.setDefaultView.bind(movieController));
   }
@@ -71,19 +75,22 @@ class PageController {
     unrender(this._filmsList.getElement());
     unrender(this._ratedList.getElement());
     unrender(this._commentedList.getElement());
+    unrender(this._popupWrapper.getElement());
 
     this._filmsList.removeElement();
     this._ratedList.removeElement();
     this._commentedList.removeElement();
+    this._popupWrapper.removeElement();
 
+    render(this._footer, this._popupWrapper.getElement(), Position.AFTEREND);
     render(this._filmsWrapper.getElement(), this._commentedList.getElement(), Position.AFTERBEGIN);
     render(this._filmsWrapper.getElement(), this._ratedList.getElement(), Position.AFTERBEGIN);
     render(this._filmsWrapper.getElement(), this._filmsList.getElement(), Position.AFTERBEGIN);
     this._renderShowButton();
 
-    films.filter((film) => film.rating > MORE_RATED).slice(0, 2).forEach((taskMock) => this._renderFilmsCard(taskMock, this._ratedList));
-    films.filter((film) => film.countComments >= MORE_COMMENTED).slice(0, 2).forEach((taskMock) => this._renderFilmsCard(taskMock, this._commentedList));
-    films.forEach((taskMock) => this._renderFilmsCard(taskMock, this._filmsList));
+    // films.filter((film) => film.rating > MORE_RATED).slice(0, 2).forEach((taskMock) => this._renderFilmsCard(taskMock, this._ratedList, this._popupWrapper));
+    // films.filter((film) => film.countComments >= MORE_COMMENTED).slice(0, 2).forEach((taskMock) => this._renderFilmsCard(taskMock, this._commentedList, this._popupWrapper));
+    films.forEach((taskMock) => this._renderFilmsCard(taskMock, this._filmsList, this._popupWrapper));
   }
 
   _renderShowButton() {
