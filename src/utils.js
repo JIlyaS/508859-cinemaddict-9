@@ -1,4 +1,4 @@
-import {MILLISECONDS_YEAR, COUNT_FILMS, COUNT_FILM_CARDS, MILLISECONDS_DAY, DAY_AGO, YEAR_AGO, RANDOM_COUNT_COMMENTS, Position} from './constants';
+import {MILLISECONDS_YEAR, COUNT_FILMS, COUNT_FILM_CARDS, MILLISECONDS_DAY, DAY_AGO, YEAR_AGO, Position} from './constants';
 
 export const createElement = (template) => {
   const newElement = document.createElement(`div`);
