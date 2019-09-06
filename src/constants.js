@@ -1,7 +1,6 @@
 export const EMOJI = [`smile`, `sleeping`, `puke`, `angry`];
 export const COMMENTS = [`Interesting setting and a good cast`, `Booooooooooring`, `Very very old. Meh`, `Almost two hours? Seriously?`];
 export const COMMENT_AUTHORS = [`Tim Macoveev`, `John Doe`, `Ilya Kolmakov`];
-export const COMMENT_DAY = [`3 days ago`, `2 days ago`, `1 days ago`, `Today`];
 export const MONTHS = [`January`, `February`, `March`, `April`, `May`, `June`, `July`, `August`, `September`, `October`, `November`, `December`];
 export const NAME_FILTERS = [`All movies`, `Watchlist`, `History`, `Favorites`, `Stats`];
 export const AGE_RESTRICTIONS = [`0+`, `6+`, `12+`, `18+`];
@@ -11,16 +10,20 @@ export const MAX_MINUTES = 29;
 export const HOUR = 60;
 export const COUNT_FILM_CARDS = 15;
 export const MILLISECONDS_DAY = 24 * 60 * 60 * 1000;
+export const COUNT_DAYS_COMMENTS = 10;
+export const MILLISECONDS_YEAR = MILLISECONDS_DAY * 30 * 12;
 export const WATCHED_MOVIES = 9;
 export const COUNT_FILMS = 21;
 export const MINUS_INDEX = 1;
-export const COUNT_COMMENTS = 10;
-export const RANDOM_COUNT_COMMENTS = 500;
+export const RANDOM_COUNT_COMMENTS = 10;
 export const RANDOM_YEAR_START = 1990;
 export const RANDOM_YEAR_DURATION = 29;
 export const ADD_MORE_CARD = 5;
 export const MORE_RATED = 7;
-export const MORE_COMMENTED = 200;
+export const MORE_COMMENTED = 6;
+export const DAY_AGO = 20;
+export const YEAR_AGO = 29;
+export const PERSONAL_RATING_COUNT = 9;
 export const Position = {
   AFTERBEGIN: `afterbegin`,
   BEFOREEND: `beforeend`,

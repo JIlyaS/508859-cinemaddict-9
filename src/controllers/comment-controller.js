@@ -1,6 +1,6 @@
 import Comments from '../components/comments';
-import {COMMENT_AUTHORS, COMMENT_DAY, MINUS_INDEX} from '../constants';
-import {render, getRandomValue, unrender} from '../utils';
+import {COMMENT_AUTHORS, MINUS_INDEX} from '../constants';
+import {render, getRandomValue, unrender, getCommentDate} from '../utils';
 
 class CommentController {
   constructor(container, dataFilm, detailsPopup, getState, onDataChange, onEscKeyDown) {
@@ -20,7 +20,7 @@ class CommentController {
         emoji: formData.get(`comment-emoji`) !== null ? formData.get(`comment-emoji`) : `smile`,
         description: formData.get(`comment`),
         author: COMMENT_AUTHORS[getRandomValue(COMMENT_AUTHORS.length - MINUS_INDEX)],
-        dayComment: COMMENT_DAY[getRandomValue(COMMENT_DAY.length - MINUS_INDEX)]
+        dayComment: getCommentDate()
       }
     };
   }

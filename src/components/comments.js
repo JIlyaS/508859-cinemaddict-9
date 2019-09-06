@@ -1,3 +1,4 @@
+import moment from 'moment';
 import AbstractComponent from './abstract-component';
 
 class Comments extends AbstractComponent {
@@ -9,10 +10,11 @@ class Comments extends AbstractComponent {
 
   getTemplate() {
     return `<section class="film-details__comments-wrap">
-          <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${this._countComments}</span></h3>
+          <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${this._comments.length}</span></h3>
 
           <ul class="film-details__comments-list">
-            ${this._comments.map(({emoji, description, author, dayComment}) => `<li class="film-details__comment">
+            ${this._comments.sort((a, b) => a.dataComment - b.dataComment)
+              .map(({emoji, description, author, dataComment}) => `<li class="film-details__comment">
             <span class="film-details__comment-emoji">
               <img src="./images/emoji/${emoji}.png" width="55" height="55" alt="emoji">
             </span>
@@ -20,7 +22,7 @@ class Comments extends AbstractComponent {
               <p class="film-details__comment-text">${description}</p>
               <p class="film-details__comment-info">
                 <span class="film-details__comment-author">${author}</span>
-                <span class="film-details__comment-day">${dayComment}</span>
+                <span class="film-details__comment-day">${moment(dataComment).format(`YY/MM/DD HH:mm`)}</span>
                 <button class="film-details__comment-delete">Delete</button>
               </p>
             </div>

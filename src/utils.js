@@ -1,4 +1,4 @@
-import {MILLISECONDS_DAY, MONTHS, COUNT_FILMS, COUNT_FILM_CARDS, Position} from './constants';
+import {MILLISECONDS_YEAR, COUNT_FILMS, COUNT_FILM_CARDS, MILLISECONDS_DAY, DAY_AGO, YEAR_AGO, RANDOM_COUNT_COMMENTS, Position} from './constants';
 
 export const createElement = (template) => {
   const newElement = document.createElement(`div`);
@@ -32,14 +32,14 @@ export const getRandomArray = (elements) => {
   return shuffleElements(elements)[0];
 };
 
-export const getRandomValue = (max = 1, min = 0) => {
-  return Math.round(Math.random() * max + min);
-};
-
 export const getRandomTime = (maxHours, minMinutes, maxMinutes) => {
   const randomHours = getRandomValue(maxHours);
   const randomMinutes = getRandomValue(maxMinutes, minMinutes);
-  return randomHours !== `0` ? `${randomHours}h ${randomMinutes}m` : `${randomMinutes}m`;
+  return randomHours !== 0 ? `${randomHours}h ${randomMinutes}m` : `${randomMinutes}m`;
+};
+
+export const getRandomValue = (max = 1, min = 0) => {
+  return Math.round(Math.random() * max + min);
 };
 
 export const shuffleElements = (array) => {
@@ -50,19 +50,12 @@ export const shuffleElements = (array) => {
   return array;
 };
 
-export const getReleaseDate = () => {
-  return Date.now() + Math.floor(Math.random() * getRandomValue(0, -29) * MILLISECONDS_DAY);
+export const getCommentDate = () => {
+  return Date.now() + Math.floor(Math.random() * getRandomValue(0, -DAY_AGO) * MILLISECONDS_DAY);
 };
 
-export const convertDataDetails = (details) => {
-  const newDetails = details.map((detail) => {
-    if (detail.term === `Release Date`) {
-      detail.cell = `${new Date(detail.cell).getDay()} ${MONTHS[new Date(detail.cell).getMonth()]} ${new Date(detail.cell).getFullYear()}`;
-    }
-
-    return detail;
-  });
-  return newDetails;
+export const getReleaseDate = () => {
+  return Date.now() + Math.floor(Math.random() * getRandomValue(0, -YEAR_AGO) * MILLISECONDS_YEAR);
 };
 
 export const getCountFilmsToRender = (count) => {
