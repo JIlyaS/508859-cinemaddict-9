@@ -35,10 +35,6 @@ export const Sorted = {
   DEFAULT: `default`
 };
 
-// export const RATING_SCORE = {
-//   rating1: false
-// };
-
 export const FILM_GENRES = [
   `Drama`,
   `Musical`,
