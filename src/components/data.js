@@ -15,51 +15,49 @@ import {
   EMOJI,
   COMMENTS,
   COMMENT_AUTHORS,
-  COMMENT_DAY,
   MINUS_INDEX,
-  COUNT_COMMENTS,
-  RANDOM_COUNT_COMMENTS,
-  RANDOM_YEAR_START,
-  RANDOM_YEAR_DURATION
+  RANDOM_COUNT_COMMENTS
 } from '../constants';
-import {getRandomArray, getRandomValue, getRandomTime, shuffleElements, getReleaseDate} from '../utils';
+import {getRandomArray, getRandomValue, getRandomTime, shuffleElements, getReleaseDate, getCommentDate} from '../utils';
 
 export const getDataComments = () => ({
   emoji: EMOJI[getRandomValue(EMOJI.length - MINUS_INDEX)],
   description: COMMENTS[getRandomValue(COMMENTS.length - MINUS_INDEX)],
   author: COMMENT_AUTHORS[getRandomValue(COMMENT_AUTHORS.length - MINUS_INDEX)],
-  dayComment: COMMENT_DAY[getRandomValue(COMMENT_DAY.length - MINUS_INDEX)]
+  dataComment: getCommentDate()
 });
 
-export const dataFilmComments = new Array(COUNT_COMMENTS).fill().map(() => getDataComments());
-
-export const getDataFilmCard = () => ({
-  title: getRandomArray(FILM_NAMES),
-  titleOriginal: getRandomArray(FULL_FILM_NAMES),
-  poster: getRandomArray(POSTER_LINKS),
-  shortDescription: DESCRIPTIONS.slice(0, getRandomValue(3, 1)),
-  rating: parseFloat(getRandomValue(90, 10) / 10),
-  year: getRandomValue(RANDOM_YEAR_DURATION, RANDOM_YEAR_START),
-  genre: FILM_GENRES[getRandomValue(FILM_GENRES.length - 1)],
-  runtime: getRandomTime(MAX_HOURS, MIN_MINUTES, MAX_MINUTES),
-  details: [
-    {term: `Director`, cell: DIRECTORS[getRandomValue(DIRECTORS.length - MINUS_INDEX)]},
-    {term: `Writers`, cell: shuffleElements(WRITERS).slice(0, getRandomValue(3, 1))},
-    {term: `Actors`, cell: shuffleElements(ACTORS).slice(0, getRandomValue(3, 1))},
-    {term: `Release Date`, cell: getReleaseDate()},
-    {term: `Runtime`, cell: getRandomTime(MAX_HOURS, MIN_MINUTES, MAX_MINUTES)},
-    {term: `Country`, cell: shuffleElements(COUNTRIES).slice(0, getRandomValue(0, 1))},
-    {term: `Genres`, cell: shuffleElements(FILM_GENRES).slice(0, getRandomValue(2, 1))},
-  ],
-  ageRestrictions: AGE_RESTRICTIONS[getRandomValue(AGE_RESTRICTIONS.length - MINUS_INDEX)],
-  fullDescription: DESCRIPTIONS.slice(0, getRandomValue(10, 5)),
-  isFavorite: Boolean(getRandomValue()),
-  isWatchlist: Boolean(getRandomValue()),
-  isViewed: Boolean(getRandomValue()),
-  countComments: getRandomValue(RANDOM_COUNT_COMMENTS),
-  comments: dataFilmComments,
-  isFilmDetails: false
-});
+export const getDataFilmCard = () => {
+  const releaseDate = getReleaseDate();
+  const runtimeFilm = getRandomTime(MAX_HOURS, MIN_MINUTES, MAX_MINUTES);
+  return {
+    title: getRandomArray(FILM_NAMES),
+    titleOriginal: getRandomArray(FULL_FILM_NAMES),
+    poster: getRandomArray(POSTER_LINKS),
+    shortDescription: DESCRIPTIONS.slice(0, getRandomValue(3, 1)),
+    rating: parseFloat(getRandomValue(90, 10) / 10),
+    date: releaseDate,
+    runtime: runtimeFilm,
+    genre: FILM_GENRES[getRandomValue(FILM_GENRES.length - 1)],
+    details: {
+      director: {name: `Director`, value: DIRECTORS[getRandomValue(DIRECTORS.length - MINUS_INDEX)]},
+      writers: {name: `Writers`, value: shuffleElements(WRITERS).slice(0, getRandomValue(3, 1))},
+      actors: {name: `Actors`, value: shuffleElements(ACTORS).slice(0, getRandomValue(3, 1))},
+      date: {name: `Release Date`, value: releaseDate},
+      runtime: {name: `Runtime`, value: runtimeFilm},
+      country: {name: `Country`, value: shuffleElements(COUNTRIES).slice(0, getRandomValue(0, 1))},
+      genres: {name: `Genres`, value: shuffleElements(FILM_GENRES).slice(0, getRandomValue(2, 1))},
+    },
+    ageRestrictions: AGE_RESTRICTIONS[getRandomValue(AGE_RESTRICTIONS.length - MINUS_INDEX)],
+    fullDescription: DESCRIPTIONS.slice(0, getRandomValue(10, 5)),
+    personalScore: null,
+    isFavorite: Boolean(getRandomValue()),
+    isWatchlist: Boolean(getRandomValue()),
+    isViewed: Boolean(getRandomValue()),
+    comments: new Array(getRandomValue(RANDOM_COUNT_COMMENTS)).fill().map(() => getDataComments()),
+    isFilmDetails: false
+  };
+};
 
 export const getRang = (countFilms) => {
   if (countFilms >= 1 && countFilms <= 10) {

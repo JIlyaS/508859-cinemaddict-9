@@ -1,5 +1,6 @@
+import moment from 'moment';
 import AbstractComponent from './abstract-component';
-import {convertDataDetails} from '../utils';
+import {PERSONAL_RATING_COUNT} from '../constants';
 
 class DetailsPopup extends AbstractComponent {
   constructor(card) {
@@ -14,12 +15,13 @@ class DetailsPopup extends AbstractComponent {
     this._isWatchlist = card.isWatchlist;
     this._isViewed = card.isViewed;
     this._isFavorite = card.isFavorite;
-    this._countComments = card.countComments;
-    this._comments = card.comments;
+    this._personalScore = card.personalScore;
     this._isFilmDetails = card.isFilmDetails;
   }
 
   getTemplate() {
+    const {director, writers, actors, date, runtime, country, genres} = this._details;
+
     return `<section class="film-details">
     <form class="film-details__inner" action="" method="get">
       <div class="form-details__top-container">
@@ -41,15 +43,38 @@ class DetailsPopup extends AbstractComponent {
               </div>
 
               <div class="film-details__rating">
-                <p class="film-details__total-rating">${this._rating}</p>
+                <p class="film-details__total-rating">${this._rating.toFixed(1)}</p>
               </div>
             </div>
             <table class="film-details__table">
-              ${convertDataDetails(this._details).map((detail) => `<tr class="film-details__row">
-                  <td class="film-details__term">${detail.term}</td>
-                  <td class="film-details__cell">
-                    ${Array.isArray(detail.cell) ? detail.cell.map((cell) => cell).join(`, `) : detail.cell}</td>
-                </tr>`).join(` `)}
+              <tr class="film-details__row">
+                <td class="film-details__term">${director.name}</td>
+                <td class="film-details__cell">${director.value}</td>
+              </tr>
+              <tr class="film-details__row">
+                <td class="film-details__term">${writers.name}</td>
+                <td class="film-details__cell">${writers.value.map((cell) => cell).join(`, `)}</td>
+              </tr>
+              <tr class="film-details__row">
+                <td class="film-details__term">${actors.name}</td>
+                <td class="film-details__cell">${actors.value.map((cell) => cell).join(`, `)}</td>
+              </tr>
+              <tr class="film-details__row">
+                <td class="film-details__term">${date.name}</td>
+                <td class="film-details__cell">${moment(date.value).format(`D dddd YYYY`)}</td>
+              </tr>
+              <tr class="film-details__row">
+                <td class="film-details__term">${runtime.name}</td>
+                <td class="film-details__cell">${runtime.value}</td>
+              </tr>
+              <tr class="film-details__row">
+                <td class="film-details__term">${country.name}</td>
+                <td class="film-details__cell">${country.value.map((cell) => cell).join(`, `)}</td>
+              </tr>
+              <tr class="film-details__row">
+                <td class="film-details__term">${genres.name}</td>
+                <td class="film-details__cell">${genres.value.map((cell) => cell).join(`, `)}</td>
+              </tr>
             </table>
 
             <p class="film-details__film-description">
@@ -69,7 +94,7 @@ class DetailsPopup extends AbstractComponent {
           <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
         </section>
       </div>
-      ${this._isViewed ? `<div class="form-details__middle-container">
+      <div class="form-details__middle-container ${this._isViewed ? `` : `visually-hidden`}">
       <section class="film-details__user-rating-wrap">
         <div class="film-details__user-rating-controls">
           <button class="film-details__watched-reset" type="button">Undo</button>
@@ -77,100 +102,24 @@ class DetailsPopup extends AbstractComponent {
 
         <div class="film-details__user-score">
           <div class="film-details__user-rating-poster">
-            <img src="./images/posters/the-great-flamarion.jpg" alt="film-poster" class="film-details__user-rating-img">
+            <img src="./images/posters/${this._poster}" alt="film-poster" class="film-details__user-rating-img">
           </div>
 
           <section class="film-details__user-rating-inner">
-            <h3 class="film-details__user-rating-title">The Great Flamarion</h3>
+            <h3 class="film-details__user-rating-title">${this._title}</h3>
 
             <p class="film-details__user-rating-feelings">How you feel it?</p>
 
             <div class="film-details__user-rating-score">
-              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="1" id="rating-1">
-              <label class="film-details__user-rating-label" for="rating-1">1</label>
-
-              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="2" id="rating-2">
-              <label class="film-details__user-rating-label" for="rating-2">2</label>
-
-              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="3" id="rating-3">
-              <label class="film-details__user-rating-label" for="rating-3">3</label>
-
-              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="4" id="rating-4">
-              <label class="film-details__user-rating-label" for="rating-4">4</label>
-
-              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="5" id="rating-5">
-              <label class="film-details__user-rating-label" for="rating-5">5</label>
-
-              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="6" id="rating-6">
-              <label class="film-details__user-rating-label" for="rating-6">6</label>
-
-              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="7" id="rating-7">
-              <label class="film-details__user-rating-label" for="rating-7">7</label>
-
-              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="8" id="rating-8">
-              <label class="film-details__user-rating-label" for="rating-8">8</label>
-
-              <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="9" id="rating-9" checked="">
-              <label class="film-details__user-rating-label" for="rating-9">9</label>
-
+              ${new Array(PERSONAL_RATING_COUNT).fill().map((_, id) => `<input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="${id + 1}" id="rating-${id + 1}" ${Number(this._personalScore) === (id + 1) ? `checked` : ``}>
+                <label class="film-details__user-rating-label" for="rating-${id + 1}">${id + 1}</label>`).join(` `)}
             </div>
           </section>
         </div>
       </section>
-    </div>` : ``}
+    </div>
 
-
-      <div class="form-details__bottom-container">
-        <section class="film-details__comments-wrap">
-          <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${this._countComments}</span></h3>
-
-          <ul class="film-details__comments-list">
-            ${this._comments.map(({emoji, description, author, dayComment}) => `<li class="film-details__comment">
-            <span class="film-details__comment-emoji">
-              <img src="./images/emoji/${emoji}.png" width="55" height="55" alt="emoji">
-            </span>
-            <div>
-              <p class="film-details__comment-text">${description}</p>
-              <p class="film-details__comment-info">
-                <span class="film-details__comment-author">${author}</span>
-                <span class="film-details__comment-day">${dayComment}</span>
-                <button class="film-details__comment-delete">Delete</button>
-              </p>
-            </div>
-          </li>`).join(` `)}
-          </ul>
-
-          <div class="film-details__new-comment">
-            <div for="add-emoji" class="film-details__add-emoji-label"></div>
-
-            <label class="film-details__comment-label">
-              <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
-            </label>
-
-            <div class="film-details__emoji-list">
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile">
-              <label class="film-details__emoji-label" for="emoji-smile">
-                <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
-              </label>
-
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping">
-              <label class="film-details__emoji-label" for="emoji-sleeping">
-                <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
-              </label>
-
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-gpuke" value="puke">
-              <label class="film-details__emoji-label" for="emoji-gpuke">
-                <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
-              </label>
-
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry">
-              <label class="film-details__emoji-label" for="emoji-angry">
-                <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
-              </label>
-            </div>
-          </div>
-        </section>
-      </div>
+    <div class="form-details__bottom-container"></div>
     </form>
   </section>`;
   }

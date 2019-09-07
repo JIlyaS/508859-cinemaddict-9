@@ -16,8 +16,9 @@ class PageController {
   constructor(container, filmCards) {
     this._container = container;
     this._filmCards = filmCards;
+    this._originalFilmCards = this._filmCards;
     this._dataRatedFilms = (this._filmCards.filter((film) => film.rating > MORE_RATED)).slice(0, 2);
-    this._dataCommentedFilms = (this._filmCards.filter((film) => film.countComments >= MORE_COMMENTED)).slice(0, 2);
+    this._dataCommentedFilms = (this._filmCards.filter((film) => film.comments.length >= MORE_COMMENTED)).slice(0, 2);
     this._dataFilters = NAME_FILTERS.map((filter) => getDataFilter(filter, filmCards));
     this._menu = new Menu(this._dataFilters);
     this._sortBlock = new Sort();
@@ -72,22 +73,23 @@ class PageController {
   }
 
   _renderFilmsList(films) {
-    unrender(this._filmsList.getElement());
-    unrender(this._ratedList.getElement());
-    unrender(this._commentedList.getElement());
+    if (films.length === 0) {
+      return this._renderEmptyResult();
+    }
 
-    this._filmsList.removeElement();
-    this._ratedList.removeElement();
-    this._commentedList.removeElement();
+    this._unrenderFilmList();
 
     render(this._filmsWrapper.getElement(), this._commentedList.getElement(), Position.AFTERBEGIN);
     render(this._filmsWrapper.getElement(), this._ratedList.getElement(), Position.AFTERBEGIN);
     render(this._filmsWrapper.getElement(), this._filmsList.getElement(), Position.AFTERBEGIN);
-    this._renderShowButton();
+
+    if (COUNT_FILMS > films.length) {
+      this._renderShowButton();
+    }
 
     films.filter((film) => film.rating > MORE_RATED).slice(0, 2).forEach((taskMock) => this._renderFilmsCard(taskMock, this._ratedList, this._popupWrapper));
-    films.filter((film) => film.countComments >= MORE_COMMENTED).slice(0, 2).forEach((taskMock) => this._renderFilmsCard(taskMock, this._commentedList, this._popupWrapper));
-    films.forEach((taskMock) => this._renderFilmsCard(taskMock, this._filmsList, this._popupWrapper));
+    films.filter((film) => film.comments.length >= MORE_COMMENTED).slice(0, 2).forEach((taskMock) => this._renderFilmsCard(taskMock, this._commentedList, this._popupWrapper));
+    return films.forEach((taskMock) => this._renderFilmsCard(taskMock, this._filmsList, this._popupWrapper));
   }
 
   _renderShowButton() {
@@ -101,11 +103,12 @@ class PageController {
       if (COUNT_FILMS < countFilmCards) {
         newCountFilm = COUNT_FILMS - (countFilmCards - ADD_MORE_CARD);
         countFilmCards = newCountFilm + countFilmCards + ADD_MORE_CARD;
-        evt.target.classList.add(`visually-hidden`);
+        unrender(showButton.getElement());
+        showButton.removeElement();
       }
 
       const newFilmCards = new Array(newCountFilm).fill().map(() => getDataFilmCard());
-      newFilmCards.forEach((film) => this._renderFilmsCard(film, this._filmsList));
+      newFilmCards.forEach((film) => this._renderFilmsCard(film, this._filmsList, this._popupWrapper));
       this._filmCards.push(...newFilmCards);
     });
     render(this._filmsList.getElement(), showButton.getElement());
@@ -113,8 +116,18 @@ class PageController {
 
   _renderEmptyResult() {
     const emptyResult = new EmptyResult();
-    this._filmsWrapper.getElement().innerHTML = ``;
+    this._unrenderFilmList();
     render(this._filmsWrapper.getElement(), emptyResult.getElement());
+  }
+
+  _unrenderFilmList() {
+    unrender(this._filmsList.getElement());
+    unrender(this._ratedList.getElement());
+    unrender(this._commentedList.getElement());
+
+    this._filmsList.removeElement();
+    this._ratedList.removeElement();
+    this._commentedList.removeElement();
   }
 
   _renderSort() {
@@ -127,19 +140,19 @@ class PageController {
         });
         evt.target.classList.add(`sort__button--active`);
 
-        this._filmsList.getElement().querySelector(`.films-list__container`).innerHTML = ``;
-
         switch (evt.target.dataset.sortType) {
           case Sorted.DATE:
-            const sortedByDateUpFilms = this._filmCards.slice().sort((a, b) => a.year - b.year);
-            sortedByDateUpFilms.forEach((filmCard) => this._renderFilmsCard(filmCard, this._filmsList));
+            const sortedByDateUpFilms = this._filmCards.slice().sort((a, b) => a.date - b.date);
+            this._filmCards = [...sortedByDateUpFilms];
+            this._renderFilmsList(this._filmCards);
             break;
           case Sorted.RATING:
             const sortedByRatingsFilms = this._filmCards.slice().sort((a, b) => b.rating - a.rating);
-            sortedByRatingsFilms.forEach((filmCard) => this._renderFilmsCard(filmCard, this._filmsList));
+            this._filmCards = [...sortedByRatingsFilms];
+            this._renderFilmsList(sortedByRatingsFilms);
             break;
           case Sorted.DEFAULT:
-            this._filmCards.forEach((filmCard) => this._renderFilmsCard(filmCard, this._filmsList));
+            this._renderFilmsList(this._originalFilmCards);
             break;
           default:
             throw new Error(`Incorrect dataset`);
