@@ -1,5 +1,6 @@
 import Search from './components/search';
 import Profile from './components/profile';
+import Statistics from './components/statistics';
 import PageController from './controllers/page-controller';
 import {render, getCountFilmsToRender} from './utils';
 import {WATCHED_MOVIES, COUNT_FILM_CARDS, COUNT_FILMS} from './constants';
@@ -21,6 +22,11 @@ const renderProfile = (rang) => {
   render(headerWrapper, profile.getElement());
 };
 
+const renderStatistics = () => {
+  const statistics = new Statistics();
+  render(mainWrapper, statistics.getElement());
+};
+
 renderSearch();
 renderProfile(getRang(WATCHED_MOVIES));
 
@@ -28,3 +34,7 @@ footerFilmCountBlock.textContent = `${COUNT_FILMS} movies inside`;
 
 const pageController = new PageController(mainWrapper, dataFilmCards);
 pageController.init();
+
+renderStatistics();
+
+
