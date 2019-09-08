@@ -42,6 +42,11 @@ export const Sorted = {
   DEFAULT: `default`
 };
 
+export const MenuName = {
+  ALL: `all`,
+  STATS: `stats`
+};
+
 export const FILM_GENRES = [
   `Drama`,
   `Musical`,

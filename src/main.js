@@ -3,8 +3,9 @@ import Profile from './components/profile';
 import Menu from './components/menu';
 import Statistics from './components/statistics';
 import PageController from './controllers/page-controller';
+import SearchController from './controllers/search-controller';
 import {render, getCountFilmsToRender} from './utils';
-import {WATCHED_MOVIES, COUNT_FILM_CARDS, COUNT_FILMS, NAME_FILTERS} from './constants';
+import {WATCHED_MOVIES, COUNT_FILM_CARDS, COUNT_FILMS, NAME_FILTERS, MenuName} from './constants';
 import {getRang, getDataFilmCard, getDataFilter} from './components/data';
 
 const headerWrapper = document.querySelector(`.header`);
@@ -14,12 +15,8 @@ const footerFilmCountBlock = document.querySelector(`.footer__statistics p`);
 const dataFilmCards = new Array(getCountFilmsToRender(COUNT_FILM_CARDS)).fill().map(() => getDataFilmCard());
 const dataFilters = NAME_FILTERS.map((filter) => getDataFilter(filter, dataFilmCards));
 
+const search = new Search();
 const statistics = new Statistics();
-
-const renderSearch = () => {
-  const search = new Search();
-  render(headerWrapper, search.getElement());
-};
 
 const renderProfile = (rang) => {
   const profile = new Profile(rang);
@@ -36,22 +33,24 @@ const renderMenu = (filters) => {
     }
 
     switch (evt.target.hash.slice(1)) {
-      case `all`:
+      case MenuName.ALL:
         menu.getElement().querySelectorAll(`.main-navigation__item`)
           .forEach((elem) => {
             elem.classList.remove(`main-navigation__item--active`);
           });
         evt.target.classList.add(`main-navigation__item--active`);
         statistics.getElement().classList.add(`visually-hidden`);
+        // searchController.hide();
         pageController.show();
         break;
-      case `stats`:
+      case MenuName.STATS:
         menu.getElement().querySelectorAll(`.main-navigation__item`)
           .forEach((elem) => {
             elem.classList.remove(`main-navigation__item--active`);
           });
         evt.target.classList.add(`main-navigation__item--active`);
         pageController.hide();
+        // searchController.hide();
         statistics.getElement().classList.remove(`visually-hidden`);
         break;
       default:
@@ -67,12 +66,28 @@ const renderStatistics = () => {
   render(mainWrapper, statistics.getElement());
 };
 
-renderSearch();
+render(headerWrapper, search.getElement());
 renderProfile(getRang(WATCHED_MOVIES));
 renderMenu(dataFilters);
 renderStatistics();
 
 footerFilmCountBlock.textContent = `${COUNT_FILMS} movies inside`;
 
-const pageController = new PageController(mainWrapper, dataFilmCards);
-pageController.init();
+// Рендерим задачи
+const pageController = new PageController(mainWrapper);
+
+const onSearchCloseButtonClick = () => {
+  console.log(`123`);
+  // statistics.getElement().classList.add(`visually-hidden`);
+  // searchController.hide();
+  // pageController.show(dataFilmCards);
+};
+const searchController = new SearchController(mainWrapper, search, onSearchCloseButtonClick);
+
+pageController.show(dataFilmCards);
+
+search.getElement().querySelector(`.search__field`).addEventListener(`click`, () => {
+  statistics.getElement().classList.add(`visually-hidden`);
+  pageController.hide();
+  searchController.show(dataFilmCards);
+});
