@@ -4,13 +4,12 @@ import RatedList from '../components/rated-list';
 import CommentedList from '../components/commented-list';
 import ShowButton from '../components/show-button';
 import EmptyResult from '../components/empty-result';
-import Menu from '../components/menu';
 import Sort from '../components/sort';
 import MovieController from './movie-controller';
 import PopupWrapper from '../components/popup-wrapper';
 import {render, unrender} from '../utils';
-import {MORE_RATED, MORE_COMMENTED, COUNT_FILM_CARDS, ADD_MORE_CARD, COUNT_FILMS, NAME_FILTERS, Position, Sorted} from '../constants';
-import {getDataFilmCard, getDataFilter} from '../components/data';
+import {MORE_RATED, MORE_COMMENTED, COUNT_FILM_CARDS, ADD_MORE_CARD, COUNT_FILMS, Position, Sorted} from '../constants';
+import {getDataFilmCard} from '../components/data';
 
 class PageController {
   constructor(container, filmCards) {
@@ -19,8 +18,6 @@ class PageController {
     this._originalFilmCards = this._filmCards;
     this._dataRatedFilms = (this._filmCards.filter((film) => film.rating > MORE_RATED)).slice(0, 2);
     this._dataCommentedFilms = (this._filmCards.filter((film) => film.comments.length >= MORE_COMMENTED)).slice(0, 2);
-    this._dataFilters = NAME_FILTERS.map((filter) => getDataFilter(filter, filmCards));
-    this._menu = new Menu(this._dataFilters);
     this._sortBlock = new Sort();
     this._filmsWrapper = new FilmsWrapper();
     this._filmsList = new FilmsList();
@@ -35,7 +32,6 @@ class PageController {
   }
 
   init() {
-    render(this._container, this._menu.getElement());
     this._renderSort();
     render(this._container, this._filmsWrapper.getElement());
     render(this._filmsWrapper.getElement(), this._filmsList.getElement());
@@ -56,6 +52,16 @@ class PageController {
     return this._dataCommentedFilms.forEach((film) => this._renderFilmsCard(film, this._commentedList, this._popupWrapper));
   }
 
+  hide() {
+    this._sortBlock.getElement().classList.add(`visually-hidden`);
+    this._filmsWrapper.getElement().classList.add(`visually-hidden`);
+  }
+
+  show() {
+    this._sortBlock.getElement().classList.remove(`visually-hidden`);
+    this._filmsWrapper.getElement().classList.remove(`visually-hidden`);
+  }
+
   _onChangeView() {
     this._subscriptions.forEach((subscription) => subscription());
   }
@@ -66,9 +72,23 @@ class PageController {
     this._subscriptions.push(movieController.setDefaultView.bind(movieController));
   }
 
-  _onDataChange(newData, oldData) {
-    this._filmCards[this._filmCards.findIndex((it) => it === oldData)] = newData;
+  _onDataChange(newData, oldData, updateComment = null) {
+    if (newData === null) {
+      const index = this._filmCards.findIndex((film) => film === oldData);
+      const commentIndex = this._filmCards[index].comments.findIndex((comment) => comment === updateComment);
+      this._filmCards[index].comments.splice(commentIndex, 1);
 
+      // this._filmCards[index].comments = [...this._filmCards[index].comments.slice(0, commentIndex), ...this._filmCards[index].comments.slice(commentIndex + 1)];
+
+      // const updateComments = [...this._filmCards[index].comments.slice(0, commentIndex), ...this._filmCards[index].comments.slice(commentIndex + 1)];
+      // this._filmCards[index] = Object.assign(this._filmCards[index], {comments: updateComments});
+    } else if (oldData === null) {
+      const index = this._filmCards.findIndex((film) => film === newData);
+      this._filmCards[index].comments.push(updateComment);
+    } else {
+      const index = this._filmCards.findIndex((film) => film === oldData);
+      this._filmCards[index] = newData;
+    }
     this._renderFilmsList(this._filmCards);
   }
 
