@@ -16,6 +16,7 @@ const dataFilmCards = new Array(getCountFilmsToRender(COUNT_FILM_CARDS)).fill().
 const dataFilters = NAME_FILTERS.map((filter) => getDataFilter(filter, dataFilmCards));
 
 const search = new Search();
+const menu = new Menu(dataFilters);
 const statistics = new Statistics();
 
 const renderProfile = (rang) => {
@@ -23,9 +24,7 @@ const renderProfile = (rang) => {
   render(headerWrapper, profile.getElement());
 };
 
-const renderMenu = (filters) => {
-  const menu = new Menu(filters);
-
+const renderMenu = () => {
   menu.getElement().addEventListener(`click`, (evt) => {
     evt.preventDefault();
     if (!evt.target.classList.contains(`main-navigation__item`)) {
@@ -87,6 +86,7 @@ const searchController = new SearchController(mainWrapper, search, onSearchClose
 pageController.show(dataFilmCards);
 
 search.getElement().querySelector(`.search__field`).addEventListener(`click`, () => {
+  menu.getElement().classList.add(`visually-hidden`)
   statistics.getElement().classList.add(`visually-hidden`);
   pageController.hide();
   searchController.show(dataFilmCards);

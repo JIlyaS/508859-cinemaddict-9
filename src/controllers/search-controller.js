@@ -2,8 +2,6 @@ import SearchInfo from '../components/search-info';
 import SearchResult from '../components/search-result';
 import FilmListController from './film-list-controller';
 import {render} from '../utils';
-import FilmsWrapper from '../components/films-wrapper';
-import FilmsList from '../components/films-list';
 
 
 class SearchController {
@@ -14,10 +12,9 @@ class SearchController {
 
     this._films = [];
 
-    this._searchInfo = new SearchInfo();
-    this._filmsWrapper = new FilmsWrapper();
-    this._filmsList = new FilmsList();
     this._searchResult = new SearchResult();
+    this._searchInfo = new SearchInfo();
+
 
     this._filmListController = new FilmListController(this._searchResult.getElement().querySelector(`.result__cards`), this._onDataChange.bind(this));
 
@@ -34,7 +31,8 @@ class SearchController {
 
   _init() {
     this.hide();
-
+    console.log(this._searchInfo.getElement());
+    render(this._container, this._searchInfo.getElement());
     render(this._container, this._searchResult.getElement());
     // render(this._searchResult.getElement(), this._searchResultGroup.getElement());
     // render(this._searchResultGroup.getElement(), this._searchResultInfo.getElement(), RenderPosition.AFTERBEGIN);
@@ -65,6 +63,7 @@ class SearchController {
 
     if (this._searchResult.getElement().classList.contains(`visually-hidden`)) {
       // this._showSearchResult(``, this._tasks);
+      this._searchInfo.getElement().classList.remove(`visually-hidden`);
       this._searchResult.getElement().classList.remove(`visually-hidden`);
     }
   }
