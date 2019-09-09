@@ -73,7 +73,8 @@ export const getRang = (countFilms) => {
 
 export const getDataFilter = (filterName, dataFilms) => {
   let filteredData;
-  switch (filterName) {
+  const {title, href} = filterName;
+  switch (title) {
     case `All movies`:
       filteredData = dataFilms;
       break;
@@ -92,7 +93,8 @@ export const getDataFilter = (filterName, dataFilms) => {
   }
 
   return {
-    title: filterName,
+    title,
+    href,
     count: filteredData.length
   };
 };
