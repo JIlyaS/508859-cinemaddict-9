@@ -76,18 +76,26 @@ footerFilmCountBlock.textContent = `${COUNT_FILMS} movies inside`;
 const pageController = new PageController(mainWrapper);
 
 const onSearchCloseButtonClick = () => {
-  console.log(`123`);
-  // statistics.getElement().classList.add(`visually-hidden`);
-  // searchController.hide();
-  // pageController.show(dataFilmCards);
+  menu.getElement().classList.remove(`visually-hidden`);
+  statistics.getElement().classList.add(`visually-hidden`);
+  searchController.hide();
+  pageController.show(dataFilmCards);
 };
+
 const searchController = new SearchController(mainWrapper, search, onSearchCloseButtonClick);
 
 pageController.show(dataFilmCards);
 
-search.getElement().querySelector(`.search__field`).addEventListener(`click`, () => {
-  menu.getElement().classList.add(`visually-hidden`)
-  statistics.getElement().classList.add(`visually-hidden`);
-  pageController.hide();
-  searchController.show(dataFilmCards);
+search.getElement().querySelector(`.search__field`).addEventListener(`keyup`, (evt) => {
+  if (evt.target.value.length > 2) {
+    menu.getElement().classList.add(`visually-hidden`);
+    statistics.getElement().classList.add(`visually-hidden`);
+    pageController.hide();
+    searchController.show(dataFilmCards);
+  } else if (evt.target.value.length < 1) {
+    menu.getElement().classList.remove(`visually-hidden`);
+    statistics.getElement().classList.add(`visually-hidden`);
+    searchController.hide();
+    pageController.show(dataFilmCards);
+  }
 });

@@ -4,6 +4,7 @@ import {MORE_RATED, MORE_COMMENTED, COUNT_FILMS, Position} from '../constants';
 
 class FilmListController {
   constructor(filmsWrapper, container, ratedList, commentedList, popupWrapper, onDataChange) {
+    console.log(filmsWrapper, container, ratedList, commentedList, popupWrapper, onDataChange);
     this._filmsWrapper = filmsWrapper;
     this._container = container;
     this._ratedList = ratedList;

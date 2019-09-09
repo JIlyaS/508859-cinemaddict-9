@@ -1,22 +1,25 @@
 import SearchInfo from '../components/search-info';
-import SearchResult from '../components/search-result';
+// import SearchResult from '../components/search-result';
+import FilmsWrapper from '../components/films-wrapper';
 import FilmListController from './film-list-controller';
-import {render} from '../utils';
+import {render, unrender} from '../utils';
+import {Position} from '../constants';
+import FilmsList from '../components/films-list';
 
 
 class SearchController {
-  constructor(container, search, onBackButtonClick) {
+  constructor(container, search, onSearchCloseButtonClick) {
     this._container = container;
     this._search = search;
-    this._onBackButtonClick = onBackButtonClick;
+    this._onSearchCloseButtonClick = onSearchCloseButtonClick;
 
     this._films = [];
 
-    this._searchResult = new SearchResult();
-    this._searchInfo = new SearchInfo();
+    this._filmsSearchWrapper = new FilmsWrapper();
+    this._filmsSearchList = new FilmsList();
+    this._searchInfo = new SearchInfo({});
 
-
-    this._filmListController = new FilmListController(this._searchResult.getElement().querySelector(`.result__cards`), this._onDataChange.bind(this));
+    this._filmListController = new FilmListController(this._filmsSearchWrapper, this._filmsSearchList, this._filmsSearchList, this._filmsSearchList, this._onDataChange.bind(this));
 
     // this._searchResult = new SearchResult();
     // this._searchResultInfo = new SearchResultInfo({});
@@ -31,55 +34,57 @@ class SearchController {
 
   _init() {
     this.hide();
-    console.log(this._searchInfo.getElement());
     render(this._container, this._searchInfo.getElement());
-    render(this._container, this._searchResult.getElement());
+    render(this._container, this._filmsSearchWrapper.getElement());
+    render(this._filmsSearchWrapper.getElement(), this._filmsSearchList.getElement());
     // render(this._searchResult.getElement(), this._searchResultGroup.getElement());
     // render(this._searchResultGroup.getElement(), this._searchResultInfo.getElement(), RenderPosition.AFTERBEGIN);
 
-    // this._searchResult.getElement().querySelector(`.result__back`)
-    //   .addEventListener(`click`, () => {
-    //     this._search.getElement().querySelector(`input`).value = ``;
-    //     this._onBackButtonClick();
-    //   });
-    // this._search.getElement().querySelector(`input`)
-    //   .addEventListener(`keyup`, (evt) => {
-    //     const {value} = evt.target;
-    //     const tasks = this._tasks.filter((task) => {
-    //       return task.description.includes(value);
-    //     });
+    this._search.getElement().querySelector(`.search__reset`)
+      .addEventListener(`click`, () => {
+        this._search.getElement().querySelector(`.search__field`).value = ``;
+        this._onSearchCloseButtonClick();
+      });
 
-    //     this._showSearchResult(value, tasks);
-    //   });
+    this._search.getElement().querySelector(`.search__field`)
+      .addEventListener(`keyup`, (evt) => {
+        const {value} = evt.target;
+        if (value.length > 2) {
+          const films = this._films.filter((film) => {
+            return film.title.includes(value);
+          });
+
+          this._showSearchResult(value, films);
+        }
+      });
   }
 
   hide() {
     this._searchInfo.getElement().classList.add(`visually-hidden`);
-    this._searchResult.getElement().classList.add(`visually-hidden`);
+    this._filmsSearchWrapper.getElement().classList.add(`visually-hidden`);
   }
 
   show(tasks) {
     this._tasks = tasks;
 
-    if (this._searchResult.getElement().classList.contains(`visually-hidden`)) {
-      // this._showSearchResult(``, this._tasks);
+    if (this._filmsSearchWrapper.getElement().classList.contains(`visually-hidden`)) {
       this._searchInfo.getElement().classList.remove(`visually-hidden`);
-      this._searchResult.getElement().classList.remove(`visually-hidden`);
+      this._filmsSearchWrapper.getElement().classList.remove(`visually-hidden`);
+      this._showSearchResult(``, this._tasks);
     }
   }
 
-  // _showSearchResult(text, tasks) {
-  //   if (this._searchResultInfo) {
-  //     unrender(this._searchResultInfo.getElement());
-  //     this._searchResultInfo.removeElement();
-  //   }
+  _showSearchResult(text, films) {
+    if (this._searchInfo) {
+      unrender(this._searchInfo.getElement());
+      this._searchInfo.removeElement();
+    }
 
-  //   this._searchResultInfo = new SearchResultInfo({title: text, count: tasks.length});
+    this._searchInfo = new SearchInfo({count: films.length});
 
-  //   render(this._searchResultGroup.getElement(), this._searchResultInfo.getElement(), RenderPosition.AFTERBEGIN);
-
-  //   this._taskListController.setTasks(tasks);
-  // }
+    render(this._container, this._searchInfo.getElement(), Position.AFTERBEGIN);
+    this._filmListController.setFilms(films);
+  }
 
   _onDataChange(tasks) {
     this._tasks = tasks;
