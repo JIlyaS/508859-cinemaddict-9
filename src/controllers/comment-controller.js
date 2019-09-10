@@ -1,16 +1,15 @@
 import Comments from '../components/comments';
-import {COMMENT_AUTHORS, MINUS_INDEX} from '../constants';
+import {COMMENT_AUTHORS, MINUS_INDEX, ENTER_KEY} from '../constants';
 import {render, getRandomValue, unrender, getCommentDate} from '../utils';
 
 class CommentController {
-  constructor(container, dataFilm, detailsPopup, getState, onDataChange, onEscKeyDown) {
+  constructor(container, dataFilm, detailsPopup, getState, onDataChange) {
     this._container = container;
     this._dataFilm = dataFilm;
     this._detailsPopup = detailsPopup;
     this._onDataChange = onDataChange;
     this._comments = new Comments(this._dataFilm);
     this._getState = getState;
-    this._onEscKeyDown = onEscKeyDown;
   }
 
   getFormData() {
@@ -26,15 +25,15 @@ class CommentController {
   }
 
   init() {
+    this._comments.getElement().querySelector(`.film-details__add-emoji-label`).innerHTML = `<img src="images/emoji/smile.png" width="55" height="55" alt="emoji">`;
+
     const onAddComment = (evt) => {
-      if (evt.ctrlKey && evt.keyCode === 13) {
+      if (evt.ctrlKey && evt.keyCode === ENTER_KEY) {
         const formData = this.getFormData();
-        this._dataFilm.comments.push(formData.comment);
         const data = Object.assign(this._dataFilm, this._getState());
-        this._onDataChange(data, this._dataFilm);
+        this._onDataChange(data, null, formData.comment);
         unrender(this._comments.getElement());
         this._comments.removeElement();
-        render(this._container, this._comments.getElement());
         this.init();
       }
     };
@@ -49,9 +48,19 @@ class CommentController {
         document.removeEventListener(`keydown`, onAddComment);
       });
 
+    this._comments.getElement().querySelectorAll(`.film-details__comment-delete`).forEach((elem, id) => {
+      elem.addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+        this._onDataChange(null, this._dataFilm, this._dataFilm.comments[id]);
+        unrender(this._comments.getElement());
+        this._comments.removeElement();
+        this.init();
+      });
+    });
+
     this._comments.getElement().querySelectorAll(`.film-details__emoji-item`).forEach((elem) => {
       elem.addEventListener(`click`, (evt) => {
-        document.querySelector(`.film-details__add-emoji-label`).innerHTML = `<img src="images/emoji/${evt.target.value}.png" width="55" height="55" alt="emoji">`;
+        this._comments.getElement().querySelector(`.film-details__add-emoji-label`).innerHTML = `<img src="images/emoji/${evt.target.value}.png" width="55" height="55" alt="emoji">`;
       });
     });
 

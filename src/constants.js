@@ -2,7 +2,13 @@ export const EMOJI = [`smile`, `sleeping`, `puke`, `angry`];
 export const COMMENTS = [`Interesting setting and a good cast`, `Booooooooooring`, `Very very old. Meh`, `Almost two hours? Seriously?`];
 export const COMMENT_AUTHORS = [`Tim Macoveev`, `John Doe`, `Ilya Kolmakov`];
 export const MONTHS = [`January`, `February`, `March`, `April`, `May`, `June`, `July`, `August`, `September`, `October`, `November`, `December`];
-export const NAME_FILTERS = [`All movies`, `Watchlist`, `History`, `Favorites`, `Stats`];
+export const NAME_FILTERS = [
+  {title: `All movies`, href: `all`},
+  {title: `Watchlist`, href: `watchlist`},
+  {title: `History`, href: `history`},
+  {title: `Favorites`, href: `favorites`},
+  {title: `Stats`, href: `stats`}
+];
 export const AGE_RESTRICTIONS = [`0+`, `6+`, `12+`, `18+`];
 export const MAX_HOURS = 3;
 export const MIN_MINUTES = 30;
@@ -11,7 +17,7 @@ export const HOUR = 60;
 export const COUNT_FILM_CARDS = 15;
 export const MILLISECONDS_DAY = 24 * 60 * 60 * 1000;
 export const COUNT_DAYS_COMMENTS = 10;
-export const MILLISECONDS_YEAR = MILLISECONDS_DAY * 30 * 12;
+export const MILLISECONDS_YEAR = MILLISECONDS_DAY * 365;
 export const WATCHED_MOVIES = 9;
 export const COUNT_FILMS = 21;
 export const MINUS_INDEX = 1;
@@ -24,15 +30,27 @@ export const MORE_COMMENTED = 6;
 export const DAY_AGO = 20;
 export const YEAR_AGO = 29;
 export const PERSONAL_RATING_COUNT = 9;
+export const ENTER_KEY = 13;
+export const MIN_SEARCH_SYMBOLS = 3;
 export const Position = {
   AFTERBEGIN: `afterbegin`,
   BEFOREEND: `beforeend`,
   AFTEREND: `afterend`
 };
+export const RenderPosition = {
+  DEFAULT: `default`,
+  RATED: `rated`,
+  COMMENTED: `commented`
+};
 export const Sorted = {
   DATE: `date`,
   RATING: `rating`,
   DEFAULT: `default`
+};
+
+export const MenuName = {
+  ALL: `all`,
+  STATS: `stats`
 };
 
 export const FILM_GENRES = [

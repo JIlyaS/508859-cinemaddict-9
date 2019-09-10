@@ -2,7 +2,6 @@ import FilmCard from '../components/film-card';
 import DetailsPopup from '../components/details-popup';
 import CommentController from './comment-controller';
 import {render, unrender} from '../utils';
-import {Position} from '../constants';
 
 class MovieController {
   constructor(container, dataFilm, popupContainer, onDataChange, onChangeView) {
@@ -64,7 +63,7 @@ class MovieController {
       const newState = Object.assign(this.getState(), {isFilmDetails: !this._dataFilm.isFilmDetails});
       const data = Object.assign(this._dataFilm, newState);
       this._onDataChange(data, this._dataFilm);
-      render(this._popupContainer.getElement(), this._detailsPopup.getElement(), Position.AFTEREND);
+      render(this._popupContainer.getElement(), this._detailsPopup.getElement());
       document.addEventListener(`keydown`, onEscKeyDown);
     });
 
@@ -75,7 +74,7 @@ class MovieController {
         const newState = Object.assign(this.getState(), {isFilmDetails: !this._dataFilm.isFilmDetails});
         const data = Object.assign(this._dataFilm, newState);
         this._onDataChange(data, this._dataFilm);
-        render(this._popupContainer.getElement(), this._detailsPopup.getElement(), Position.AFTEREND);
+        render(this._popupContainer.getElement(), this._detailsPopup.getElement());
         document.addEventListener(`keydown`, onEscKeyDown);
       });
 
@@ -86,7 +85,7 @@ class MovieController {
         const newState = Object.assign(this.getState(), {isFilmDetails: !this._dataFilm.isFilmDetails});
         const data = Object.assign(this._dataFilm, newState);
         this._onDataChange(data, this._dataFilm);
-        render(this._popupContainer.getElement(), this._detailsPopup.getElement(), Position.AFTEREND);
+        render(this._popupContainer.getElement(), this._detailsPopup.getElement());
         document.addEventListener(`keydown`, onEscKeyDown);
       });
 

@@ -61,7 +61,7 @@ class DetailsPopup extends AbstractComponent {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">${date.name}</td>
-                <td class="film-details__cell">${moment(date.value).format(`D dddd YYYY`)}</td>
+                <td class="film-details__cell">${moment(date.value).format(`D MMMM YYYY`)}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">${runtime.name}</td>
