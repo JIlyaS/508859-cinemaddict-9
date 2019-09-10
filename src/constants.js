@@ -31,6 +31,7 @@ export const DAY_AGO = 20;
 export const YEAR_AGO = 29;
 export const PERSONAL_RATING_COUNT = 9;
 export const ENTER_KEY = 13;
+export const MIN_SEARCH_SYMBOLS = 3;
 export const Position = {
   AFTERBEGIN: `afterbegin`,
   BEFOREEND: `beforeend`,

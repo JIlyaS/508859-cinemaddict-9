@@ -7,6 +7,7 @@ class FilmListController {
     this._container = container;
     this._popupWrapper = popupWrapper;
     this._onDataChangeMain = onDataChange;
+    this._renderPosition = renderPosition;
 
     this._subscriptions = [];
     this._films = [];
@@ -19,24 +20,26 @@ class FilmListController {
     this._films = films;
     this._subscriptions = [];
 
-    // switch (renderPosition) {
-    //   case
-    // }
-    this._films.forEach((film) => this._renderFilmsCard(film, this._container, this._popupWrapper));
+    switch (this._renderPosition) {
+      case RenderPosition.RATED:
+        this._ratedFilms = (this._films.filter((film) => film.rating > MORE_RATED)).slice(0, 2);
+        this._ratedFilms.forEach((film) => this._renderFilmsCard(film, this._container, this._popupWrapper));
+        break;
+      case RenderPosition.COMMENTED:
+        this._commentedFilms = (this._films.filter((film) => film.comments.length >= MORE_COMMENTED)).slice(0, 2);
+        this._commentedFilms.forEach((film) => this._renderFilmsCard(film, this._container, this._popupWrapper));
+        break;
+      case RenderPosition.DEFAULT:
+        this._films.forEach((film) => this._renderFilmsCard(film, this._container, this._popupWrapper));
+        break;
+      default:
+        throw new Error(`Incorrect render position`);
+    }
   }
 
-  setRatedFilms(films) {
-    this._films = films;
-    this._ratedFilms = (this._films.filter((film) => film.rating > MORE_RATED)).slice(0, 2);
-
-    this._ratedFilms.forEach((film) => this._renderFilmsCard(film, this._container, this._popupWrapper));
-  }
-
-  setCommentedFilms(films) {
-    this._films = films;
-    this._commentedFilms = (this._films.filter((film) => film.comments.length >= MORE_COMMENTED)).slice(0, 2);
-
-    this._commentedFilms.forEach((film) => this._renderFilmsCard(film, this._container, this._popupWrapper));
+  addFilms(films) {
+    films.forEach((film) => this._renderFilmsCard(film, this._container, this._popupWrapper));
+    this._films = this._films.concat(films);
   }
 
   _renderFilmsCard(film, container, popupContainer) {
@@ -65,26 +68,6 @@ class FilmListController {
     this.setFilms(this._films);
     this._onDataChangeMain(this._films);
   }
-
-  // _renderFilmsList(films) {
-  //   if (films.length === 0) {
-  //     return this._renderEmptyResult();
-  //   }
-
-  //   this._unrenderFilmList();
-
-  //   render(this._filmsWrapper.getElement(), this._commentedList.getElement(), Position.AFTERBEGIN);
-  //   render(this._filmsWrapper.getElement(), this._ratedList.getElement(), Position.AFTERBEGIN);
-  //   render(this._filmsWrapper.getElement(), this._filmsList.getElement(), Position.AFTERBEGIN);
-
-  //   if (COUNT_FILMS > films.length) {
-  //     this._renderShowButton();
-  //   }
-
-  //   films.filter((film) => film.rating > MORE_RATED).slice(0, 2).forEach((taskMock) => this._renderFilmsCard(taskMock, this._ratedList, this._popupWrapper));
-  //   films.filter((film) => film.comments.length >= MORE_COMMENTED).slice(0, 2).forEach((taskMock) => this._renderFilmsCard(taskMock, this._commentedList, this._popupWrapper));
-  //   return films.forEach((taskMock) => this._renderFilmsCard(taskMock, this._filmsList, this._popupWrapper));
-  // }
 }
 
 export default FilmListController;
