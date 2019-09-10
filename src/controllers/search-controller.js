@@ -59,7 +59,7 @@ class SearchController {
     this._searchInfo.getElement().classList.remove(`visually-hidden`);
     this._filmsSearchWrapper.getElement().classList.remove(`visually-hidden`);
     const filteredFilms = this._films.filter((film) => {
-      return film.title.includes(value);
+      return film.title.toLowerCase().includes(value.toLowerCase());
     });
     this._showSearchResult(value, filteredFilms);
   }
