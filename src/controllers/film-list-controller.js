@@ -1,21 +1,15 @@
 import MovieController from './movie-controller';
-import {render} from '../utils';
-import {MORE_RATED, MORE_COMMENTED, COUNT_FILMS, Position} from '../constants';
+import {MORE_RATED, MORE_COMMENTED, RenderPosition} from '../constants';
 
 class FilmListController {
-  constructor(filmsWrapper, container, ratedList, commentedList, popupWrapper, onDataChange) {
-    console.log(filmsWrapper, container, ratedList, commentedList, popupWrapper, onDataChange);
+  constructor(filmsWrapper, container, popupWrapper, onDataChange, renderPosition = RenderPosition.DEFAULT) {
     this._filmsWrapper = filmsWrapper;
     this._container = container;
-    this._ratedList = ratedList;
-    this._commentedList = commentedList;
     this._popupWrapper = popupWrapper;
     this._onDataChangeMain = onDataChange;
 
     this._subscriptions = [];
     this._films = [];
-    this._ratedFilms = [];
-    this._commentedFilms = [];
 
     this._onChangeView = this._onChangeView.bind(this);
     this._onDataChange = this._onDataChange.bind(this);
@@ -23,14 +17,26 @@ class FilmListController {
 
   setFilms(films) {
     this._films = films;
-    this._ratedFilms = (this._films.filter((film) => film.rating > MORE_RATED)).slice(0, 2);
-    this._commentedFilms = (this._films.filter((film) => film.comments.length >= MORE_COMMENTED)).slice(0, 2);
     this._subscriptions = [];
 
-    // this._container.innerHTML = ``;
+    // switch (renderPosition) {
+    //   case
+    // }
     this._films.forEach((film) => this._renderFilmsCard(film, this._container, this._popupWrapper));
-    this._ratedFilms.forEach((film) => this._renderFilmsCard(film, this._ratedList, this._popupWrapper));
-    this._commentedFilms.forEach((film) => this._renderFilmsCard(film, this._commentedList, this._popupWrapper));
+  }
+
+  setRatedFilms(films) {
+    this._films = films;
+    this._ratedFilms = (this._films.filter((film) => film.rating > MORE_RATED)).slice(0, 2);
+
+    this._ratedFilms.forEach((film) => this._renderFilmsCard(film, this._container, this._popupWrapper));
+  }
+
+  setCommentedFilms(films) {
+    this._films = films;
+    this._commentedFilms = (this._films.filter((film) => film.comments.length >= MORE_COMMENTED)).slice(0, 2);
+
+    this._commentedFilms.forEach((film) => this._renderFilmsCard(film, this._container, this._popupWrapper));
   }
 
   _renderFilmsCard(film, container, popupContainer) {
@@ -60,25 +66,25 @@ class FilmListController {
     this._onDataChangeMain(this._films);
   }
 
-  _renderFilmsList(films) {
-    if (films.length === 0) {
-      return this._renderEmptyResult();
-    }
+  // _renderFilmsList(films) {
+  //   if (films.length === 0) {
+  //     return this._renderEmptyResult();
+  //   }
 
-    this._unrenderFilmList();
+  //   this._unrenderFilmList();
 
-    render(this._filmsWrapper.getElement(), this._commentedList.getElement(), Position.AFTERBEGIN);
-    render(this._filmsWrapper.getElement(), this._ratedList.getElement(), Position.AFTERBEGIN);
-    render(this._filmsWrapper.getElement(), this._filmsList.getElement(), Position.AFTERBEGIN);
+  //   render(this._filmsWrapper.getElement(), this._commentedList.getElement(), Position.AFTERBEGIN);
+  //   render(this._filmsWrapper.getElement(), this._ratedList.getElement(), Position.AFTERBEGIN);
+  //   render(this._filmsWrapper.getElement(), this._filmsList.getElement(), Position.AFTERBEGIN);
 
-    if (COUNT_FILMS > films.length) {
-      this._renderShowButton();
-    }
+  //   if (COUNT_FILMS > films.length) {
+  //     this._renderShowButton();
+  //   }
 
-    films.filter((film) => film.rating > MORE_RATED).slice(0, 2).forEach((taskMock) => this._renderFilmsCard(taskMock, this._ratedList, this._popupWrapper));
-    films.filter((film) => film.comments.length >= MORE_COMMENTED).slice(0, 2).forEach((taskMock) => this._renderFilmsCard(taskMock, this._commentedList, this._popupWrapper));
-    return films.forEach((taskMock) => this._renderFilmsCard(taskMock, this._filmsList, this._popupWrapper));
-  }
+  //   films.filter((film) => film.rating > MORE_RATED).slice(0, 2).forEach((taskMock) => this._renderFilmsCard(taskMock, this._ratedList, this._popupWrapper));
+  //   films.filter((film) => film.comments.length >= MORE_COMMENTED).slice(0, 2).forEach((taskMock) => this._renderFilmsCard(taskMock, this._commentedList, this._popupWrapper));
+  //   return films.forEach((taskMock) => this._renderFilmsCard(taskMock, this._filmsList, this._popupWrapper));
+  // }
 }
 
 export default FilmListController;

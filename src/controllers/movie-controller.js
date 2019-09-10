@@ -177,7 +177,6 @@ class MovieController {
     }
 
     this._renderCommentsBlock();
-    console.log(this._container);
     render(this._container.getElement().querySelector(`.films-list__container`), this._filmCard.getElement());
   }
 }

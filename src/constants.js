@@ -36,6 +36,11 @@ export const Position = {
   BEFOREEND: `beforeend`,
   AFTEREND: `afterend`
 };
+export const RenderPosition = {
+  DEFAULT: `default`,
+  RATED: `rated`,
+  COMMENTED: `commented`
+};
 export const Sorted = {
   DATE: `date`,
   RATING: `rating`,

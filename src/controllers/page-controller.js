@@ -25,10 +25,9 @@ class PageController {
     this._commentedList = new CommentedList();
     this._footer = document.querySelector(`.footer`);
 
-    // Хранением тасков занимается отдельный контроллер.
-    // Мы сможем его использовать и на странице Поиска.
-    this._filmListController = new FilmListController(this._filmsWrapper, this._filmsList, this._ratedList, this._commentedList, this._popupWrapper, this._onDataChange.bind(this));
-
+    this._filmListController = new FilmListController(this._filmsWrapper, this._filmsList, this._popupWrapper, this._onDataChange.bind(this));
+    this._filmListRatedController = new FilmListController(this._filmsWrapper, this._ratedList, this._popupWrapper, this._onDataChange.bind(this));
+    this._filmListCommentedController = new FilmListController(this._filmsWrapper, this._commentedList, this._popupWrapper, this._onDataChange.bind(this));
     this._init();
   }
 
@@ -107,7 +106,11 @@ class PageController {
       this._renderShowButton();
     }
 
-    return this._filmListController.setFilms(films);
+    this._filmListController.setFilms(films);
+    this._filmListRatedController.setRatedFilms(films);
+    return this._filmListCommentedController.setCommentedFilms(films);
+    // this._filmListRatedController.setFilms(films);
+    // return this._filmListCommented.setFilms(films);
   }
 
   _renderShowButton() {

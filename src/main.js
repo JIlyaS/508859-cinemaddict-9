@@ -39,7 +39,7 @@ const renderMenu = () => {
           });
         evt.target.classList.add(`main-navigation__item--active`);
         statistics.getElement().classList.add(`visually-hidden`);
-        // searchController.hide();
+        searchController.hide();
         pageController.show();
         break;
       case MenuName.STATS:
@@ -49,7 +49,7 @@ const renderMenu = () => {
           });
         evt.target.classList.add(`main-navigation__item--active`);
         pageController.hide();
-        // searchController.hide();
+        searchController.hide();
         statistics.getElement().classList.remove(`visually-hidden`);
         break;
       default:

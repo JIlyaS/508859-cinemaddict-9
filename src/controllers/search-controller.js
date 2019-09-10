@@ -5,7 +5,7 @@ import FilmListController from './film-list-controller';
 import {render, unrender} from '../utils';
 import {Position} from '../constants';
 import FilmsList from '../components/films-list';
-
+import PopupWrapper from '../components/popup-wrapper';
 
 class SearchController {
   constructor(container, search, onSearchCloseButtonClick) {
@@ -17,9 +17,10 @@ class SearchController {
 
     this._filmsSearchWrapper = new FilmsWrapper();
     this._filmsSearchList = new FilmsList();
+    this._popupWrapper = new PopupWrapper();
     this._searchInfo = new SearchInfo({});
 
-    this._filmListController = new FilmListController(this._filmsSearchWrapper, this._filmsSearchList, this._filmsSearchList, this._filmsSearchList, this._onDataChange.bind(this));
+    this._filmListController = new FilmListController(this._filmsSearchWrapper, this._filmsSearchList, this._filmsSearchList, this._filmsSearchList, this._popupWrapper, this._onDataChange.bind(this));
 
     // this._searchResult = new SearchResult();
     // this._searchResultInfo = new SearchResultInfo({});
@@ -30,10 +31,10 @@ class SearchController {
     // );
 
     this._init();
+    this.hide();
   }
 
   _init() {
-    this.hide();
     render(this._container, this._searchInfo.getElement());
     render(this._container, this._filmsSearchWrapper.getElement());
     render(this._filmsSearchWrapper.getElement(), this._filmsSearchList.getElement());
@@ -53,7 +54,6 @@ class SearchController {
           const films = this._films.filter((film) => {
             return film.title.includes(value);
           });
-
           this._showSearchResult(value, films);
         }
       });
@@ -64,13 +64,17 @@ class SearchController {
     this._filmsSearchWrapper.getElement().classList.add(`visually-hidden`);
   }
 
-  show(tasks) {
-    this._tasks = tasks;
+  show(films) {
+    this._films = films;
+    const value = this._search.getElement().querySelector(`.search__field`).value;
 
     if (this._filmsSearchWrapper.getElement().classList.contains(`visually-hidden`)) {
       this._searchInfo.getElement().classList.remove(`visually-hidden`);
       this._filmsSearchWrapper.getElement().classList.remove(`visually-hidden`);
-      this._showSearchResult(``, this._tasks);
+      const filteredFilms = this._films.filter((film) => {
+        return film.title.includes(value);
+      });
+      this._showSearchResult(value, filteredFilms);
     }
   }
 
@@ -83,6 +87,16 @@ class SearchController {
     this._searchInfo = new SearchInfo({count: films.length});
 
     render(this._container, this._searchInfo.getElement(), Position.AFTERBEGIN);
+
+    unrender(this._filmsSearchList.getElement());
+    unrender(this._filmsSearchWrapper.getElement());
+    this._filmsSearchList.removeElement();
+    this._filmsSearchWrapper.removeElement();
+
+    render(this._container, this._searchInfo.getElement());
+    render(this._container, this._filmsSearchWrapper.getElement());
+    render(this._filmsSearchWrapper.getElement(), this._filmsSearchList.getElement());
+
     this._filmListController.setFilms(films);
   }
 
