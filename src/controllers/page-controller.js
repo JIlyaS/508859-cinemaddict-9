@@ -8,7 +8,6 @@ import ShowButton from '../components/show-button';
 import FilmListController from './film-list-controller';
 import {render, unrender} from '../utils';
 import {COUNT_FILM_CARDS, ADD_MORE_CARD, Position, Sorted, RenderPosition} from '../constants';
-// import {getDataFilmCard} from '../components/data';
 
 class PageController {
   constructor(container, popupWrapper) {
@@ -105,17 +104,6 @@ class PageController {
   }
 
   _renderShowButton() {
-    // this._filmListController.addFilms(this._films.slice(this._showedFilms, this._showedFilms + ADD_MORE_CARD));
-
-    // this._showedFilms += ADD_MORE_CARD;
-
-    // if (this._showedFilms >= this._films.length) {
-    //   unrender(this._showMoreButton.getElement());
-    //   this._showMoreButton.removeElement();
-    // }
-
-    // let countFilmCards = COUNT_FILM_CARDS;
-    // let newCountFilm = ADD_MORE_CARD;
     this._showMoreButton.getElement().addEventListener(`click`, (evt) => {
       evt.preventDefault();
       this._filmListController.addFilms(this._films.slice(this._showedFilms, this._showedFilms + ADD_MORE_CARD));
@@ -125,18 +113,6 @@ class PageController {
         unrender(this._showMoreButton.getElement());
         this._showMoreButton.removeElement();
       }
-      // countFilmCards += ADD_MORE_CARD;
-
-      // if (COUNT_FILMS < countFilmCards) {
-      //   newCountFilm = COUNT_FILMS - (countFilmCards - ADD_MORE_CARD);
-      //   countFilmCards = newCountFilm + countFilmCards + ADD_MORE_CARD;
-      //   unrender(this._showMoreButton.getElement());
-      //   this._showMoreButton.removeElement();
-      // }
-
-      // const newFilmCards = new Array(newCountFilm).fill().map(() => getDataFilmCard());
-      // newFilmCards.forEach((film) => this._renderFilmsCard(film, this._filmsList, this._popupWrapper));
-      // this._films.push(...newFilmCards);
     });
     render(this._filmsList.getElement(), this._showMoreButton.getElement());
   }

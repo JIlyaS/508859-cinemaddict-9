@@ -25,6 +25,8 @@ class CommentController {
   }
 
   init() {
+    this._comments.getElement().querySelector(`.film-details__add-emoji-label`).innerHTML = `<img src="images/emoji/smile.png" width="55" height="55" alt="emoji">`;
+
     const onAddComment = (evt) => {
       if (evt.ctrlKey && evt.keyCode === ENTER_KEY) {
         const formData = this.getFormData();
@@ -58,7 +60,7 @@ class CommentController {
 
     this._comments.getElement().querySelectorAll(`.film-details__emoji-item`).forEach((elem) => {
       elem.addEventListener(`click`, (evt) => {
-        document.querySelector(`.film-details__add-emoji-label`).innerHTML = `<img src="images/emoji/${evt.target.value}.png" width="55" height="55" alt="emoji">`;
+        this._comments.getElement().querySelector(`.film-details__add-emoji-label`).innerHTML = `<img src="images/emoji/${evt.target.value}.png" width="55" height="55" alt="emoji">`;
       });
     });
 
