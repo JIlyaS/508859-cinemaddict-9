@@ -42,7 +42,7 @@ const renderMenu = () => {
         evt.target.classList.add(`main-navigation__item--active`);
         statistics.getElement().classList.add(`visually-hidden`);
         searchController.hide();
-        pageController.show();
+        pageController.show(dataFilmCards);
         break;
       case MenuName.STATS:
         menu.getElement().querySelectorAll(`.main-navigation__item`)
