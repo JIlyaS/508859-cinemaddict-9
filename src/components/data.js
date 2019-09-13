@@ -18,7 +18,7 @@ import {
   MINUS_INDEX,
   RANDOM_COUNT_COMMENTS
 } from '../constants';
-import {getRandomArray, getRandomValue, getRandomTime, shuffleElements, getReleaseDate, getCommentDate} from '../utils';
+import {getRandomArray, getRandomValue, getRandomTime, shuffleElements, getReleaseDate, getCommentDate, getViewedDate} from '../utils';
 
 export const getDataComments = () => ({
   emoji: EMOJI[getRandomValue(EMOJI.length - MINUS_INDEX)],
@@ -30,6 +30,7 @@ export const getDataComments = () => ({
 export const getDataFilmCard = () => {
   const releaseDate = getReleaseDate();
   const runtimeFilm = getRandomTime(MAX_HOURS, MIN_MINUTES, MAX_MINUTES);
+  const isView = Boolean(getRandomValue());
   return {
     title: getRandomArray(FILM_NAMES),
     titleOriginal: getRandomArray(FULL_FILM_NAMES),
@@ -53,7 +54,8 @@ export const getDataFilmCard = () => {
     personalScore: null,
     isFavorite: Boolean(getRandomValue()),
     isWatchlist: Boolean(getRandomValue()),
-    isViewed: Boolean(getRandomValue()),
+    isViewed: isView,
+    viewedTime: isView ? getViewedDate() : null,
     comments: new Array(getRandomValue(RANDOM_COUNT_COMMENTS)).fill().map(() => getDataComments()),
     isFilmDetails: false
   };

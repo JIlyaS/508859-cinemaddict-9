@@ -25,6 +25,7 @@ export const COUNT_FILM_CARDS = 15;
 export const MILLISECONDS_DAY = 24 * 60 * 60 * 1000;
 export const COUNT_DAYS_COMMENTS = 10;
 export const MILLISECONDS_YEAR = MILLISECONDS_DAY * 365;
+export const STATS_DAYS_AGO = 40;
 export const WATCHED_MOVIES = 9;
 export const COUNT_FILMS = 21;
 export const MINUS_INDEX = 1;
@@ -58,6 +59,14 @@ export const Sorted = {
 export const MenuName = {
   ALL: `all`,
   STATS: `stats`
+};
+
+export const PeriodStats = {
+  ALL_TIME: `all-time`,
+  TODAY: `today`,
+  WEEK: `week`,
+  MONTH: `month`,
+  YEAR: `year`
 };
 
 export const FILM_GENRES = [

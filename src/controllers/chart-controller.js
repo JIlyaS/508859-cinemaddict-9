@@ -1,8 +1,9 @@
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import moment from 'moment';
 import Statistics from '../components/statistics';
 import {render, unrender} from '../utils';
-import {FILM_GENRES} from '../constants';
+import {FILM_GENRES, STATS_DAYS_AGO, PeriodStats} from '../constants';
 import {getRang} from '../components/data';
 
 class ChartController {
@@ -12,31 +13,11 @@ class ChartController {
     this._chart = {};
 
     this._films = [];
+    this._originalFilms = [];
+    this._filteredFilms = [];
+    this._onlyGenres = {};
 
-    this._init();
     this.hide();
-  }
-
-  _init() {
-    // render(this._container, this._searchInfo.getElement());
-    // this._renderSerchedFilmsWrapper();
-
-    // this._search.getElement().querySelector(`.search__reset`)
-    //   .addEventListener(`click`, () => {
-    //     this._search.getElement().querySelector(`.search__field`).value = ``;
-    //     this._onSearchCloseButtonClick();
-    //   });
-
-    // this._search.getElement().querySelector(`.search__field`)
-    //   .addEventListener(`keyup`, (evt) => {
-    //     const {value} = evt.target;
-    //     if (value.length >= MIN_SEARCH_SYMBOLS) {
-    //       const films = this._films.filter((film) => {
-    //         return film.title.includes(value);
-    //       });
-    //       this._showSearchResult(value, films);
-    //     }
-    //   });
   }
 
   hide() {
@@ -45,20 +26,26 @@ class ChartController {
 
   show(films) {
     this._films = films;
+    this._originalFilms = films;
     this._statistic.getElement().classList.remove(`visually-hidden`);
 
     this._showChart();
   }
 
   _showChart() {
+    if (this._statistic) {
+      unrender(this._statistic.getElement());
+      this._statistic.removeElement();
+    }
+
     const genresObj = FILM_GENRES.reduce((acc, item) => {
       acc[item] = 0;
       return acc;
     }, {});
 
-    const filmGenres = this._films.map((film) => film.genre);
+    const filmGenres = this._films.filter((elem) => elem.isViewed).map((film) => film.genre);
 
-    filmGenres.reduce((acc, item) => {
+    this._onlyGenres = filmGenres.reduce((acc, item) => {
       if (acc.hasOwnProperty(item)) {
         acc[item]++;
         genresObj[item]++;
@@ -92,6 +79,9 @@ class ChartController {
     totalDuration.minutes = realMonutes;
 
     this._statistic = new Statistics({rang: getRang(watchedMovies.length), watchedMovies: watchedMovies.length, totalDuration, topGenre: topGenre[0]});
+
+
+    this._getStatisticActions();
     const ctx = this._statistic.getElement().querySelector(`.statistic__chart`);
 
     this._chart = new Chart(ctx, {
@@ -99,9 +89,11 @@ class ChartController {
       type: `horizontalBar`,
       data: {
         labels: Object.keys(genresObj),
+        // labels: Object.keys(this._onlyGenres),
         datasets: [{
           backgroundColor: `#FBE44D`,
           data: Object.values(genresObj)
+          // data: Object.values(this._onlyGenres)
         }]
       },
       options: {
@@ -160,6 +152,59 @@ class ChartController {
     });
 
     render(this._container, this._statistic.getElement());
+  }
+
+  _getStatisticActions() {
+    this._filteredFilms = this._originalFilms.slice().filter((film) => {
+      return film.viewedTime;
+    });
+    console.log(this._filteredFilms);
+    this._statistic.getElement().querySelectorAll(`.statistic__filters-input`).forEach((elem) => {
+      elem.addEventListener(`click`, (evt) => {
+        switch (evt.target.value) {
+          case PeriodStats.ALL_TIME:
+            this._films = this._originalFilms;
+            this._showChart();
+            break;
+          case PeriodStats.TODAY:
+            this._films = this._filteredFilms.filter((elemToday) => {
+              const dateViewed = moment(elemToday.viewedTime).format(`YYYY-MM-DD`);
+              const dateNow = moment().format(`YYYY-MM-DD`);
+              return moment(dateViewed).isSame(dateNow, `day`) && elemToday;
+            });
+            this._showChart();
+            break;
+          case PeriodStats.WEEK:
+            this._films = this._filteredFilms.filter((elemWeek) => {
+              const dateViewed = moment(elemWeek.viewedTime).format(`YYYY-MM-DD`);
+              const dateNow = moment().format(`YYYY-MM-DD`);
+              return moment(dateViewed).isSame(dateNow, `week`) && elemWeek;
+            });
+            this._showChart();
+            break;
+          case PeriodStats.MONTH:
+            console.log(this._filteredFilms);
+            this._films = this._filteredFilms.filter((elemMonth) => {
+              const dateViewed = moment(elemMonth.viewedTime).format(`YYYY-MM-DD`);
+              const dateNow = moment().format(`YYYY-MM-DD`);
+              console.log(moment(dateViewed).isSame(dateNow, `month`), elemMonth);
+              return moment(dateViewed).isSame(dateNow, `month`) && elemMonth;
+            });
+            this._showChart();
+            break;
+          case PeriodStats.YEAR:
+            this._films = this._filteredFilms.filter((elemYear) => {
+              const dateViewed = moment(elemYear.viewedTime).format(`YYYY-MM-DD`);
+              const dateNow = moment().format(`YYYY-MM-DD`);
+              return moment(dateViewed).isSame(dateNow, `year`) && elemYear;
+            });
+            this._showChart();
+            break;
+          default:
+            throw new Error(`Incorrect value`);
+        }
+      });
+    });
   }
 
   _unrenderStatistics() {
