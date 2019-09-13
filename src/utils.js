@@ -35,7 +35,7 @@ export const getRandomArray = (elements) => {
 export const getRandomTime = (maxHours, minMinutes, maxMinutes) => {
   const randomHours = getRandomValue(maxHours);
   const randomMinutes = getRandomValue(maxMinutes, minMinutes);
-  return randomHours !== 0 ? `${randomHours}h ${randomMinutes}m` : `${randomMinutes}m`;
+  return {hours: randomHours, minutes: randomMinutes};
 };
 
 export const getRandomValue = (max = 1, min = 0) => {
