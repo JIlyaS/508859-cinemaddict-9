@@ -2,13 +2,13 @@ import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import Statistics from '../components/statistics';
 import {render, unrender} from '../utils';
-import {MIN_SEARCH_SYMBOLS, Position} from '../constants';
+import {MIN_SEARCH_SYMBOLS, FILM_GENRES, Position} from '../constants';
 import FilmsList from '../components/films-list';
 
 class ChartController {
   constructor(container) {
     this._container = container;
-    this._statistic = new Statistics();
+    this._statistic = new Statistics({});
     this._ctx = this._statistic.getElement().querySelector(`.statistic__chart`);
     this._chart = {};
 
@@ -62,61 +62,81 @@ class ChartController {
     // }
 
     // render(this._container, this._statistic.getElement());
+    const watchedMovies = this._films.filter((elem) => {
+      return elem.isViewed;
+    });
 
-    console.log(this._films);
+    const filmGenres = this._films.map((film) => film.genre);
+
+    const countGenresObj = filmGenres.reduce((acc, item) => {
+      if (acc.hasOwnProperty(item)) {
+        acc[item]++;
+      } else {
+        acc[item] = 1;
+      }
+      return acc;
+    }, {});
+
+    this._statistic = new Statistics({watchedMovies: watchedMovies.length});
 
     this._chart = new Chart(this._ctx, {
+      plugins: [ChartDataLabels],
       type: `horizontalBar`,
       data: {
-          labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-          datasets: [{
-              label: 'My First dataset',
-              backgroundColor: `#FBE44D`,
-              borderColor: 'rgb(255, 99, 132)',
-              data: [0, 10, 5, 2, 20, 30, 45]
-          }]
+        labels: Object.keys(countGenresObj),
+        datasets: [{
+          backgroundColor: `#FBE44D`,
+          data: Object.values(countGenresObj)
+        }]
       },
-
-      // Configuration options go here
-      options: {}
-  });
-
-    // const myChart = new Chart(this._ctx, {
-    //   type: `bar`,
-    //   data: {
-    //     labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-    //     datasets: [{
-    //       label: '# of Votes',
-    //       data: [12, 19, 3, 5, 2, 3],
-    //       backgroundColor: [
-    //         'rgba(255, 99, 132, 0.2)',
-    //         'rgba(54, 162, 235, 0.2)',
-    //         'rgba(255, 206, 86, 0.2)',
-    //         'rgba(75, 192, 192, 0.2)',
-    //         'rgba(153, 102, 255, 0.2)',
-    //         'rgba(255, 159, 64, 0.2)'
-    //       ],
-    //       borderColor: [
-    //         'rgba(255, 99, 132, 1)',
-    //         'rgba(54, 162, 235, 1)',
-    //         'rgba(255, 206, 86, 1)',
-    //         'rgba(75, 192, 192, 1)',
-    //         'rgba(153, 102, 255, 1)',
-    //         'rgba(255, 159, 64, 1)'
-    //       ],
-    //       borderWidth: 1
-    //     }]
-    //   },
-    //   options: {
-    //     scales: {
-    //       yAxes: [{
-    //         ticks: {
-    //           beginAtZero: true
-    //         }
-    //       }]
-    //     }
-    //   }
-    // });
+      options: {
+        plugins: {
+          datalabels: {
+            clamp: true,
+            anchor: `start`,
+            offset: 40,
+            color: `#ffffff`,
+            align: `start`,
+            font: {
+              family: `Open Sans`,
+              weight: `bold`,
+              size: 14
+            }
+          }
+        },
+        scales: {
+          yAxes: [{
+            ticks: {
+              defaultFontFamily: `Open Sans`,
+              beginAtZero: true,
+              display: true,
+              fontColor: `#ffffff`,
+              fontSize: 16,
+              padding: 85
+            },
+            gridLines: {
+              display: false,
+              drawBorder: false
+            }
+          }],
+          xAxes: [{
+            ticks: {
+              display: false,
+            },
+            gridLines: {
+              display: false,
+              drawBorder: false
+            }
+          }]
+        },
+        legend: {
+          display: false
+        },
+        tooltips: {
+          enabled: false
+        }
+      }
+    });
 
     // render(this._container, this._searchInfo.getElement(), Position.AFTERBEGIN);
 

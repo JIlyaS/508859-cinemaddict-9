@@ -9,6 +9,13 @@ export const NAME_FILTERS = [
   {title: `Favorites`, href: `favorites`},
   {title: `Stats`, href: `stats`}
 ];
+export const MENU_STATISTIC = [
+  {id: `all-time`, title: `All time`, checked: true},
+  {id: `today`, title: `Today`},
+  {id: `week`, title: `Week`},
+  {id: `month`, title: `Month`},
+  {id: `year`, title: `Year`}
+];
 export const AGE_RESTRICTIONS = [`0+`, `6+`, `12+`, `18+`];
 export const MAX_HOURS = 3;
 export const MIN_MINUTES = 30;
