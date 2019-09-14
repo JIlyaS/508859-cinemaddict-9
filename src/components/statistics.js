@@ -21,7 +21,7 @@ class Statistics extends AbstractComponent {
 
     <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
       <p class="statistic__filters-description">Show stats:</p>
-      ${MENU_STATISTIC.map((elem) => `<input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-${elem.id}" value="${elem.id}" ${elem.checked ? `checked` : ``}>
+      ${MENU_STATISTIC.map((elem) => `<input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-${elem.id}" value="${elem.id}" ${elem.checked ? `checked` : ``} >
       <label for="statistic-${elem.id}" class="statistic__filters-label">${elem.title}</label>`).join(` `)}
     </form>
 
@@ -40,9 +40,7 @@ class Statistics extends AbstractComponent {
       </li>
     </ul>
 
-    <div class="statistic__chart-wrap">
-      <canvas class="statistic__chart" width="1000"></canvas>
-    </div>
+    <div class="statistic__chart-wrap"></div>
 
   </section>`;
   }
