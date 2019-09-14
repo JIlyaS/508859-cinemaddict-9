@@ -4,8 +4,9 @@ import Menu from './components/menu';
 import PopupWrapper from './components/popup-wrapper';
 import PageController from './controllers/page-controller';
 import SearchController from './controllers/search-controller';
+import MenuController from './controllers/menu-controller';
 import {render, getCountFilmsToRender} from './utils';
-import {COUNT_FILMS, NAME_FILTERS, MIN_SEARCH_SYMBOLS, MenuName} from './constants';
+import {COUNT_FILMS, NAME_FILTERS, MIN_SEARCH_SYMBOLS} from './constants';
 import {getRang, getDataFilmCard, getDataFilter} from './components/data';
 import ChartController from './controllers/chart-controller';
 
@@ -22,42 +23,6 @@ const profile = new Profile(getRang(watchedFilms.length));
 const menu = new Menu(dataFilters);
 const popupWrapper = new PopupWrapper();
 
-const renderMenu = () => {
-  menu.getElement().addEventListener(`click`, (evt) => {
-    evt.preventDefault();
-    if (!evt.target.classList.contains(`main-navigation__item`)) {
-      return;
-    }
-
-    switch (evt.target.hash.slice(1)) {
-      case MenuName.ALL:
-        menu.getElement().querySelectorAll(`.main-navigation__item`)
-          .forEach((elem) => {
-            elem.classList.remove(`main-navigation__item--active`);
-          });
-        evt.target.classList.add(`main-navigation__item--active`);
-        chartController.hide();
-        searchController.hide();
-        pageController.show(dataFilmCards);
-        break;
-      case MenuName.STATS:
-        menu.getElement().querySelectorAll(`.main-navigation__item`)
-          .forEach((elem) => {
-            elem.classList.remove(`main-navigation__item--active`);
-          });
-        evt.target.classList.add(`main-navigation__item--active`);
-        pageController.hide();
-        searchController.hide();
-        chartController.show(dataFilmCards);
-        break;
-      default:
-        break;
-    }
-  });
-
-  render(mainWrapper, menu.getElement());
-};
-
 const onSearchCloseButtonClick = () => {
   menu.getElement().classList.remove(`visually-hidden`);
   chartController.hide();
@@ -67,14 +32,14 @@ const onSearchCloseButtonClick = () => {
 
 render(headerWrapper, search.getElement());
 render(headerWrapper, profile.getElement());
-renderMenu(dataFilters);
 
 footerFilmCountBlock.textContent = `${COUNT_FILMS} movies inside`;
 
 const pageController = new PageController(mainWrapper, popupWrapper);
 const searchController = new SearchController(mainWrapper, popupWrapper, search, onSearchCloseButtonClick);
 const chartController = new ChartController(mainWrapper);
-
+const menuController = new MenuController(mainWrapper, menu, pageController, searchController, chartController);
+menuController.show(dataFilmCards);
 pageController.show(dataFilmCards);
 
 search.getElement().querySelector(`.search__field`).addEventListener(`keyup`, (evt) => {

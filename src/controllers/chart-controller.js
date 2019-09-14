@@ -98,12 +98,10 @@ class ChartController {
       plugins: [ChartDataLabels],
       type: `horizontalBar`,
       data: {
-        // labels: Object.keys(this._genresObj),
         labels: Object.keys(this._onlyGenres),
         datasets: [{
           backgroundColor: `#FBE44D`,
           data: Object.values(this._onlyGenres)
-          // data: Object.values(this._genresObj)
         }]
       },
       options: {
@@ -219,6 +217,7 @@ class ChartController {
       const dateViewed = moment(elem.viewedTime).format(`YYYY-MM-DD`);
       return moment(dateViewed).isSame(dateNow, period) && elem;
     });
+
     this._changeStatistics();
   }
 

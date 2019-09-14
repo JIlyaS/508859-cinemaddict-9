@@ -58,6 +58,9 @@ export const Sorted = {
 
 export const MenuName = {
   ALL: `all`,
+  WATCHLIST: `watchlist`,
+  HISTORY: `history`,
+  FAVORITES: `favorites`,
   STATS: `stats`
 };
 
