@@ -23,7 +23,7 @@ class FilmCard extends AbstractComponent {
     <p class="film-card__rating">${this._rating.toFixed(1)}</p>
     <p class="film-card__info">
       <span class="film-card__year">${moment(this._date).format(`YYYY`)}</span>
-      <span class="film-card__duration">${this._runtime}</span>
+      <span class="film-card__duration">${this._runtime.hours !== 0 ? `${this._runtime.hours}h ${this._runtime.minutes}m` : `${this._runtime.minutes}m`}</span>
       <span class="film-card__genre">${this._genre}</span>
     </p>
     <img src="./images/posters/${this._poster}" alt="" class="film-card__poster">

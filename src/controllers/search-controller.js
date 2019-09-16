@@ -28,7 +28,7 @@ class SearchController {
 
   _init() {
     render(this._container, this._searchInfo.getElement());
-    this._renderSerchedFilmsWrapper();
+    this._renderFindedFilmsWrapper();
 
     this._search.getElement().querySelector(`.search__reset`)
       .addEventListener(`click`, () => {
@@ -49,15 +49,13 @@ class SearchController {
   }
 
   hide() {
-    this._searchInfo.getElement().classList.add(`visually-hidden`);
-    this._filmsSearchWrapper.getElement().classList.add(`visually-hidden`);
+    this._unrenderFindedFilmsWrapper();
   }
 
   show(films) {
     this._films = films;
     const value = this._search.getElement().querySelector(`.search__field`).value;
-    this._searchInfo.getElement().classList.remove(`visually-hidden`);
-    this._filmsSearchWrapper.getElement().classList.remove(`visually-hidden`);
+    this._renderFindedFilmsWrapper();
     const filteredFilms = this._films.filter((film) => {
       return film.title.toLowerCase().includes(value.toLowerCase());
     });
@@ -78,9 +76,9 @@ class SearchController {
       return this._renderEmptyResult();
     }
 
-    this._unrenderSerchedFilmsWrapper();
+    this._unrenderFindedFilmsWrapper();
     render(this._container, this._searchInfo.getElement());
-    this._renderSerchedFilmsWrapper();
+    this._renderFindedFilmsWrapper();
 
     return this._filmListController.setFilms(films);
   }
@@ -91,29 +89,31 @@ class SearchController {
     this._renderFilmsList(this._films);
   }
 
-  _unrenderSerchedFilmsWrapper() {
+  _unrenderFindedFilmsWrapper() {
     unrender(this._filmsSearchList.getElement());
     unrender(this._filmsSearchWrapper.getElement());
+    unrender(this._searchInfo.getElement());
+    this._searchInfo.removeElement();
     this._filmsSearchList.removeElement();
     this._filmsSearchWrapper.removeElement();
   }
 
-  _renderSerchedFilmsWrapper() {
+  _renderFindedFilmsWrapper() {
     render(this._container, this._filmsSearchWrapper.getElement());
     render(this._filmsSearchWrapper.getElement(), this._filmsSearchList.getElement());
   }
 
   _renderFilmsList(films) {
-    this._unrenderSerchedFilmsWrapper();
+    this._unrenderFindedFilmsWrapper();
     render(this._container, this._searchInfo.getElement());
-    this._renderSerchedFilmsWrapper();
+    this._renderFindedFilmsWrapper();
 
     return this._filmListController.setFilms(films);
   }
 
   _renderEmptyResult() {
-    this._unrenderSerchedFilmsWrapper();
-    this._renderSerchedFilmsWrapper();
+    this._unrenderFindedFilmsWrapper();
+    this._renderFindedFilmsWrapper();
     render(this._filmsSearchList.getElement(), this._searcNoResult.getElement());
   }
 }

@@ -65,7 +65,7 @@ class DetailsPopup extends AbstractComponent {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">${runtime.name}</td>
-                <td class="film-details__cell">${runtime.value}</td>
+                <td class="film-details__cell">${runtime.value.hours !== 0 ? `${runtime.value.hours}h ${runtime.value.minutes}m` : `${runtime.value.minutes}m`}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">${country.name}</td>

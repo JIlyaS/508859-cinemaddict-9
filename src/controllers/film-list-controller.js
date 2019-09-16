@@ -1,5 +1,5 @@
 import MovieController from './movie-controller';
-import {MORE_RATED, MORE_COMMENTED, RenderPosition} from '../constants';
+import {RenderPosition} from '../constants';
 
 class FilmListController {
   constructor(filmsWrapper, container, popupWrapper, onDataChange, renderPosition = RenderPosition.DEFAULT) {
@@ -9,8 +9,8 @@ class FilmListController {
     this._onDataChangeMain = onDataChange;
     this._renderPosition = renderPosition;
 
-    this._subscriptions = [];
     this._films = [];
+    this._subscriptions = [];
 
     this._onChangeView = this._onChangeView.bind(this);
     this._onDataChange = this._onDataChange.bind(this);
@@ -22,11 +22,11 @@ class FilmListController {
 
     switch (this._renderPosition) {
       case RenderPosition.RATED:
-        this._ratedFilms = (this._films.filter((film) => film.rating > MORE_RATED)).slice(0, 2);
+        this._ratedFilms = (this._films.sort((prevFilm, currFilm) => currFilm.rating - prevFilm.rating).slice(0, 2));
         this._ratedFilms.forEach((film) => this._renderFilmsCard(film, this._container, this._popupWrapper));
         break;
       case RenderPosition.COMMENTED:
-        this._commentedFilms = (this._films.filter((film) => film.comments.length >= MORE_COMMENTED)).slice(0, 2);
+        this._commentedFilms = (this._films.sort((prevFilm, currFilm) => currFilm.comments.length - prevFilm.comments.length)).slice(0, 2);
         this._commentedFilms.forEach((film) => this._renderFilmsCard(film, this._container, this._popupWrapper));
         break;
       case RenderPosition.DEFAULT:

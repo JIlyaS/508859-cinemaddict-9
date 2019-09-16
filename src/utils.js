@@ -1,4 +1,11 @@
-import {MILLISECONDS_YEAR, COUNT_FILMS, COUNT_FILM_CARDS, MILLISECONDS_DAY, DAY_AGO, YEAR_AGO, Position} from './constants';
+import moment from 'moment';
+import {MILLISECONDS_YEAR, COUNT_FILMS, COUNT_FILM_CARDS, MILLISECONDS_DAY, DAY_AGO, YEAR_AGO, STATS_DAYS_AGO, Position} from './constants';
+
+moment.updateLocale(`en`, {
+  week: {
+    dow: 1
+  }
+});
 
 export const createElement = (template) => {
   const newElement = document.createElement(`div`);
@@ -35,7 +42,7 @@ export const getRandomArray = (elements) => {
 export const getRandomTime = (maxHours, minMinutes, maxMinutes) => {
   const randomHours = getRandomValue(maxHours);
   const randomMinutes = getRandomValue(maxMinutes, minMinutes);
-  return randomHours !== 0 ? `${randomHours}h ${randomMinutes}m` : `${randomMinutes}m`;
+  return {hours: randomHours, minutes: randomMinutes};
 };
 
 export const getRandomValue = (max = 1, min = 0) => {
@@ -56,6 +63,10 @@ export const getCommentDate = () => {
 
 export const getReleaseDate = () => {
   return Date.now() + Math.floor(Math.random() * getRandomValue(0, -YEAR_AGO) * MILLISECONDS_YEAR);
+};
+
+export const getViewedDate = () => {
+  return Date.now() + Math.floor(Math.random() * getRandomValue(0, -STATS_DAYS_AGO) * MILLISECONDS_DAY);
 };
 
 export const getCountFilmsToRender = (count) => {
