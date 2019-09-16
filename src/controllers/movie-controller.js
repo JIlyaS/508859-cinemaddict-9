@@ -32,8 +32,8 @@ class MovieController {
   }
 
   setDefaultView() {
-    if (this._popupContainer.getElement().contains(this._detailsPopup.getElement())) {
-      unrender(this._detailsPopup.getElement());
+    if (this._popupContainer.getElement().childNodes.length) {
+      unrender(this._detailsPopup);
       this._detailsPopup.removeElement();
     }
   }

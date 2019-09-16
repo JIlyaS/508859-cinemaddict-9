@@ -12,10 +12,10 @@ import {COUNT_FILM_CARDS, ADD_MORE_CARD, Position, Sorted, RenderPosition} from 
 class PageController {
   constructor(container, popupWrapper) {
     this._container = container;
+    this._popupWrapper = popupWrapper;
     this._filmsWrapper = new FilmsWrapper();
     this._filmsList = new FilmsList();
     this._sortBlock = new Sort();
-    this._popupWrapper = popupWrapper;
     this._showMoreButton = new ShowButton();
     this._films = [];
     this._originalFilmCards = [];
@@ -23,6 +23,8 @@ class PageController {
     this._ratedList = new RatedList();
     this._commentedList = new CommentedList();
     this._footer = document.querySelector(`.footer`);
+
+    this._onClickShowButton = this._onClickShowButton.bind(this);
 
     this._showedFilms = COUNT_FILM_CARDS;
 
@@ -58,7 +60,7 @@ class PageController {
 
   _onDataChange(films) {
     this._films = films;
-    this._originalFilmCards = this._films;
+
     this._renderFilmsList(this._films);
   }
 
@@ -94,27 +96,28 @@ class PageController {
     render(this._filmsWrapper.getElement(), this._ratedList.getElement(), Position.AFTERBEGIN);
     render(this._filmsWrapper.getElement(), this._filmsList.getElement(), Position.AFTERBEGIN);
 
-    if (this._showedFilms <= films.length) {
+    if (this._showedFilms < this._originalFilmCards.length) {
       this._renderShowButton();
     }
 
     this._filmListController.setFilms(films.slice(0, this._showedFilms));
-    this._filmListRatedController.setFilms(films);
-    return this._filmListCommentedController.setFilms(films);
+    this._filmListRatedController.setFilms(this._originalFilmCards);
+    return this._filmListCommentedController.setFilms(this._originalFilmCards);
   }
 
   _renderShowButton() {
-    this._showMoreButton.getElement().addEventListener(`click`, (evt) => {
-      evt.preventDefault();
-      this._filmListController.addFilms(this._films.slice(this._showedFilms, this._showedFilms + ADD_MORE_CARD));
-      this._showedFilms += ADD_MORE_CARD;
-
-      if (this._showedFilms >= this._films.length) {
-        unrender(this._showMoreButton.getElement());
-        this._showMoreButton.removeElement();
-      }
-    });
+    this._showMoreButton.getElement().addEventListener(`click`, this._onClickShowButton);
     render(this._filmsList.getElement(), this._showMoreButton.getElement());
+  }
+
+  _onClickShowButton(evt) {
+    evt.preventDefault();
+    this._filmListController.addFilms(this._originalFilmCards.slice(this._showedFilms, this._showedFilms + ADD_MORE_CARD));
+    this._showedFilms += ADD_MORE_CARD;
+    if (this._showedFilms >= this._originalFilmCards.length) {
+      unrender(this._showMoreButton.getElement());
+      this._showMoreButton.removeElement();
+    }
   }
 
   _renderSort() {

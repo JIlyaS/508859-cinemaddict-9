@@ -1,27 +1,44 @@
-import {MenuName, Position} from '../constants';
-import {render} from '../utils';
+import Menu from '../components/menu';
+import {NAME_FILTERS, MenuName, Position} from '../constants';
+import {render, unrender} from '../utils';
+import {getDataFilter} from '../components/data';
 
 class CommentController {
-  constructor(container, menu, pageController, searchController, chartController) {
+  constructor(container, pageController, searchController, chartController) {
     this._container = container;
-    this._menu = menu;
+    this._dataFilters = {};
+    this._menu = {};
     this._pageController = pageController;
     this._searchController = searchController;
     this._chartController = chartController;
 
     this._films = [];
-
-    this._init();
   }
 
   show(films) {
     if (films !== this._films) {
       this._setFilms(films);
     }
+
+    this._init();
+  }
+
+  hide() {
+    unrender(this._menu.getElement());
+    this._menu.removeElement();
   }
 
   _setFilms(films) {
     this._films = films;
+
+    this._renderMenu(this._films);
+  }
+
+  _renderMenu(films) {
+    this._dataFilters = NAME_FILTERS.map((filter) => getDataFilter(filter, films));
+    this._menu = new Menu(this._dataFilters);
+
+    this._init();
   }
 
   _init() {
@@ -39,12 +56,18 @@ class CommentController {
           this._pageController.show(this._films);
           break;
         case MenuName.WATCHLIST:
+          this._chartController.hide();
+          this._searchController.hide();
           this._changeFilter(evt, `isWatchlist`);
           break;
         case MenuName.HISTORY:
+          this._chartController.hide();
+          this._searchController.hide();
           this._changeFilter(evt, `isViewed`);
           break;
         case MenuName.FAVORITES:
+          this._chartController.hide();
+          this._searchController.hide();
           this._changeFilter(evt, `isFavorite`);
           break;
         case MenuName.STATS:
