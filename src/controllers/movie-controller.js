@@ -33,8 +33,7 @@ class MovieController {
 
   setDefaultView() {
     if (this._popupContainer.getElement().childNodes.length) {
-      unrender(this._detailsPopup);
-      this._detailsPopup.removeElement();
+      this._popupContainer.getElement().innerHTML = ``;
     }
   }
 

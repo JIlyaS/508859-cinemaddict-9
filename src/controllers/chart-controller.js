@@ -129,7 +129,7 @@ class ChartController {
               fontSize: 16,
               padding: 85
             },
-            maxBarThickness: 35,
+            maxBarThickness: 30,
             barPercentage: 1.0,
             categoryPercentage: 0.9,
             gridLines: {
@@ -212,10 +212,10 @@ class ChartController {
   }
 
   _getFilteredStatsFilms(filteredFilms, period) {
-    const dateNow = moment().format(`YYYY-MM-DD`);
+    const startDate = moment().startOf(period).format(`YYYY-MM-DD`);
     this._films = filteredFilms.filter((elem) => {
       const dateViewed = moment(elem.viewedTime).format(`YYYY-MM-DD`);
-      return moment(dateViewed).isSame(dateNow, period) && elem;
+      return moment(dateViewed).isSame(startDate, period) && elem;
     });
 
     this._changeStatistics();

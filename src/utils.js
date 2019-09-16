@@ -1,4 +1,11 @@
+import moment from 'moment';
 import {MILLISECONDS_YEAR, COUNT_FILMS, COUNT_FILM_CARDS, MILLISECONDS_DAY, DAY_AGO, YEAR_AGO, STATS_DAYS_AGO, Position} from './constants';
+
+moment.updateLocale(`en`, {
+  week: {
+    dow: 1
+  }
+});
 
 export const createElement = (template) => {
   const newElement = document.createElement(`div`);
@@ -60,7 +67,7 @@ export const getReleaseDate = () => {
 
 export const getViewedDate = () => {
   return Date.now() + Math.floor(Math.random() * getRandomValue(0, -STATS_DAYS_AGO) * MILLISECONDS_DAY);
-}
+};
 
 export const getCountFilmsToRender = (count) => {
   if (COUNT_FILMS < count) {
