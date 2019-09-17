@@ -1,11 +1,12 @@
 import Search from './components/search';
 import Profile from './components/profile';
 import PopupWrapper from './components/popup-wrapper';
+import API from './api';
 import PageController from './controllers/page-controller';
 import SearchController from './controllers/search-controller';
 import MenuController from './controllers/menu-controller';
 import {render, getCountFilmsToRender} from './utils';
-import {COUNT_FILMS, MIN_SEARCH_SYMBOLS} from './constants';
+import {COUNT_FILMS, MIN_SEARCH_SYMBOLS, AUTHORIZATION, SERVER} from './constants';
 import {getRang, getDataFilmCard} from './components/data';
 import ChartController from './controllers/chart-controller';
 
@@ -15,6 +16,9 @@ const footerFilmCountBlock = document.querySelector(`.footer__statistics p`);
 
 const dataFilmCards = new Array(getCountFilmsToRender(COUNT_FILMS)).fill().map(() => getDataFilmCard());
 const watchedFilms = dataFilmCards.filter((elem) => elem.isViewed === true);
+
+const api = new API({authorization: AUTHORIZATION, server: SERVER});
+api.getMovies().then((movies) => console.log(movies));
 
 const search = new Search();
 const profile = new Profile(getRang(watchedFilms.length));
@@ -37,7 +41,8 @@ const searchController = new SearchController(mainWrapper, popupWrapper, search,
 const chartController = new ChartController(mainWrapper);
 const menuController = new MenuController(mainWrapper, pageController, searchController, chartController);
 menuController.show(dataFilmCards);
-pageController.show(dataFilmCards);
+// pageController.show(dataFilmCards);
+api.getMovies().then((movies) => pageController.show(movies));
 
 search.getElement().querySelector(`.search__field`).addEventListener(`keyup`, (evt) => {
   if (evt.target.value.length >= MIN_SEARCH_SYMBOLS) {
