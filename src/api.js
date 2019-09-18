@@ -1,4 +1,5 @@
-import ModelMovie from './model-movie';
+import ModelMovie from './models/model-movie';
+import ModelComment from './models/model-comment';
 import {Method} from './constants';
 import {checkStatus, toJSON} from './utils';
 
@@ -13,16 +14,16 @@ class API {
   }
 
   getMovieComments({movieId}) {
-    return this._load({url: `/comments/${movieId}`}).then(toJSON);
+    return this._load({url: `comments/${movieId}`}).then(toJSON).then(ModelComment.parseComments);
   }
 
-  createComment({commentId}) {
+  // createComment({commentId}) {
 
-  }
+  // }
 
-  deleteComment({commentId}) {
+  // deleteComment({commentId}) {
 
-  }
+  // }
 
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {
     headers.append(`Authorization`, this._authorization);
@@ -30,7 +31,7 @@ class API {
     return fetch(`${this._server}/${url}`, {method, body, headers})
       .then(checkStatus)
       .catch((err) => {
-        console.error(`fetch error: ${err}`);
+        // console.error(`fetch error: ${err}`);
         throw err;
       });
   }

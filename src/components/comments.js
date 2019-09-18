@@ -2,9 +2,8 @@ import moment from 'moment';
 import AbstractComponent from './abstract-component';
 
 class Comments extends AbstractComponent {
-  constructor({countComments, comments}) {
+  constructor({comments}) {
     super();
-    this._countComments = countComments;
     this._comments = comments;
   }
 
@@ -13,8 +12,8 @@ class Comments extends AbstractComponent {
           <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${this._comments.length}</span></h3>
 
           <ul class="film-details__comments-list">
-            ${this._comments.sort((a, b) => a.dataComment - b.dataComment)
-              .map(({emoji, description, author, dataComment}) => `<li class="film-details__comment">
+            ${this._comments.sort((a, b) => a.date - b.date)
+              .map(({emoji, description, author, date}) => `<li class="film-details__comment">
             <span class="film-details__comment-emoji">
               <img src="./images/emoji/${emoji}.png" width="55" height="55" alt="emoji">
             </span>
@@ -22,7 +21,7 @@ class Comments extends AbstractComponent {
               <p class="film-details__comment-text">${description}</p>
               <p class="film-details__comment-info">
                 <span class="film-details__comment-author">${author}</span>
-                <span class="film-details__comment-day">${moment(dataComment).format(`YY/MM/DD HH:mm`)}</span>
+                <span class="film-details__comment-day">${moment(date).format(`YY/MM/DD HH:mm`)}</span>
                 <button class="film-details__comment-delete">Delete</button>
               </p>
             </div>

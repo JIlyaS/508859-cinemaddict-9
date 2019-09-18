@@ -18,17 +18,18 @@ const dataFilmCards = new Array(getCountFilmsToRender(COUNT_FILMS)).fill().map((
 const watchedFilms = dataFilmCards.filter((elem) => elem.isViewed === true);
 
 const api = new API({authorization: AUTHORIZATION, server: SERVER});
-api.getMovies().then((movies) => console.log(movies));
 
 const search = new Search();
 const profile = new Profile(getRang(watchedFilms.length));
 const popupWrapper = new PopupWrapper();
 
 const onSearchCloseButtonClick = () => {
-  menuController.show(dataFilmCards);
+  // menuController.show(dataFilmCards);
+  api.getMovies().then((movies) => menuController.show(movies));
   chartController.hide();
   searchController.hide();
-  pageController.show(dataFilmCards);
+  // pageController.show(dataFilmCards);
+  api.getMovies().then((movies) => pageController.show(movies));
 };
 
 render(headerWrapper, search.getElement());
@@ -40,7 +41,8 @@ const pageController = new PageController(mainWrapper, popupWrapper);
 const searchController = new SearchController(mainWrapper, popupWrapper, search, onSearchCloseButtonClick);
 const chartController = new ChartController(mainWrapper);
 const menuController = new MenuController(mainWrapper, pageController, searchController, chartController);
-menuController.show(dataFilmCards);
+// menuController.show(dataFilmCards);
+api.getMovies().then((movies) => menuController.show(movies));
 // pageController.show(dataFilmCards);
 api.getMovies().then((movies) => pageController.show(movies));
 
@@ -54,6 +56,7 @@ search.getElement().querySelector(`.search__field`).addEventListener(`keyup`, (e
     menuController.show(dataFilmCards);
     chartController.hide();
     searchController.hide();
-    pageController.show(dataFilmCards);
+    // pageController.show(dataFilmCards);
+    api.getMovies().then((movies) => pageController.show(movies));
   }
 });

@@ -2,6 +2,8 @@ import FilmCard from '../components/film-card';
 import DetailsPopup from '../components/details-popup';
 import CommentController from './comment-controller';
 import {render, unrender} from '../utils';
+import {AUTHORIZATION, SERVER} from '../constants';
+import API from '../api';
 
 class MovieController {
   constructor(container, dataFilm, popupContainer, onDataChange, onChangeView) {
@@ -12,6 +14,7 @@ class MovieController {
     this._onChangeView = onChangeView;
     this._filmCard = new FilmCard(this._dataFilm);
     this._detailsPopup = new DetailsPopup(this._dataFilm);
+    this._api = new API({authorization: AUTHORIZATION, server: SERVER});
     this._containerComments = this._detailsPopup.getElement().querySelector(`.form-details__bottom-container`);
   }
 
@@ -39,7 +42,7 @@ class MovieController {
 
   _renderCommentsBlock() {
     const commentController = new CommentController(this._containerComments, this._dataFilm, this._detailsPopup, this.getState, this._onDataChange);
-    commentController.init();
+    this._api.getMovieComments({movieId: this._dataFilm.id}).then((comments) => commentController.show(comments));
   }
 
   init() {
