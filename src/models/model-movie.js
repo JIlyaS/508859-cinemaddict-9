@@ -13,6 +13,7 @@ class ModelMovie {
     this.genres = data[`film_info`][`genre`];
     this.ageRating = data[`film_info`][`age_rating`];
     this.runtime = getTransformRuntime(data[`film_info`][`runtime`]);
+    this.comments = data[`comments`];
     this.details = {
       director: {name: `Director`, value: data[`film_info`][`director`]},
       writers: {name: `Writers`, value: data[`film_info`][`writers`]},
@@ -22,12 +23,13 @@ class ModelMovie {
       country: {name: `Country`, value: data[`film_info`][`release`][`release_country`]},
       genres: {name: `Genre`, value: data[`film_info`][`genre`]}
     };
+
     this.personalRating = data[`user_details`][`personal_rating`] || null;
     this.isFavorite = Boolean(data[`user_details`][`favorite`]);
     this.isWatchlist = Boolean(data[`user_details`][`watchlist`]);
     this.isViewed = Boolean(data[`user_details`][`already_watched`]);
     this.viewedDate = data[`user_details`][`watching_date`];
-    this.comments = data[`comments`];
+
     this.isFilmDetails = false;
   }
 
@@ -37,6 +39,37 @@ class ModelMovie {
 
   static parseMovies(data) {
     return data.map(ModelMovie.parseMovie);
+  }
+
+  toRAW() {
+    return {
+      'id': this.id,
+      'film_info': {
+        'title': this.title,
+        'alternative_title': this.titleOriginal,
+        'poster': this.poster,
+        'description': this.description,
+        'total_rating': this.rating,
+        'genre': this.genres,
+        'age_rating': this.ageRating,
+        'runtime': this.runtime,
+        'comments': this.comments,
+        'release': {
+          'date': this.date,
+          'release_country': this.details[`country`].value
+        },
+        'director': this.details[`director`].value,
+        'writers': this.details[`writers`].value,
+        'actors': this.details[`actors`].value,
+        'user_details': {
+          [`personal_rating`]: this.personalRating,
+          favorite: this.isFavorite,
+          watchlist: this.isWatchlist,
+          [`already_watched`]: this.isViewed,
+          [`watching_date`]: new Date(this.viewedDate)
+        }
+      }
+    };
   }
 }
 

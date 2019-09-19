@@ -10,7 +10,7 @@ import {render, unrender} from '../utils';
 import {COUNT_FILM_CARDS, ADD_MORE_CARD, Position, Sorted, RenderPosition} from '../constants';
 
 class PageController {
-  constructor(container, popupWrapper) {
+  constructor(container, popupWrapper, onDataChange) {
     this._container = container;
     this._popupWrapper = popupWrapper;
     this._filmsWrapper = new FilmsWrapper();
@@ -28,9 +28,11 @@ class PageController {
 
     this._showedFilms = COUNT_FILM_CARDS;
 
-    this._filmListController = new FilmListController(this._filmsWrapper, this._filmsList, this._popupWrapper, this._onDataChange.bind(this));
-    this._filmListRatedController = new FilmListController(this._filmsWrapper, this._ratedList, this._popupWrapper, this._onDataChange.bind(this), RenderPosition.RATED);
-    this._filmListCommentedController = new FilmListController(this._filmsWrapper, this._commentedList, this._popupWrapper, this._onDataChange.bind(this), RenderPosition.COMMENTED);
+    this._onDataChangeMain = onDataChange;
+
+    this._filmListController = new FilmListController(this._filmsWrapper, this._filmsList, this._popupWrapper, this._onDataChangeMain.bind(this));
+    this._filmListRatedController = new FilmListController(this._filmsWrapper, this._ratedList, this._popupWrapper, this._onDataChangeMain.bind(this), RenderPosition.RATED);
+    this._filmListCommentedController = new FilmListController(this._filmsWrapper, this._commentedList, this._popupWrapper, this._onDataChangeMain.bind(this), RenderPosition.COMMENTED);
     this._init();
   }
 
@@ -58,11 +60,11 @@ class PageController {
     this._filmsWrapper.getElement().classList.add(`visually-hidden`);
   }
 
-  _onDataChange(films) {
-    this._films = films;
+  // _onDataChange(films) {
+  //   this._films = films;
 
-    this._renderFilmsList(this._films);
-  }
+  //   this._renderFilmsList(this._films);
+  // }
 
   show(films) {
     if (films !== this._films) {

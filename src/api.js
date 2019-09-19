@@ -21,9 +21,9 @@ class API {
 
   // }
 
-  // deleteComment({commentId}) {
-
-  // }
+  deleteComment({commentId}) {
+    return this._load({url: `movies/${commentId}`, method: Method.DELETE});
+  }
 
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {
     headers.append(`Authorization`, this._authorization);

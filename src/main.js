@@ -5,45 +5,63 @@ import API from './api';
 import PageController from './controllers/page-controller';
 import SearchController from './controllers/search-controller';
 import MenuController from './controllers/menu-controller';
-import {render, getCountFilmsToRender} from './utils';
+import {render} from './utils';
 import {COUNT_FILMS, MIN_SEARCH_SYMBOLS, AUTHORIZATION, SERVER} from './constants';
-import {getRang, getDataFilmCard} from './components/data';
+import {getRang} from './components/data';
 import ChartController from './controllers/chart-controller';
 
 const headerWrapper = document.querySelector(`.header`);
 const mainWrapper = document.querySelector(`.main`);
 const footerFilmCountBlock = document.querySelector(`.footer__statistics p`);
 
-const dataFilmCards = new Array(getCountFilmsToRender(COUNT_FILMS)).fill().map(() => getDataFilmCard());
-const watchedFilms = dataFilmCards.filter((elem) => elem.isViewed === true);
-
 const api = new API({authorization: AUTHORIZATION, server: SERVER});
-
 const search = new Search();
-const profile = new Profile(getRang(watchedFilms.length));
 const popupWrapper = new PopupWrapper();
 
 const onSearchCloseButtonClick = () => {
-  // menuController.show(dataFilmCards);
   api.getMovies().then((movies) => menuController.show(movies));
   chartController.hide();
   searchController.hide();
-  // pageController.show(dataFilmCards);
   api.getMovies().then((movies) => pageController.show(movies));
 };
 
+const onDataChange = (actionType, updatedFilm) => {
+  console.log(actionType, updatedFilm);
+  switch (actionType) {
+    case `update`:
+      api.updateMovie({
+        id: updatedFilm.id,
+        data: updatedFilm.toRAW()
+      }).then((movies) => pageController.show(movies));
+      break;
+    case `create`:
+      break;
+    case `delete`:
+      // api.deleteComments({
+      //   id: updatedFilm.id
+      // })
+      //   .then(() => api.getMovies())
+      //   .then((movies) => pageController.show(movies));
+      break;
+  }
+};
+
 render(headerWrapper, search.getElement());
-render(headerWrapper, profile.getElement());
+
+api.getMovies().then((movies) => {
+  const watchedFilms = movies.filter((elem) => elem.isViewed === true);
+  const profile = new Profile(getRang(watchedFilms.length));
+  render(headerWrapper, profile.getElement());
+});
 
 footerFilmCountBlock.textContent = `${COUNT_FILMS} movies inside`;
 
-const pageController = new PageController(mainWrapper, popupWrapper);
+const pageController = new PageController(mainWrapper, popupWrapper, onDataChange);
 const searchController = new SearchController(mainWrapper, popupWrapper, search, onSearchCloseButtonClick);
 const chartController = new ChartController(mainWrapper);
 const menuController = new MenuController(mainWrapper, pageController, searchController, chartController);
-// menuController.show(dataFilmCards);
+
 api.getMovies().then((movies) => menuController.show(movies));
-// pageController.show(dataFilmCards);
 api.getMovies().then((movies) => pageController.show(movies));
 
 search.getElement().querySelector(`.search__field`).addEventListener(`keyup`, (evt) => {
@@ -51,12 +69,11 @@ search.getElement().querySelector(`.search__field`).addEventListener(`keyup`, (e
     menuController.hide();
     chartController.hide();
     pageController.hide();
-    searchController.show(dataFilmCards);
+    api.getMovies().then((movies) => searchController.show(movies));
   } else if (evt.target.value.length === 0) {
-    menuController.show(dataFilmCards);
+    api.getMovies().then((movies) => menuController.show(movies));
     chartController.hide();
     searchController.hide();
-    // pageController.show(dataFilmCards);
     api.getMovies().then((movies) => pageController.show(movies));
   }
 });
