@@ -260,7 +260,8 @@ export const Method = {
   DELETE: `DELETE`
 };
 export const ActionType = {
-  UPDATE: `update`
+  UPDATE: `update`,
+  CREATE: `create`
 };
 export const AUTHORIZATION = `Basic eo0w590ik29889a=${Math.random()}`;
 export const SERVER = `https://htmlacademy-es-9.appspot.com/cinemaddict/`;

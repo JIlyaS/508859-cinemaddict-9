@@ -6,7 +6,7 @@ import PageController from './controllers/page-controller';
 import SearchController from './controllers/search-controller';
 import MenuController from './controllers/menu-controller';
 import {render} from './utils';
-import {COUNT_FILMS, MIN_SEARCH_SYMBOLS, AUTHORIZATION, SERVER, ActionType} from './constants';
+import {MIN_SEARCH_SYMBOLS, AUTHORIZATION, SERVER, ActionType} from './constants';
 import {getRang} from './components/data';
 import ChartController from './controllers/chart-controller';
 
@@ -18,19 +18,10 @@ const api = new API({authorization: AUTHORIZATION, server: SERVER});
 const search = new Search();
 const popupWrapper = new PopupWrapper();
 
-const hideMainPage = () => {
-  menuController.hide();
-  pageController.hide();
-};
-
 const onSearchCloseButtonClick = () => {
   chartController.hide();
   searchController.hide();
-  api.getMovies().then((movies) => {
-    hideMainPage();
-    menuController.show(movies);
-    pageController.show(movies);
-  });
+  onDataChange(ActionType.CREATE);
 };
 
 const onDataChange = (actionType, updatedFilm) => {
@@ -42,12 +33,16 @@ const onDataChange = (actionType, updatedFilm) => {
       })
       .then(() => api.getMovies())
       .then((movies) => {
-        hideMainPage();
-        menuController.show(movies);
-        pageController.show(movies);
+        menuController.show(movies.slice());
+        pageController.show(movies.slice());
       });
       break;
-    case `create`:
+    case ActionType.CREATE:
+      api.getMovies().then((movies) => {
+        menuController.show(movies.slice());
+        pageController.show(movies.slice());
+        footerFilmCountBlock.textContent = `${movies.length} movies inside`;
+      });
       break;
     case `delete`:
       break;
@@ -62,31 +57,22 @@ api.getMovies().then((movies) => {
   render(headerWrapper, profile.getElement());
 });
 
-footerFilmCountBlock.textContent = `${COUNT_FILMS} movies inside`;
-
 const pageController = new PageController(mainWrapper, popupWrapper, onDataChange);
 const searchController = new SearchController(mainWrapper, popupWrapper, search, onSearchCloseButtonClick);
 const chartController = new ChartController(mainWrapper);
 const menuController = new MenuController(mainWrapper, pageController, searchController, chartController);
-
-api.getMovies().then((movies) => {
-  menuController.show(movies);
-  pageController.show(movies);
-});
 
 search.getElement().querySelector(`.search__field`).addEventListener(`keyup`, (evt) => {
   if (evt.target.value.length >= MIN_SEARCH_SYMBOLS) {
     menuController.hide();
     chartController.hide();
     pageController.hide();
-    api.getMovies().then((movies) => searchController.show(movies));
+    api.getMovies().then((movies) => searchController.show(movies.slice()));
   } else if (evt.target.value.length === 0) {
     chartController.hide();
     searchController.hide();
-    api.getMovies().then((movies) => {
-      hideMainPage();
-      menuController.show(movies);
-      pageController.show(movies);
-    });
+    onDataChange(ActionType.CREATE);
   }
 });
+
+onDataChange(ActionType.CREATE);

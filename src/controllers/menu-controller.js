@@ -7,7 +7,7 @@ class CommentController {
   constructor(container, pageController, searchController, chartController) {
     this._container = container;
     this._dataFilters = {};
-    this._menu = {};
+    this._menu = null;
     this._pageController = pageController;
     this._searchController = searchController;
     this._chartController = chartController;
@@ -19,8 +19,6 @@ class CommentController {
     if (films !== this._films) {
       this._setFilms(films);
     }
-
-    this._init();
   }
 
   hide() {
@@ -36,6 +34,11 @@ class CommentController {
 
   _renderMenu(films) {
     this._dataFilters = NAME_FILTERS.map((filter) => getDataFilter(filter, films));
+
+    if (this._menu !== null) {
+      this.hide();
+    }
+
     this._menu = new Menu(this._dataFilters);
 
     this._init();
@@ -53,7 +56,7 @@ class CommentController {
           this._getActiveMenuElement(evt);
           this._chartController.hide();
           this._searchController.hide();
-          this._pageController.show(this._films);
+          this._pageController.show(this._films.slice());
           break;
         case MenuName.WATCHLIST:
           this._chartController.hide();
@@ -74,7 +77,7 @@ class CommentController {
           this._getActiveMenuElement(evt);
           this._pageController.hide();
           this._searchController.hide();
-          this._chartController.show(this._films);
+          this._chartController.show(this._films.slice());
           break;
         default:
           break;
@@ -94,7 +97,7 @@ class CommentController {
 
   _changeFilter(evt, filterName) {
     this._getActiveMenuElement(evt);
-    const filteredFilmCards = this._films.filter((elem) => elem[filterName] === true);
+    const filteredFilmCards = this._films.slice().filter((elem) => elem[filterName] === true);
     this._pageController.show(filteredFilmCards);
   }
 }

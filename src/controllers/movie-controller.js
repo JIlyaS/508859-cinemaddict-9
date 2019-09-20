@@ -123,8 +123,7 @@ class MovieController {
         evt.preventDefault();
         const newState = Object.assign(this.getState(), {isViewed: !this._dataFilm.isViewed});
         const newData = Object.assign(this._dataFilm, {personalScore: null});
-        const data = Object.assign(newData, newState);
-        this._onDataChangeMain(data, this._dataFilm);
+        this._onDataChangeMain(ActionType.UPDATE, Object.assign(newData, newState));
       });
 
     this._filmCard.getElement()
@@ -132,8 +131,7 @@ class MovieController {
       .addEventListener(`click`, (evt) => {
         evt.preventDefault();
         const newState = Object.assign(this.getState(), {isFavorite: !this._dataFilm.isFavorite});
-        const data = Object.assign(this._dataFilm, newState);
-        this._onDataChangeMain(data, this._dataFilm);
+        this._onDataChangeMain(ActionType.UPDATE, Object.assign(this._dataFilm, newState));
       });
 
     this._detailsPopup.getElement().querySelector(`.film-details__close-btn`)
@@ -164,9 +162,10 @@ class MovieController {
         }
         const newState = Object.assign(this.getState(), {isViewed});
         const newData = Object.assign(this._dataFilm, {personalScore: null});
-        const data = Object.assign(newData, newState);
+        // const data = Object.assign(newData, newState);
         // this._onDataChange(data, this._dataFilm);
         this._detailsPopup.getElement().querySelector(`.form-details__middle-container`).classList.toggle(`visually-hidden`);
+        this._onDataChangeMain(ActionType.UPDATE, Object.assign(newData, newState));
       });
 
     this._detailsPopup.getElement().querySelector(`.film-details__control-label--favorite`)
