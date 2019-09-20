@@ -65,6 +65,7 @@ class MovieController {
       const newState = Object.assign(this.getState(), {isFilmDetails: !this._dataFilm.isFilmDetails});
       const data = Object.assign(this._dataFilm, newState);
       this._onDataChange(data, this._dataFilm);
+      this._renderCommentsBlock();
       render(this._popupContainer.getElement(), this._detailsPopup.getElement());
       document.addEventListener(`keydown`, onEscKeyDown);
     });
@@ -76,6 +77,7 @@ class MovieController {
         const newState = Object.assign(this.getState(), {isFilmDetails: !this._dataFilm.isFilmDetails});
         const data = Object.assign(this._dataFilm, newState);
         this._onDataChange(data, this._dataFilm);
+        this._renderCommentsBlock();
         render(this._popupContainer.getElement(), this._detailsPopup.getElement());
         document.addEventListener(`keydown`, onEscKeyDown);
       });
@@ -87,6 +89,7 @@ class MovieController {
         const newState = Object.assign(this.getState(), {isFilmDetails: !this._dataFilm.isFilmDetails});
         const data = Object.assign(this._dataFilm, newState);
         this._onDataChange(data, this._dataFilm);
+        this._renderCommentsBlock();
         render(this._popupContainer.getElement(), this._detailsPopup.getElement());
         document.addEventListener(`keydown`, onEscKeyDown);
       });
@@ -178,7 +181,6 @@ class MovieController {
       });
     }
 
-    this._renderCommentsBlock();
     render(this._container.getElement().querySelector(`.films-list__container`), this._filmCard.getElement());
   }
 }

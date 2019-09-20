@@ -101,11 +101,7 @@ export const getTransformRuntime = (runtime) => {
   } else if (minutes < 10) {
     minutes = `0${minutes}`;
   }
-  return {hours, minutes};
-};
-
-export const getViewRuntime = (runtime) => {
-  return runtime.hours !== 0 ? `${runtime.hours}h ${runtime.minutes}m` : `${runtime.minutes}m`;
+  return hours !== 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
 };
 
 export const getCorrectDataArray = (dataArray) => {

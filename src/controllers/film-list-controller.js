@@ -2,11 +2,11 @@ import MovieController from './movie-controller';
 import {RenderPosition} from '../constants';
 
 class FilmListController {
-  constructor(filmsWrapper, container, popupWrapper, onDataChange, renderPosition = RenderPosition.DEFAULT) {
+  constructor(filmsWrapper, container, popupWrapper, onDataChangeMain, renderPosition = RenderPosition.DEFAULT) {
     this._filmsWrapper = filmsWrapper;
     this._container = container;
     this._popupWrapper = popupWrapper;
-    this._onDataChangeMain = onDataChange;
+    this._onDataChangeMain = onDataChangeMain;
     this._renderPosition = renderPosition;
 
     this._films = [];
@@ -43,7 +43,7 @@ class FilmListController {
   }
 
   _renderFilmsCard(film, container, popupContainer) {
-    const movieController = new MovieController(container, film, popupContainer, this._onDataChange, this._onChangeView);
+    const movieController = new MovieController(container, film, popupContainer, this._onDataChangeMain, this._onChangeView);
     movieController.init();
     this._subscriptions.push(movieController.setDefaultView.bind(movieController));
   }

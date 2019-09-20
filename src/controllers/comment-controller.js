@@ -10,8 +10,6 @@ class CommentController {
     this._onDataChange = onDataChange;
     this._commentComponent = {};
     this._getState = getState;
-
-    this._comments = [];
   }
 
   getFormData() {
@@ -27,15 +25,12 @@ class CommentController {
   }
 
   show(comments) {
-    if (comments !== this._films) {
-      this._setComments(comments);
-    }
+    this._renderCommentList(comments);
   }
 
-  _setComments(comments) {
-    this._comments = comments;
-
-    this._renderCommentList(this._comments);
+  hide() {
+    unrender(this._commentComponent.getElement());
+    this._commentComponent.removeElement();
   }
 
   _renderCommentList(comments) {
@@ -52,8 +47,7 @@ class CommentController {
         const formData = this.getFormData();
         const data = Object.assign(this._dataFilm, this._getState());
         this._onDataChange(data, null, formData.comment);
-        unrender(this._commentComponent.getElement());
-        this._commentComponent.removeElement();
+        this.hide();
         this._init();
       }
     };
@@ -72,8 +66,7 @@ class CommentController {
       elem.addEventListener(`click`, (evt) => {
         evt.preventDefault();
         this._onDataChange(null, this._dataFilm, this._dataFilm.comments[id]);
-        unrender(this._commentComponent.getElement());
-        this._commentComponent.removeElement();
+        this.hide();
         this._init();
       });
     });

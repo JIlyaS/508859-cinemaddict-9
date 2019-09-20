@@ -1,7 +1,7 @@
 import moment from 'moment';
 import AbstractComponent from './abstract-component';
 import {PERSONAL_RATING_COUNT} from '../constants';
-import {getViewRuntime, getGenreTitle} from '../utils';
+import {getGenreTitle, getTransformRuntime} from '../utils';
 
 class DetailsPopup extends AbstractComponent {
   constructor(card) {
@@ -66,7 +66,7 @@ class DetailsPopup extends AbstractComponent {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">${runtime.name}</td>
-                <td class="film-details__cell">${getViewRuntime(runtime.value)}</td>
+                <td class="film-details__cell">${getTransformRuntime(runtime.value)}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">${country.name}</td>

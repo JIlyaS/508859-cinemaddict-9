@@ -6,7 +6,7 @@ import PageController from './controllers/page-controller';
 import SearchController from './controllers/search-controller';
 import MenuController from './controllers/menu-controller';
 import {render} from './utils';
-import {COUNT_FILMS, MIN_SEARCH_SYMBOLS, AUTHORIZATION, SERVER} from './constants';
+import {COUNT_FILMS, MIN_SEARCH_SYMBOLS, AUTHORIZATION, SERVER, ActionType} from './constants';
 import {getRang} from './components/data';
 import ChartController from './controllers/chart-controller';
 
@@ -26,13 +26,17 @@ const onSearchCloseButtonClick = () => {
 };
 
 const onDataChange = (actionType, updatedFilm) => {
-  console.log(actionType, updatedFilm);
   switch (actionType) {
-    case `update`:
+    case ActionType.UPDATE:
       api.updateMovie({
         id: updatedFilm.id,
         data: updatedFilm.toRAW()
-      }).then((movies) => pageController.show(movies));
+      })
+      .then(() => api.getMovies())
+      .then((movies) => {
+        menuController.show(movies);
+        pageController.show(movies);
+      });
       break;
     case `create`:
       break;
