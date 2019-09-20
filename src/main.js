@@ -18,11 +18,19 @@ const api = new API({authorization: AUTHORIZATION, server: SERVER});
 const search = new Search();
 const popupWrapper = new PopupWrapper();
 
+const hideMainPage = () => {
+  menuController.hide();
+  pageController.hide();
+};
+
 const onSearchCloseButtonClick = () => {
-  api.getMovies().then((movies) => menuController.show(movies));
   chartController.hide();
   searchController.hide();
-  api.getMovies().then((movies) => pageController.show(movies));
+  api.getMovies().then((movies) => {
+    hideMainPage();
+    menuController.show(movies);
+    pageController.show(movies);
+  });
 };
 
 const onDataChange = (actionType, updatedFilm) => {
@@ -34,6 +42,7 @@ const onDataChange = (actionType, updatedFilm) => {
       })
       .then(() => api.getMovies())
       .then((movies) => {
+        hideMainPage();
         menuController.show(movies);
         pageController.show(movies);
       });
@@ -41,11 +50,6 @@ const onDataChange = (actionType, updatedFilm) => {
     case `create`:
       break;
     case `delete`:
-      // api.deleteComments({
-      //   id: updatedFilm.id
-      // })
-      //   .then(() => api.getMovies())
-      //   .then((movies) => pageController.show(movies));
       break;
   }
 };
@@ -65,8 +69,10 @@ const searchController = new SearchController(mainWrapper, popupWrapper, search,
 const chartController = new ChartController(mainWrapper);
 const menuController = new MenuController(mainWrapper, pageController, searchController, chartController);
 
-api.getMovies().then((movies) => menuController.show(movies));
-api.getMovies().then((movies) => pageController.show(movies));
+api.getMovies().then((movies) => {
+  menuController.show(movies);
+  pageController.show(movies);
+});
 
 search.getElement().querySelector(`.search__field`).addEventListener(`keyup`, (evt) => {
   if (evt.target.value.length >= MIN_SEARCH_SYMBOLS) {
@@ -75,9 +81,12 @@ search.getElement().querySelector(`.search__field`).addEventListener(`keyup`, (e
     pageController.hide();
     api.getMovies().then((movies) => searchController.show(movies));
   } else if (evt.target.value.length === 0) {
-    api.getMovies().then((movies) => menuController.show(movies));
     chartController.hide();
     searchController.hide();
-    api.getMovies().then((movies) => pageController.show(movies));
+    api.getMovies().then((movies) => {
+      hideMainPage();
+      menuController.show(movies);
+      pageController.show(movies);
+    });
   }
 });

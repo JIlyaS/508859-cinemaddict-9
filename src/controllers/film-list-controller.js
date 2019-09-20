@@ -66,7 +66,7 @@ class FilmListController {
     }
 
     this.setFilms(this._films);
-    this._onDataChangeMain(this._films);
+    // this._onDataChangeMain(this._films);
   }
 }
 

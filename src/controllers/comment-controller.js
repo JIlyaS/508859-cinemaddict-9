@@ -3,13 +3,13 @@ import {COMMENT_AUTHORS, MINUS_INDEX, ENTER_KEY} from '../constants';
 import {render, getRandomValue, unrender, getCommentDate} from '../utils';
 
 class CommentController {
-  constructor(container, dataFilm, detailsPopup, getState, onDataChange) {
-    this._container = container;
+  constructor(containerPopup, dataFilm, getState, onDataChange) {
+    this._containerPopup = containerPopup;
     this._dataFilm = dataFilm;
-    this._detailsPopup = detailsPopup;
     this._onDataChange = onDataChange;
-    this._commentComponent = {};
     this._getState = getState;
+
+    this._containerComments = this._containerPopup.getElement().querySelector(`.form-details__bottom-container`);
   }
 
   getFormData() {
@@ -25,18 +25,14 @@ class CommentController {
   }
 
   show(comments) {
-    this._renderCommentList(comments);
+    this._commentComponent = new Comments({comments});
+
+    this._init();
   }
 
   hide() {
     unrender(this._commentComponent.getElement());
     this._commentComponent.removeElement();
-  }
-
-  _renderCommentList(comments) {
-    this._commentComponent = new Comments({comments});
-
-    this._init();
   }
 
   _init() {
@@ -46,7 +42,7 @@ class CommentController {
       if (evt.ctrlKey && evt.keyCode === ENTER_KEY) {
         const formData = this.getFormData();
         const data = Object.assign(this._dataFilm, this._getState());
-        this._onDataChange(data, null, formData.comment);
+        // this._onDataChange(data, null, formData.comment);
         this.hide();
         this._init();
       }
@@ -65,7 +61,7 @@ class CommentController {
     this._commentComponent.getElement().querySelectorAll(`.film-details__comment-delete`).forEach((elem, id) => {
       elem.addEventListener(`click`, (evt) => {
         evt.preventDefault();
-        this._onDataChange(null, this._dataFilm, this._dataFilm.comments[id]);
+        // this._onDataChange(null, this._dataFilm, this._dataFilm.comments[id]);
         this.hide();
         this._init();
       });
@@ -77,7 +73,7 @@ class CommentController {
       });
     });
 
-    render(this._container, this._commentComponent.getElement());
+    render(this._containerComments, this._commentComponent.getElement());
   }
 }
 

@@ -67,6 +67,7 @@ class PageController {
   }
 
   show(films) {
+    console.log(films);
     if (films !== this._films) {
       this._setFilms(films);
     }
