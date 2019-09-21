@@ -16,7 +16,7 @@ class DetailsPopup extends AbstractComponent {
     this._isWatchlist = card.isWatchlist;
     this._isViewed = card.isViewed;
     this._isFavorite = card.isFavorite;
-    this._personalScore = card.personalScore;
+    this._personalRating = card.personalRating;
     this._isFilmDetails = card.isFilmDetails;
   }
 
@@ -112,7 +112,7 @@ class DetailsPopup extends AbstractComponent {
             <p class="film-details__user-rating-feelings">How you feel it?</p>
 
             <div class="film-details__user-rating-score">
-              ${new Array(PERSONAL_RATING_COUNT).fill().map((_, id) => `<input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="${id + 1}" id="rating-${id + 1}" ${Number(this._personalScore) === (id + 1) ? `checked` : ``}>
+              ${new Array(PERSONAL_RATING_COUNT).fill().map((_, id) => `<input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="${id + 1}" id="rating-${id + 1}" ${Number(this._personalRating) === (id + 1) ? `checked` : ``}>
                 <label class="film-details__user-rating-label" for="rating-${id + 1}">${id + 1}</label>`).join(` `)}
             </div>
           </section>

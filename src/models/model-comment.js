@@ -2,10 +2,10 @@ import moment from 'moment';
 
 class ModelComment {
   constructor(data) {
-    this.id = Number(data[`id`]);
+    this.id = data[`id`];
     this.author = data[`author`];
-    this.emoji = data[`emotion`];
-    this.description = data[`comment`];
+    this.emotion = data[`emotion`];
+    this.comment = data[`comment`];
     this.date = Number(moment(data[`date`]).format(`x`));
   }
 
@@ -15,6 +15,16 @@ class ModelComment {
 
   static parseComments(data) {
     return data.map(ModelComment.parseComment);
+  }
+
+  toRAW() {
+    return {
+      'id': this.id,
+      'author': this.author,
+      'comment': this.comment,
+      'date': this.date,
+      'emotion': this.emotion
+    };
   }
 }
 

@@ -24,12 +24,12 @@ const onSearchCloseButtonClick = () => {
   onDataChange(ActionType.CREATE);
 };
 
-const onDataChange = (actionType, updatedFilm) => {
+const onDataChange = (actionType, updated, callback) => {
   switch (actionType) {
     case ActionType.UPDATE:
       api.updateMovie({
-        id: updatedFilm.id,
-        data: updatedFilm.toRAW()
+        id: updated.id,
+        data: updated.toRAW()
       })
       .then(() => api.getMovies())
       .then((movies) => {
@@ -44,8 +44,29 @@ const onDataChange = (actionType, updatedFilm) => {
         footerFilmCountBlock.textContent = `${movies.length} movies inside`;
       });
       break;
-    case `delete`:
+    case ActionType.CREATE_COMMENT:
+      api.createComment({
+        id: updated.movieId,
+        comment: updated.comment
+      })
+      .then(() => api.getMovies())
+      .then((movies) => {
+        pageController.show(movies);
+        callback();
+      });
       break;
+    case ActionType.DELETE_COMMENT:
+      api.deleteComment({
+        commentId: updated.id
+      })
+      .then(() => api.getMovies())
+      .then((movies) => {
+        pageController.show(movies);
+        callback();
+      });
+      break;
+    default:
+      throw new Error(`Incorrect ActionType property`);
   }
 };
 

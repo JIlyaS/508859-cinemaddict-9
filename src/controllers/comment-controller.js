@@ -1,31 +1,34 @@
 import Comments from '../components/comments';
-import {COMMENT_AUTHORS, MINUS_INDEX, ENTER_KEY} from '../constants';
-import {render, getRandomValue, unrender, getCommentDate} from '../utils';
+import {ENTER_KEY, ActionType} from '../constants';
+import {render, unrender} from '../utils';
 
 class CommentController {
-  constructor(containerPopup, dataFilm, getState, onDataChange) {
-    this._containerPopup = containerPopup;
+  constructor(detailsPopup, dataFilm, getState, onDataChangeMain, renderComment) {
+    this._detailsPopup = detailsPopup;
     this._dataFilm = dataFilm;
-    this._onDataChange = onDataChange;
+    this._onDataChangeMain = onDataChangeMain;
+    this._renderComment = renderComment;
     this._getState = getState;
 
-    this._containerComments = this._containerPopup.getElement().querySelector(`.form-details__bottom-container`);
+    this._comments = [];
+
+    this._containerComments = this._detailsPopup.getElement().querySelector(`.form-details__bottom-container`);
   }
 
   getFormData() {
     const formData = new FormData(this._detailsPopup.getElement().querySelector(`.film-details__inner`));
     return {
       comment: {
-        emoji: formData.get(`comment-emoji`) !== null ? formData.get(`comment-emoji`) : `smile`,
-        description: formData.get(`comment`),
-        author: COMMENT_AUTHORS[getRandomValue(COMMENT_AUTHORS.length - MINUS_INDEX)],
-        dayComment: getCommentDate()
+        emotion: formData.get(`comment-emoji`) !== null ? formData.get(`comment-emoji`) : `smile`,
+        comment: formData.get(`comment`),
+        date: new Date(Date.now())
       }
     };
   }
 
   show(comments) {
-    this._commentComponent = new Comments({comments});
+    this._comments = comments;
+    this._commentComponent = new Comments({comments: this._comments});
 
     this._init();
   }
@@ -41,10 +44,7 @@ class CommentController {
     const onAddComment = (evt) => {
       if (evt.ctrlKey && evt.keyCode === ENTER_KEY) {
         const formData = this.getFormData();
-        const data = Object.assign(this._dataFilm, this._getState());
-        // this._onDataChange(data, null, formData.comment);
-        this.hide();
-        this._init();
+        this._onDataChangeMain(ActionType.CREATE_COMMENT, {movieId: this._dataFilm.id, comment: formData.comment}, this._renderComment);
       }
     };
 
@@ -61,9 +61,7 @@ class CommentController {
     this._commentComponent.getElement().querySelectorAll(`.film-details__comment-delete`).forEach((elem, id) => {
       elem.addEventListener(`click`, (evt) => {
         evt.preventDefault();
-        // this._onDataChange(null, this._dataFilm, this._dataFilm.comments[id]);
-        this.hide();
-        this._init();
+        this._onDataChangeMain(ActionType.DELETE_COMMENT, {id: this._comments[id].id}, this._renderComment);
       });
     });
 

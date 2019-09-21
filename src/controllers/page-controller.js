@@ -138,7 +138,7 @@ class PageController {
 
         switch (evt.target.dataset.sortType) {
           case Sorted.DATE:
-            const sortedByDateUpFilms = this._films.slice().sort((a, b) => a.date - b.date);
+            const sortedByDateUpFilms = this._films.slice().sort((a, b) => b.date - a.date);
             this._films = [...sortedByDateUpFilms];
             this._renderFilmsList(this._films);
             break;

@@ -28,13 +28,20 @@ class API {
     return this._load({url: `comments/${movieId}`}).then(toJSON).then(ModelComment.parseComments);
   }
 
-  // createComment({commentId}) {
+  createComment({id, comment}) {
+    return this._load({
+      url: `comments/${id}`,
+      method: Method.POST,
+      body: JSON.stringify(comment),
+      headers: new Headers({'Content-Type': `application/json`})
+    })
+      .then(toJSON)
+      .then(ModelComment.parseComment);
+  }
 
-  // }
-
-  // deleteComment({commentId}) {
-  //   return this._load({url: `movies/${commentId}`, method: Method.DELETE});
-  // }
+  deleteComment({commentId}) {
+    return this._load({url: `comments/${commentId}`, method: Method.DELETE});
+  }
 
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {
     headers.append(`Authorization`, this._authorization);

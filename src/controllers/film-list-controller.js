@@ -13,7 +13,7 @@ class FilmListController {
     this._subscriptions = [];
 
     this._onChangeView = this._onChangeView.bind(this);
-    this._onDataChange = this._onDataChange.bind(this);
+    // this._onDataChange = this._onDataChange.bind(this);
   }
 
   setFilms(films) {
@@ -50,23 +50,6 @@ class FilmListController {
 
   _onChangeView() {
     this._subscriptions.forEach((subscription) => subscription());
-  }
-
-  _onDataChange(newData, oldData, updateComment = null) {
-    if (newData === null) {
-      const index = this._films.findIndex((film) => film === oldData);
-      const commentIndex = this._films[index].comments.findIndex((comment) => comment === updateComment);
-      this._films[index].comments.splice(commentIndex, 1);
-    } else if (oldData === null) {
-      const index = this._films.findIndex((film) => film === newData);
-      this._films[index].comments.push(updateComment);
-    } else {
-      const index = this._films.findIndex((film) => film === oldData);
-      this._films[index] = newData;
-    }
-
-    this.setFilms(this._films);
-    // this._onDataChangeMain(this._films);
   }
 }
 

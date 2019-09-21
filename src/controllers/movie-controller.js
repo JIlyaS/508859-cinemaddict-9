@@ -15,7 +15,7 @@ class MovieController {
     this._filmCard = new FilmCard(this._dataFilm);
     this._detailsPopup = new DetailsPopup(this._dataFilm);
     this._api = new API({authorization: AUTHORIZATION, server: SERVER});
-    this._commentController = new CommentController(this._detailsPopup, this._dataFilm, this.getState, this._onDataChangeMain);
+    this._commentController = new CommentController(this._detailsPopup, this._dataFilm, this.getState, this._onDataChangeMain, this._renderComment.bind(this));
   }
 
   getState() {
@@ -30,7 +30,7 @@ class MovieController {
   getFormData() {
     const formData = new FormData(this._detailsPopup.getElement().querySelector(`.film-details__inner`));
     return {
-      personalScore: formData.get(`score`),
+      personalRating: formData.get(`score`),
     };
   }
 
@@ -47,17 +47,24 @@ class MovieController {
   }
 
   _renderCommentsBlock() {
-    this._api.getMovieComments({movieId: this._dataFilm.id}).then((comments) => this._commentController.show(comments));
+    this._api.getMovieComments({movieId: this._dataFilm.id}).then((comments) => {
+      this._commentController.show(comments);
+    });
+  }
+
+  _renderComment() {
+    this._api.getMovieComments({movieId: this._dataFilm.id}).then((comments) => {
+      this._commentController.hide();
+      this._commentController.show(comments);
+    });
   }
 
   init() {
     const onEscKeyDown = (evt) => {
       if (evt.key === `Escape` || evt.key === `Esc`) {
         const newState = Object.assign(this.getState(), {isFilmDetails: !this._dataFilm.isFilmDetails});
-        const data = Object.assign(this._dataFilm, newState);
-        // this._onDataChange(data, this._dataFilm);
-
         this._hideDetailsPopup();
+        this._onDataChangeMain(ActionType.UPDATE, Object.assign(this._dataFilm, newState));
 
         document.removeEventListener(`keydown`, onEscKeyDown);
       }
@@ -67,14 +74,10 @@ class MovieController {
     .querySelector(`.film-card__poster`)
     .addEventListener(`click`, () => {
       this._onChangeView();
-
-      // const newState = Object.assign(this.getState(), {isFilmDetails: !this._dataFilm.isFilmDetails});
-      // const data = Object.assign(this._dataFilm, newState);
-      // this._onDataChange(data, this._dataFilm);
-
+      const newState = Object.assign(this.getState(), {isFilmDetails: !this._dataFilm.isFilmDetails});
       this._renderCommentsBlock();
       render(this._popupContainer.getElement(), this._detailsPopup.getElement());
-      this.init();
+      this._onDataChangeMain(ActionType.UPDATE, Object.assign(this._dataFilm, newState));
 
       document.addEventListener(`keydown`, onEscKeyDown);
     });
@@ -83,13 +86,11 @@ class MovieController {
       .querySelector(`.film-card__title`)
       .addEventListener(`click`, () => {
         this._onChangeView();
-        // const newState = Object.assign(this.getState(), {isFilmDetails: !this._dataFilm.isFilmDetails});
-        // const data = Object.assign(this._dataFilm, newState);
-        // this._onDataChange(data, this._dataFilm);
+        const newState = Object.assign(this.getState(), {isFilmDetails: !this._dataFilm.isFilmDetails});
 
         this._renderCommentsBlock();
         render(this._popupContainer.getElement(), this._detailsPopup.getElement());
-        this.init();
+        this._onDataChangeMain(ActionType.UPDATE, Object.assign(this._dataFilm, newState));
 
         document.addEventListener(`keydown`, onEscKeyDown);
       });
@@ -98,13 +99,11 @@ class MovieController {
       .querySelector(`.film-card__comments`)
       .addEventListener(`click`, () => {
         this._onChangeView();
-        // const newState = Object.assign(this.getState(), {isFilmDetails: !this._dataFilm.isFilmDetails});
-        // const data = Object.assign(this._dataFilm, newState);
-        // this._onDataChange(data, this._dataFilm);
+        const newState = Object.assign(this.getState(), {isFilmDetails: !this._dataFilm.isFilmDetails});
 
         this._renderCommentsBlock();
         render(this._popupContainer.getElement(), this._detailsPopup.getElement());
-        this.init();
+        this._onDataChangeMain(ActionType.UPDATE, Object.assign(this._dataFilm, newState));
 
         document.addEventListener(`keydown`, onEscKeyDown);
       });
@@ -121,8 +120,14 @@ class MovieController {
       .querySelector(`.film-card__controls-item--mark-as-watched`)
       .addEventListener(`click`, (evt) => {
         evt.preventDefault();
-        const newState = Object.assign(this.getState(), {isViewed: !this._dataFilm.isViewed});
-        const newData = Object.assign(this._dataFilm, {personalScore: null});
+        const isViewed = !this._dataFilm.isViewed;
+        if (isViewed === false) {
+          this._detailsPopup.getElement().querySelectorAll(`.film-details__user-rating-input`).forEach((elem) => {
+            elem.checked = false;
+          });
+        }
+        const newState = Object.assign(this.getState(), {isViewed});
+        const newData = Object.assign(this._dataFilm, {personalRating: null});
         this._onDataChangeMain(ActionType.UPDATE, Object.assign(newData, newState));
       });
 
@@ -137,19 +142,15 @@ class MovieController {
     this._detailsPopup.getElement().querySelector(`.film-details__close-btn`)
       .addEventListener(`click`, () => {
         const newState = Object.assign(this.getState(), {isFilmDetails: !this._dataFilm.isFilmDetails});
-        const data = Object.assign(this._dataFilm, newState);
-        // this._onDataChange(data, this._dataFilm);
-
         this._hideDetailsPopup();
-
+        this._onDataChangeMain(ActionType.UPDATE, Object.assign(this._dataFilm, newState));
         document.removeEventListener(`keydown`, onEscKeyDown);
       });
 
     this._detailsPopup.getElement().querySelector(`.film-details__control-label--watchlist`)
       .addEventListener(`click`, () => {
         const newState = Object.assign(this.getState(), {isWatchlist: !this._dataFilm.isWatchlist});
-        const data = Object.assign(this._dataFilm, newState);
-        // this._onDataChange(data, this._dataFilm);
+        this._onDataChangeMain(ActionType.UPDATE, Object.assign(this._dataFilm, newState));
       });
 
     this._detailsPopup.getElement().querySelector(`.film-details__control-label--watched`)
@@ -161,9 +162,7 @@ class MovieController {
           });
         }
         const newState = Object.assign(this.getState(), {isViewed});
-        const newData = Object.assign(this._dataFilm, {personalScore: null});
-        // const data = Object.assign(newData, newState);
-        // this._onDataChange(data, this._dataFilm);
+        const newData = Object.assign(this._dataFilm, {personalRating: null});
         this._detailsPopup.getElement().querySelector(`.form-details__middle-container`).classList.toggle(`visually-hidden`);
         this._onDataChangeMain(ActionType.UPDATE, Object.assign(newData, newState));
       });
@@ -171,15 +170,13 @@ class MovieController {
     this._detailsPopup.getElement().querySelector(`.film-details__control-label--favorite`)
       .addEventListener(`click`, () => {
         const newState = Object.assign(this.getState(), {isFavorite: !this._dataFilm.isFavorite});
-        const data = Object.assign(this._dataFilm, newState);
-        // this._onDataChange(data, this._dataFilm);
+        this._onDataChangeMain(ActionType.UPDATE, Object.assign(this._dataFilm, newState));
       });
 
     this._detailsPopup.getElement().querySelectorAll(`.film-details__user-rating-input`).forEach((elem) => {
       elem.addEventListener(`click`, () => {
         const newData = Object.assign(this._dataFilm, this.getFormData());
-        const data = Object.assign(newData, this.getState());
-        // this._onDataChange(data, this._dataFilm);
+        this._onDataChangeMain(ActionType.UPDATE, Object.assign(newData, this.getState()));
       });
     });
 
@@ -189,9 +186,8 @@ class MovieController {
         this._detailsPopup.getElement().querySelectorAll(`.film-details__user-rating-input`).forEach((elem) => {
           elem.checked = false;
         });
-        const newData = Object.assign(this._dataFilm, {personalScore: null});
-        const data = Object.assign(newData, this.getState());
-        // this._onDataChange(data, this._dataFilm);
+        const newData = Object.assign(this._dataFilm, {personalRating: null});
+        this._onDataChangeMain(ActionType.UPDATE, Object.assign(newData, this.getState()));
       });
     }
 
