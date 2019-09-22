@@ -13,12 +13,19 @@ class CommentController {
     this._chartController = chartController;
 
     this._films = [];
+    this._isSearch = false;
   }
 
   show(films) {
-    if (films !== this._films) {
-      this._setFilms(films);
+    if (!this._isSearch) {
+      if (films !== this._films) {
+        this._setFilms(films);
+      }
     }
+  }
+
+  setSearch(isSearch) {
+    this._isSearch = isSearch;
   }
 
   hide() {

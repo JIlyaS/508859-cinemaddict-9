@@ -15,6 +15,7 @@ class SearchController {
     this._onSearchCloseButtonClick = onSearchCloseButtonClick;
 
     this._films = [];
+    this._isSearch = false;
 
     this._filmsSearchWrapper = new FilmsWrapper();
     this._filmsSearchList = new FilmsList();
@@ -54,13 +55,19 @@ class SearchController {
   }
 
   show(films) {
-    this._films = films.slice();
-    const value = this._search.getElement().querySelector(`.search__field`).value;
-    this._renderFindedFilmsWrapper();
-    const filteredFilms = this._films.filter((film) => {
-      return film.title.toLowerCase().includes(value.toLowerCase());
-    });
-    this._showSearchResult(value, filteredFilms);
+    if (this._isSearch) {
+      this._films = films.slice();
+      const value = this._search.getElement().querySelector(`.search__field`).value;
+      this._renderFindedFilmsWrapper();
+      const filteredFilms = this._films.filter((film) => {
+        return film.title.toLowerCase().includes(value.toLowerCase());
+      });
+      this._showSearchResult(value, filteredFilms);
+    }
+  }
+
+  setSearch(isSearch) {
+    this._isSearch = isSearch;
   }
 
   _showSearchResult(_, films) {
@@ -102,7 +109,7 @@ class SearchController {
     render(this._container, this._searchInfo.getElement());
     this._renderFindedFilmsWrapper();
 
-    return this._filmListController.setFilms(films);
+    this._filmListController.setFilms(films);
   }
 
   _renderEmptyResult() {

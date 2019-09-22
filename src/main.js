@@ -18,9 +18,16 @@ const api = new API({authorization: AUTHORIZATION, server: SERVER});
 const search = new Search();
 const popupWrapper = new PopupWrapper();
 
+const changeSearchInfo = (isSearch) => {
+  menuController.setSearch(isSearch);
+  pageController.setSearch(isSearch);
+  searchController.setSearch(isSearch);
+};
+
 const onSearchCloseButtonClick = () => {
   chartController.hide();
   searchController.hide();
+  changeSearchInfo(false);
   onDataChange(ActionType.CREATE);
 };
 
@@ -35,12 +42,14 @@ const onDataChange = (actionType, updated, callback) => {
       .then((movies) => {
         menuController.show(movies);
         pageController.show(movies);
+        searchController.show(movies);
       });
       break;
     case ActionType.CREATE:
       api.getMovies().then((movies) => {
         menuController.show(movies);
         pageController.show(movies);
+        searchController.show(movies);
         footerFilmCountBlock.textContent = `${movies.length} movies inside`;
       });
       break;
@@ -88,10 +97,12 @@ search.getElement().querySelector(`.search__field`).addEventListener(`keyup`, (e
     menuController.hide();
     chartController.hide();
     pageController.hide();
+    changeSearchInfo(true);
     api.getMovies().then((movies) => searchController.show(movies));
   } else if (evt.target.value.length === 0) {
     chartController.hide();
     searchController.hide();
+    changeSearchInfo(false);
     onDataChange(ActionType.CREATE);
   }
 });

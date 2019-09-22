@@ -23,6 +23,7 @@ class PageController {
     this._commentedList = new CommentedList();
     this._emptyResult = null;
     this._footer = document.querySelector(`.footer`);
+    this._isSearch = false;
 
     this._onClickShowButton = this._onClickShowButton.bind(this);
 
@@ -67,12 +68,17 @@ class PageController {
   }
 
   show(films) {
-    if (films !== this._films) {
-      this._setFilms(films);
+    if (!this._isSearch) {
+      if (films !== this._films) {
+        this._setFilms(films);
+      }
+      this._sortBlock.getElement().classList.remove(`visually-hidden`);
+      this._filmsWrapper.getElement().classList.remove(`visually-hidden`);
     }
+  }
 
-    this._sortBlock.getElement().classList.remove(`visually-hidden`);
-    this._filmsWrapper.getElement().classList.remove(`visually-hidden`);
+  setSearch(isSearch) {
+    this._isSearch = isSearch;
   }
 
   _onChangeView() {
