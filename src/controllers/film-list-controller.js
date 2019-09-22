@@ -1,6 +1,6 @@
 import MovieController from './movie-controller';
 import {RenderPosition} from '../constants';
-import {render, unrender} from '../utils';
+import {render} from '../utils';
 
 class FilmListController {
   constructor(filmsWrapper, container, popupWrapper, onDataChangeMain, renderPosition = RenderPosition.DEFAULT) {
