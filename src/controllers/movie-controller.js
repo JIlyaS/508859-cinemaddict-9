@@ -15,7 +15,7 @@ class MovieController {
     this._filmCard = new FilmCard(this._dataFilm);
     this._detailsPopup = new DetailsPopup(this._dataFilm);
     this._api = new API({authorization: AUTHORIZATION, server: SERVER});
-    this._commentController = new CommentController(this._detailsPopup, this._dataFilm, this.getState, this._onDataChangeMain, this._renderComment.bind(this));
+    this._commentController = new CommentController(this._detailsPopup, this._dataFilm, this.getState, this._onDataChangeMain, this._queryAddComment.bind(this), this._queryDeleteComment.bind(this));
   }
 
   getState() {
@@ -50,7 +50,19 @@ class MovieController {
     });
   }
 
-  _renderComment() {
+  _queryAddComment() {
+    this._api.getMovieComments({movieId: this._dataFilm.id}).then((comments) => {
+      this._commentController.enabledCommentTextarea();
+      this._commentController.hide();
+      this._commentController.show(comments);
+    }).catch(() => {
+      this._commentController.viewErrorComponent();
+      this._commentController.shakeErrorComponent();
+      this._commentController.enabledCommentTextarea();
+    });
+  }
+
+  _queryDeleteComment() {
     this._api.getMovieComments({movieId: this._dataFilm.id}).then((comments) => {
       this._commentController.hide();
       this._commentController.show(comments);
