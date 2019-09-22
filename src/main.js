@@ -1,54 +1,110 @@
 import Search from './components/search';
 import Profile from './components/profile';
 import PopupWrapper from './components/popup-wrapper';
+import API from './api';
 import PageController from './controllers/page-controller';
 import SearchController from './controllers/search-controller';
 import MenuController from './controllers/menu-controller';
-import {render, getCountFilmsToRender} from './utils';
-import {COUNT_FILMS, MIN_SEARCH_SYMBOLS} from './constants';
-import {getRang, getDataFilmCard} from './components/data';
+import {render} from './utils';
+import {MIN_SEARCH_SYMBOLS, AUTHORIZATION, SERVER, ActionType} from './constants';
+import {getRang} from './components/data';
 import ChartController from './controllers/chart-controller';
 
 const headerWrapper = document.querySelector(`.header`);
 const mainWrapper = document.querySelector(`.main`);
 const footerFilmCountBlock = document.querySelector(`.footer__statistics p`);
 
-const dataFilmCards = new Array(getCountFilmsToRender(COUNT_FILMS)).fill().map(() => getDataFilmCard());
-const watchedFilms = dataFilmCards.filter((elem) => elem.isViewed === true);
-
+const api = new API({authorization: AUTHORIZATION, server: SERVER});
 const search = new Search();
-const profile = new Profile(getRang(watchedFilms.length));
 const popupWrapper = new PopupWrapper();
 
+const changeSearchInfo = (isSearch) => {
+  menuController.setSearch(isSearch);
+  pageController.setSearch(isSearch);
+  searchController.setSearch(isSearch);
+};
+
 const onSearchCloseButtonClick = () => {
-  menuController.show(dataFilmCards);
   chartController.hide();
   searchController.hide();
-  pageController.show(dataFilmCards);
+  changeSearchInfo(false);
+  onDataChange(ActionType.CREATE);
+};
+
+const onDataChange = (actionType, updated, callback) => {
+  switch (actionType) {
+    case ActionType.UPDATE:
+      api.updateMovie({
+        id: updated.id,
+        data: updated.toRAW()
+      })
+      .then(() => api.getMovies())
+      .then((movies) => {
+        menuController.show(movies);
+        pageController.show(movies);
+        searchController.show(movies);
+      });
+      break;
+    case ActionType.CREATE:
+      api.getMovies().then((movies) => {
+        menuController.show(movies);
+        pageController.show(movies);
+        searchController.show(movies);
+        footerFilmCountBlock.textContent = `${movies.length} movies inside`;
+      });
+      break;
+    case ActionType.CREATE_COMMENT:
+      api.createComment({
+        id: updated.movieId,
+        comment: updated.comment
+      })
+      .then(() => api.getMovies())
+      .then((movies) => {
+        pageController.show(movies);
+        callback();
+      });
+      break;
+    case ActionType.DELETE_COMMENT:
+      api.deleteComment({
+        commentId: updated.id
+      })
+      .then(() => api.getMovies())
+      .then((movies) => {
+        pageController.show(movies);
+        callback();
+      });
+      break;
+    default:
+      throw new Error(`Incorrect ActionType property`);
+  }
 };
 
 render(headerWrapper, search.getElement());
-render(headerWrapper, profile.getElement());
 
-footerFilmCountBlock.textContent = `${COUNT_FILMS} movies inside`;
+api.getMovies().then((movies) => {
+  const watchedFilms = movies.filter((elem) => elem.isViewed === true);
+  const profile = new Profile(getRang(watchedFilms.length));
+  render(headerWrapper, profile.getElement());
+});
 
-const pageController = new PageController(mainWrapper, popupWrapper);
-const searchController = new SearchController(mainWrapper, popupWrapper, search, onSearchCloseButtonClick);
+const pageController = new PageController(mainWrapper, popupWrapper, onDataChange);
+const searchController = new SearchController(mainWrapper, popupWrapper, search, onDataChange, onSearchCloseButtonClick);
 const chartController = new ChartController(mainWrapper);
 const menuController = new MenuController(mainWrapper, pageController, searchController, chartController);
-menuController.show(dataFilmCards);
-pageController.show(dataFilmCards);
 
 search.getElement().querySelector(`.search__field`).addEventListener(`keyup`, (evt) => {
   if (evt.target.value.length >= MIN_SEARCH_SYMBOLS) {
     menuController.hide();
     chartController.hide();
     pageController.hide();
-    searchController.show(dataFilmCards);
+    changeSearchInfo(true);
+    api.getMovies().then((movies) => searchController.show(movies));
   } else if (evt.target.value.length === 0) {
-    menuController.show(dataFilmCards);
     chartController.hide();
     searchController.hide();
-    pageController.show(dataFilmCards);
+    changeSearchInfo(false);
+    onDataChange(ActionType.CREATE);
   }
 });
+
+onDataChange(ActionType.CREATE);

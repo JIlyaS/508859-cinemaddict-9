@@ -1,18 +1,21 @@
 import FilmCard from '../components/film-card';
 import DetailsPopup from '../components/details-popup';
 import CommentController from './comment-controller';
-import {render, unrender} from '../utils';
+import {render} from '../utils';
+import {AUTHORIZATION, SERVER, ActionType} from '../constants';
+import API from '../api';
 
 class MovieController {
-  constructor(container, dataFilm, popupContainer, onDataChange, onChangeView) {
+  constructor(container, dataFilm, popupContainer, onDataChangeMain, onChangeView) {
     this._container = container;
     this._dataFilm = dataFilm;
     this._popupContainer = popupContainer;
-    this._onDataChange = onDataChange;
+    this._onDataChangeMain = onDataChangeMain;
     this._onChangeView = onChangeView;
     this._filmCard = new FilmCard(this._dataFilm);
     this._detailsPopup = new DetailsPopup(this._dataFilm);
-    this._containerComments = this._detailsPopup.getElement().querySelector(`.form-details__bottom-container`);
+    this._api = new API({authorization: AUTHORIZATION, server: SERVER});
+    this._commentController = new CommentController(this._detailsPopup, this._dataFilm, this.getState, this._onDataChangeMain, this._renderComment.bind(this));
   }
 
   getState() {
@@ -27,30 +30,40 @@ class MovieController {
   getFormData() {
     const formData = new FormData(this._detailsPopup.getElement().querySelector(`.film-details__inner`));
     return {
-      personalScore: formData.get(`score`),
+      personalRating: formData.get(`score`),
     };
   }
 
   setDefaultView() {
     if (this._popupContainer.getElement().childNodes.length) {
-      this._popupContainer.getElement().innerHTML = ``;
+      this._hideDetailsPopup();
     }
   }
 
+  _hideDetailsPopup() {
+    this._popupContainer.getElement().innerHTML = ``;
+  }
+
   _renderCommentsBlock() {
-    const commentController = new CommentController(this._containerComments, this._dataFilm, this._detailsPopup, this.getState, this._onDataChange);
-    commentController.init();
+    this._api.getMovieComments({movieId: this._dataFilm.id}).then((comments) => {
+      this._commentController.show(comments);
+    });
+  }
+
+  _renderComment() {
+    this._api.getMovieComments({movieId: this._dataFilm.id}).then((comments) => {
+      this._commentController.hide();
+      this._commentController.show(comments);
+    });
   }
 
   init() {
     const onEscKeyDown = (evt) => {
       if (evt.key === `Escape` || evt.key === `Esc`) {
         const newState = Object.assign(this.getState(), {isFilmDetails: !this._dataFilm.isFilmDetails});
-        const data = Object.assign(this._dataFilm, newState);
-        this._onDataChange(data, this._dataFilm);
+        this._hideDetailsPopup();
+        this._onDataChangeMain(ActionType.UPDATE, Object.assign(this._dataFilm, newState));
 
-        unrender(this._detailsPopup.getElement());
-        this._detailsPopup.removeElement();
         document.removeEventListener(`keydown`, onEscKeyDown);
       }
     };
@@ -60,9 +73,10 @@ class MovieController {
     .addEventListener(`click`, () => {
       this._onChangeView();
       const newState = Object.assign(this.getState(), {isFilmDetails: !this._dataFilm.isFilmDetails});
-      const data = Object.assign(this._dataFilm, newState);
-      this._onDataChange(data, this._dataFilm);
+      this._renderCommentsBlock();
       render(this._popupContainer.getElement(), this._detailsPopup.getElement());
+      this._onDataChangeMain(ActionType.UPDATE, Object.assign(this._dataFilm, newState));
+
       document.addEventListener(`keydown`, onEscKeyDown);
     });
 
@@ -71,9 +85,11 @@ class MovieController {
       .addEventListener(`click`, () => {
         this._onChangeView();
         const newState = Object.assign(this.getState(), {isFilmDetails: !this._dataFilm.isFilmDetails});
-        const data = Object.assign(this._dataFilm, newState);
-        this._onDataChange(data, this._dataFilm);
+
+        this._renderCommentsBlock();
         render(this._popupContainer.getElement(), this._detailsPopup.getElement());
+        this._onDataChangeMain(ActionType.UPDATE, Object.assign(this._dataFilm, newState));
+
         document.addEventListener(`keydown`, onEscKeyDown);
       });
 
@@ -82,9 +98,11 @@ class MovieController {
       .addEventListener(`click`, () => {
         this._onChangeView();
         const newState = Object.assign(this.getState(), {isFilmDetails: !this._dataFilm.isFilmDetails});
-        const data = Object.assign(this._dataFilm, newState);
-        this._onDataChange(data, this._dataFilm);
+
+        this._renderCommentsBlock();
         render(this._popupContainer.getElement(), this._detailsPopup.getElement());
+        this._onDataChangeMain(ActionType.UPDATE, Object.assign(this._dataFilm, newState));
+
         document.addEventListener(`keydown`, onEscKeyDown);
       });
 
@@ -93,18 +111,22 @@ class MovieController {
       .addEventListener(`click`, (evt) => {
         evt.preventDefault();
         const newState = Object.assign(this.getState(), {isWatchlist: !this._dataFilm.isWatchlist});
-        const data = Object.assign(this._dataFilm, newState);
-        this._onDataChange(data, this._dataFilm);
+        this._onDataChangeMain(ActionType.UPDATE, Object.assign(this._dataFilm, newState));
       });
 
     this._filmCard.getElement()
       .querySelector(`.film-card__controls-item--mark-as-watched`)
       .addEventListener(`click`, (evt) => {
         evt.preventDefault();
-        const newState = Object.assign(this.getState(), {isViewed: !this._dataFilm.isViewed});
-        const newData = Object.assign(this._dataFilm, {personalScore: null});
-        const data = Object.assign(newData, newState);
-        this._onDataChange(data, this._dataFilm);
+        const isViewed = !this._dataFilm.isViewed;
+        if (isViewed === false) {
+          this._detailsPopup.getElement().querySelectorAll(`.film-details__user-rating-input`).forEach((elem) => {
+            elem.checked = false;
+          });
+        }
+        const newState = Object.assign(this.getState(), {isViewed});
+        const newData = Object.assign(this._dataFilm, {personalRating: null});
+        this._onDataChangeMain(ActionType.UPDATE, Object.assign(newData, newState));
       });
 
     this._filmCard.getElement()
@@ -112,25 +134,21 @@ class MovieController {
       .addEventListener(`click`, (evt) => {
         evt.preventDefault();
         const newState = Object.assign(this.getState(), {isFavorite: !this._dataFilm.isFavorite});
-        const data = Object.assign(this._dataFilm, newState);
-        this._onDataChange(data, this._dataFilm);
+        this._onDataChangeMain(ActionType.UPDATE, Object.assign(this._dataFilm, newState));
       });
 
     this._detailsPopup.getElement().querySelector(`.film-details__close-btn`)
       .addEventListener(`click`, () => {
         const newState = Object.assign(this.getState(), {isFilmDetails: !this._dataFilm.isFilmDetails});
-        const data = Object.assign(this._dataFilm, newState);
-        this._onDataChange(data, this._dataFilm);
+        this._hideDetailsPopup();
+        this._onDataChangeMain(ActionType.UPDATE, Object.assign(this._dataFilm, newState));
         document.removeEventListener(`keydown`, onEscKeyDown);
-        unrender(this._detailsPopup.getElement());
-        this._detailsPopup.removeElement();
       });
 
     this._detailsPopup.getElement().querySelector(`.film-details__control-label--watchlist`)
       .addEventListener(`click`, () => {
         const newState = Object.assign(this.getState(), {isWatchlist: !this._dataFilm.isWatchlist});
-        const data = Object.assign(this._dataFilm, newState);
-        this._onDataChange(data, this._dataFilm);
+        this._onDataChangeMain(ActionType.UPDATE, Object.assign(this._dataFilm, newState));
       });
 
     this._detailsPopup.getElement().querySelector(`.film-details__control-label--watched`)
@@ -142,24 +160,21 @@ class MovieController {
           });
         }
         const newState = Object.assign(this.getState(), {isViewed});
-        const newData = Object.assign(this._dataFilm, {personalScore: null});
-        const data = Object.assign(newData, newState);
-        this._onDataChange(data, this._dataFilm);
+        const newData = Object.assign(this._dataFilm, {personalRating: null});
         this._detailsPopup.getElement().querySelector(`.form-details__middle-container`).classList.toggle(`visually-hidden`);
+        this._onDataChangeMain(ActionType.UPDATE, Object.assign(newData, newState));
       });
 
     this._detailsPopup.getElement().querySelector(`.film-details__control-label--favorite`)
       .addEventListener(`click`, () => {
         const newState = Object.assign(this.getState(), {isFavorite: !this._dataFilm.isFavorite});
-        const data = Object.assign(this._dataFilm, newState);
-        this._onDataChange(data, this._dataFilm);
+        this._onDataChangeMain(ActionType.UPDATE, Object.assign(this._dataFilm, newState));
       });
 
     this._detailsPopup.getElement().querySelectorAll(`.film-details__user-rating-input`).forEach((elem) => {
       elem.addEventListener(`click`, () => {
         const newData = Object.assign(this._dataFilm, this.getFormData());
-        const data = Object.assign(newData, this.getState());
-        this._onDataChange(data, this._dataFilm);
+        this._onDataChangeMain(ActionType.UPDATE, Object.assign(newData, this.getState()));
       });
     });
 
@@ -169,13 +184,11 @@ class MovieController {
         this._detailsPopup.getElement().querySelectorAll(`.film-details__user-rating-input`).forEach((elem) => {
           elem.checked = false;
         });
-        const newData = Object.assign(this._dataFilm, {personalScore: null});
-        const data = Object.assign(newData, this.getState());
-        this._onDataChange(data, this._dataFilm);
+        const newData = Object.assign(this._dataFilm, {personalRating: null});
+        this._onDataChangeMain(ActionType.UPDATE, Object.assign(newData, this.getState()));
       });
     }
 
-    this._renderCommentsBlock();
     render(this._container.getElement().querySelector(`.films-list__container`), this._filmCard.getElement());
   }
 }

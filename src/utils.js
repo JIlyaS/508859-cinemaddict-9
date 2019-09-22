@@ -1,5 +1,5 @@
 import moment from 'moment';
-import {MILLISECONDS_YEAR, COUNT_FILMS, COUNT_FILM_CARDS, MILLISECONDS_DAY, DAY_AGO, YEAR_AGO, STATS_DAYS_AGO, Position} from './constants';
+import {MILLISECONDS_YEAR, COUNT_FILMS, COUNT_FILM_CARDS, MILLISECONDS_DAY, DAY_AGO, YEAR_AGO, STATS_DAYS_AGO, SHORT_DESCRIPTION_LENGTH, Position} from './constants';
 
 moment.updateLocale(`en`, {
   week: {
@@ -77,3 +77,41 @@ export const getCountFilmsToRender = (count) => {
   return count;
 };
 
+export const checkStatus = (response) => {
+  if (response.status >= 200 && response.status < 300) {
+    return response;
+  } else {
+    throw new Error(`${response.status}: ${response.statusText}`);
+  }
+};
+
+export const toJSON = (response) => {
+  return response.json();
+};
+
+export const getShortDescription = (description) => {
+  return description.length >= SHORT_DESCRIPTION_LENGTH ? description.slice(0, SHORT_DESCRIPTION_LENGTH - 1) + `...` : description;
+};
+
+export const getTransformRuntime = (runtime) => {
+  const hours = parseInt(runtime / 60, 10);
+  let minutes = runtime % 60;
+  if (minutes === 0) {
+    minutes = `00`;
+  } else if (minutes < 10) {
+    minutes = `0${minutes}`;
+  }
+  return hours !== 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
+};
+
+export const getCorrectDataArray = (dataArray) => {
+  return dataArray.length !== 0 ? dataArray : ``;
+};
+
+export const getCorrectData = (data) => {
+  return data ? data : ``;
+};
+
+export const getGenreTitle = (genres) => {
+  return genres.value.length > 1 ? `Genres` : `Genre`;
+};

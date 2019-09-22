@@ -1,5 +1,6 @@
 import moment from 'moment';
 import AbstractComponent from './abstract-component';
+import {getShortDescription, getCorrectData, getTransformRuntime} from '../utils';
 
 class FilmCard extends AbstractComponent {
   constructor(card) {
@@ -8,9 +9,9 @@ class FilmCard extends AbstractComponent {
     this._rating = card.rating;
     this._date = card.date;
     this._runtime = card.runtime;
-    this._genre = card.genre;
+    this._genres = card.genres;
     this._poster = card.poster;
-    this._shortDescription = card.shortDescription;
+    this._description = card.description;
     this._comments = card.comments;
     this._isWatchlist = card.isWatchlist;
     this._isViewed = card.isViewed;
@@ -23,11 +24,11 @@ class FilmCard extends AbstractComponent {
     <p class="film-card__rating">${this._rating.toFixed(1)}</p>
     <p class="film-card__info">
       <span class="film-card__year">${moment(this._date).format(`YYYY`)}</span>
-      <span class="film-card__duration">${this._runtime.hours !== 0 ? `${this._runtime.hours}h ${this._runtime.minutes}m` : `${this._runtime.minutes}m`}</span>
-      <span class="film-card__genre">${this._genre}</span>
+      <span class="film-card__duration">${getTransformRuntime(this._runtime)}</span>
+      <span class="film-card__genre">${getCorrectData(this._genres[0])}</span>
     </p>
-    <img src="./images/posters/${this._poster}" alt="" class="film-card__poster">
-    <p class="film-card__description">${this._shortDescription}</p>
+    <img src="./${this._poster}" alt="" class="film-card__poster">
+    <p class="film-card__description">${getShortDescription(this._description)}</p>
     <a class="film-card__comments">${this._comments.length} comments</a>
     <form class="film-card__controls">
       <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist ${this._isWatchlist ? `film-card__controls-item--active` : ``}">Add to watchlist</button>

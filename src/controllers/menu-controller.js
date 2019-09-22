@@ -7,20 +7,25 @@ class CommentController {
   constructor(container, pageController, searchController, chartController) {
     this._container = container;
     this._dataFilters = {};
-    this._menu = {};
+    this._menu = null;
     this._pageController = pageController;
     this._searchController = searchController;
     this._chartController = chartController;
 
     this._films = [];
+    this._isSearch = false;
   }
 
   show(films) {
-    if (films !== this._films) {
-      this._setFilms(films);
+    if (!this._isSearch) {
+      if (films !== this._films) {
+        this._setFilms(films);
+      }
     }
+  }
 
-    this._init();
+  setSearch(isSearch) {
+    this._isSearch = isSearch;
   }
 
   hide() {
@@ -29,13 +34,18 @@ class CommentController {
   }
 
   _setFilms(films) {
-    this._films = films;
+    this._films = films.slice();
 
     this._renderMenu(this._films);
   }
 
   _renderMenu(films) {
     this._dataFilters = NAME_FILTERS.map((filter) => getDataFilter(filter, films));
+
+    if (this._menu !== null) {
+      this.hide();
+    }
+
     this._menu = new Menu(this._dataFilters);
 
     this._init();
@@ -94,7 +104,7 @@ class CommentController {
 
   _changeFilter(evt, filterName) {
     this._getActiveMenuElement(evt);
-    const filteredFilmCards = this._films.filter((elem) => elem[filterName] === true);
+    const filteredFilmCards = this._films.slice().filter((elem) => elem[filterName] === true);
     this._pageController.show(filteredFilmCards);
   }
 }

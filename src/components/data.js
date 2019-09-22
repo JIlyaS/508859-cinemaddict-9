@@ -21,10 +21,10 @@ import {
 import {getRandomArray, getRandomValue, getRandomTime, shuffleElements, getReleaseDate, getCommentDate, getViewedDate} from '../utils';
 
 export const getDataComments = () => ({
-  emoji: EMOJI[getRandomValue(EMOJI.length - MINUS_INDEX)],
-  description: COMMENTS[getRandomValue(COMMENTS.length - MINUS_INDEX)],
+  emotion: EMOJI[getRandomValue(EMOJI.length - MINUS_INDEX)],
+  comment: COMMENTS[getRandomValue(COMMENTS.length - MINUS_INDEX)],
   author: COMMENT_AUTHORS[getRandomValue(COMMENT_AUTHORS.length - MINUS_INDEX)],
-  dataComment: getCommentDate()
+  date: getCommentDate()
 });
 
 export const getDataFilmCard = () => {

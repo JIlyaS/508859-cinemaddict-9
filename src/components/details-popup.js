@@ -1,21 +1,22 @@
 import moment from 'moment';
 import AbstractComponent from './abstract-component';
 import {PERSONAL_RATING_COUNT} from '../constants';
+import {getGenreTitle, getTransformRuntime} from '../utils';
 
 class DetailsPopup extends AbstractComponent {
   constructor(card) {
     super();
     this._poster = card.poster;
-    this._ageRestrictions = card.ageRestrictions;
+    this._ageRating = card.ageRating;
     this._title = card.title;
     this._titleOriginal = card.titleOriginal;
     this._rating = card.rating;
     this._details = card.details;
-    this._fullDescription = card.fullDescription;
+    this._description = card.description;
     this._isWatchlist = card.isWatchlist;
     this._isViewed = card.isViewed;
     this._isFavorite = card.isFavorite;
-    this._personalScore = card.personalScore;
+    this._personalRating = card.personalRating;
     this._isFilmDetails = card.isFilmDetails;
   }
 
@@ -30,9 +31,9 @@ class DetailsPopup extends AbstractComponent {
         </div>
         <div class="film-details__info-wrap">
           <div class="film-details__poster">
-            <img class="film-details__poster-img" src="./images/posters/${this._poster}" alt="">
+            <img class="film-details__poster-img" src="./${this._poster}" alt="">
 
-            <p class="film-details__age">${this._ageRestrictions}</p>
+            <p class="film-details__age">${this._ageRating}+</p>
           </div>
 
           <div class="film-details__info">
@@ -65,20 +66,20 @@ class DetailsPopup extends AbstractComponent {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">${runtime.name}</td>
-                <td class="film-details__cell">${runtime.value.hours !== 0 ? `${runtime.value.hours}h ${runtime.value.minutes}m` : `${runtime.value.minutes}m`}</td>
+                <td class="film-details__cell">${getTransformRuntime(runtime.value)}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">${country.name}</td>
-                <td class="film-details__cell">${country.value.map((cell) => cell).join(`, `)}</td>
+                <td class="film-details__cell">${country.value}</td>
               </tr>
               <tr class="film-details__row">
-                <td class="film-details__term">${genres.name}</td>
+                <td class="film-details__term">${getGenreTitle(genres)}</td>
                 <td class="film-details__cell">${genres.value.map((cell) => cell).join(`, `)}</td>
               </tr>
             </table>
 
             <p class="film-details__film-description">
-              ${this._fullDescription.join(` `)}
+              ${this._description}
             </p>
           </div>
         </div>
@@ -102,7 +103,7 @@ class DetailsPopup extends AbstractComponent {
 
         <div class="film-details__user-score">
           <div class="film-details__user-rating-poster">
-            <img src="./images/posters/${this._poster}" alt="film-poster" class="film-details__user-rating-img">
+            <img src="./${this._poster}" alt="film-poster" class="film-details__user-rating-img">
           </div>
 
           <section class="film-details__user-rating-inner">
@@ -111,7 +112,7 @@ class DetailsPopup extends AbstractComponent {
             <p class="film-details__user-rating-feelings">How you feel it?</p>
 
             <div class="film-details__user-rating-score">
-              ${new Array(PERSONAL_RATING_COUNT).fill().map((_, id) => `<input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="${id + 1}" id="rating-${id + 1}" ${Number(this._personalScore) === (id + 1) ? `checked` : ``}>
+              ${new Array(PERSONAL_RATING_COUNT).fill().map((_, id) => `<input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="${id + 1}" id="rating-${id + 1}" ${Number(this._personalRating) === (id + 1) ? `checked` : ``}>
                 <label class="film-details__user-rating-label" for="rating-${id + 1}">${id + 1}</label>`).join(` `)}
             </div>
           </section>

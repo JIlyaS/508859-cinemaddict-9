@@ -1,5 +1,5 @@
 import SearchInfo from '../components/search-info';
-import SearchNoResult from '../components/search-no-result';
+import EmptyResult from '../components/empty-result';
 import FilmsWrapper from '../components/films-wrapper';
 import FilmListController from './film-list-controller';
 import {render, unrender} from '../utils';
@@ -7,20 +7,22 @@ import {MIN_SEARCH_SYMBOLS, Position} from '../constants';
 import FilmsList from '../components/films-list';
 
 class SearchController {
-  constructor(container, popupWrapper, search, onSearchCloseButtonClick) {
+  constructor(container, popupWrapper, search, onDataChangeMain, onSearchCloseButtonClick) {
     this._container = container;
     this._popupWrapper = popupWrapper;
     this._search = search;
+    this._onDataChangeMain = onDataChangeMain;
     this._onSearchCloseButtonClick = onSearchCloseButtonClick;
 
     this._films = [];
+    this._isSearch = false;
+    this._emptyResult = null;
 
     this._filmsSearchWrapper = new FilmsWrapper();
     this._filmsSearchList = new FilmsList();
     this._searchInfo = new SearchInfo({});
-    this._searcNoResult = new SearchNoResult();
 
-    this._filmListController = new FilmListController(this._filmsSearchWrapper, this._filmsSearchList, this._popupWrapper, this._onDataChange.bind(this));
+    this._filmListController = new FilmListController(this._filmsSearchWrapper, this._filmsSearchList, this._popupWrapper, this._onDataChangeMain);
 
     this._init();
     this.hide();
@@ -53,13 +55,19 @@ class SearchController {
   }
 
   show(films) {
-    this._films = films;
-    const value = this._search.getElement().querySelector(`.search__field`).value;
-    this._renderFindedFilmsWrapper();
-    const filteredFilms = this._films.filter((film) => {
-      return film.title.toLowerCase().includes(value.toLowerCase());
-    });
-    this._showSearchResult(value, filteredFilms);
+    if (this._isSearch) {
+      this._films = films.slice();
+      const value = this._search.getElement().querySelector(`.search__field`).value;
+      this._renderFindedFilmsWrapper();
+      const filteredFilms = this._films.filter((film) => {
+        return film.title.toLowerCase().includes(value.toLowerCase());
+      });
+      this._showSearchResult(value, filteredFilms);
+    }
+  }
+
+  setSearch(isSearch) {
+    this._isSearch = isSearch;
   }
 
   _showSearchResult(_, films) {
@@ -72,6 +80,11 @@ class SearchController {
 
     render(this._container, this._searchInfo.getElement(), Position.AFTERBEGIN);
 
+    if (this._emptyResult !== null) {
+      unrender(this._emptyResult.getElement());
+      this._emptyResult.removeElement();
+    }
+
     if (films.length === 0) {
       return this._renderEmptyResult();
     }
@@ -79,14 +92,7 @@ class SearchController {
     this._unrenderFindedFilmsWrapper();
     render(this._container, this._searchInfo.getElement());
     this._renderFindedFilmsWrapper();
-
     return this._filmListController.setFilms(films);
-  }
-
-  _onDataChange(films) {
-    this._films = films;
-
-    this._renderFilmsList(this._films);
   }
 
   _unrenderFindedFilmsWrapper() {
@@ -108,13 +114,14 @@ class SearchController {
     render(this._container, this._searchInfo.getElement());
     this._renderFindedFilmsWrapper();
 
-    return this._filmListController.setFilms(films);
+    this._filmListController.setFilms(films);
   }
 
   _renderEmptyResult() {
+    this._emptyResult = new EmptyResult();
     this._unrenderFindedFilmsWrapper();
     this._renderFindedFilmsWrapper();
-    render(this._filmsSearchList.getElement(), this._searcNoResult.getElement());
+    render(this._filmsSearchList.getElement(), this._emptyResult.getElement());
   }
 }
 

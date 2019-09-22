@@ -38,6 +38,7 @@ export const YEAR_AGO = 29;
 export const PERSONAL_RATING_COUNT = 9;
 export const ENTER_KEY = 13;
 export const MIN_SEARCH_SYMBOLS = 3;
+export const SHORT_DESCRIPTION_LENGTH = 140;
 export const Position = {
   AFTERBEGIN: `afterbegin`,
   BEFOREEND: `beforeend`,
@@ -53,7 +54,6 @@ export const Sorted = {
   RATING: `rating`,
   DEFAULT: `default`
 };
-
 export const MenuName = {
   ALL: `all`,
   WATCHLIST: `watchlist`,
@@ -253,3 +253,17 @@ export const DIRECTORS = [
   `John McTiernan`,
   `David Yates`
 ];
+export const Method = {
+  GET: `GET`,
+  POST: `POST`,
+  PUT: `PUT`,
+  DELETE: `DELETE`
+};
+export const ActionType = {
+  UPDATE: `update`,
+  CREATE: `create`,
+  CREATE_COMMENT: `create_comment`,
+  DELETE_COMMENT: `delete_comment`
+};
+export const AUTHORIZATION = `Basic eo0w590ik29889a=${Math.random()}`;
+export const SERVER = `https://htmlacademy-es-9.appspot.com/cinemaddict/`;

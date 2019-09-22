@@ -10,7 +10,7 @@ import {render, unrender} from '../utils';
 import {COUNT_FILM_CARDS, ADD_MORE_CARD, Position, Sorted, RenderPosition} from '../constants';
 
 class PageController {
-  constructor(container, popupWrapper) {
+  constructor(container, popupWrapper, onDataChangeMain) {
     this._container = container;
     this._popupWrapper = popupWrapper;
     this._filmsWrapper = new FilmsWrapper();
@@ -18,19 +18,22 @@ class PageController {
     this._sortBlock = new Sort();
     this._showMoreButton = new ShowButton();
     this._films = [];
-    this._originalFilmCards = [];
 
     this._ratedList = new RatedList();
     this._commentedList = new CommentedList();
+    this._emptyResult = null;
     this._footer = document.querySelector(`.footer`);
+    this._isSearch = false;
 
     this._onClickShowButton = this._onClickShowButton.bind(this);
 
     this._showedFilms = COUNT_FILM_CARDS;
 
-    this._filmListController = new FilmListController(this._filmsWrapper, this._filmsList, this._popupWrapper, this._onDataChange.bind(this));
-    this._filmListRatedController = new FilmListController(this._filmsWrapper, this._ratedList, this._popupWrapper, this._onDataChange.bind(this), RenderPosition.RATED);
-    this._filmListCommentedController = new FilmListController(this._filmsWrapper, this._commentedList, this._popupWrapper, this._onDataChange.bind(this), RenderPosition.COMMENTED);
+    this._onDataChangeMain = onDataChangeMain;
+
+    this._filmListController = new FilmListController(this._filmsWrapper, this._filmsList, this._popupWrapper, this._onDataChangeMain);
+    this._filmListRatedController = new FilmListController(this._filmsWrapper, this._ratedList, this._popupWrapper, this._onDataChangeMain, RenderPosition.RATED);
+    this._filmListCommentedController = new FilmListController(this._filmsWrapper, this._commentedList, this._popupWrapper, this._onDataChangeMain, RenderPosition.COMMENTED);
     this._init();
   }
 
@@ -48,8 +51,6 @@ class PageController {
     this._renderSort();
     render(this._container, this._filmsWrapper.getElement());
     render(this._filmsWrapper.getElement(), this._filmsList.getElement());
-    render(this._filmsWrapper.getElement(), this._ratedList.getElement());
-    render(this._filmsWrapper.getElement(), this._commentedList.getElement());
     render(this._footer, this._popupWrapper.getElement(), Position.AFTEREND);
   }
 
@@ -65,12 +66,17 @@ class PageController {
   }
 
   show(films) {
-    if (films !== this._films) {
-      this._setFilms(films);
+    if (!this._isSearch) {
+      if (films !== this._films) {
+        this._setFilms(films);
+      }
+      this._sortBlock.getElement().classList.remove(`visually-hidden`);
+      this._filmsWrapper.getElement().classList.remove(`visually-hidden`);
     }
+  }
 
-    this._sortBlock.getElement().classList.remove(`visually-hidden`);
-    this._filmsWrapper.getElement().classList.remove(`visually-hidden`);
+  setSearch(isSearch) {
+    this._isSearch = isSearch;
   }
 
   _onChangeView() {
@@ -78,31 +84,34 @@ class PageController {
   }
 
   _setFilms(films) {
-    this._films = films;
-    this._originalFilmCards = films;
+    this._films = films.slice();
     this._showedFilms = COUNT_FILM_CARDS;
 
     this._renderFilmsList(this._films);
   }
 
   _renderFilmsList(films) {
+    if (this._emptyResult !== null) {
+      unrender(this._emptyResult.getElement());
+      this._emptyResult.removeElement();
+    }
+
     if (films.length === 0) {
       return this._renderEmptyResult();
     }
 
     this._unrenderFilmList();
+    render(this._filmsWrapper.getElement(), this._filmsList.getElement());
+    // render(this._filmsWrapper.getElement(), this._commentedList.getElement());
+    // render(this._filmsWrapper.getElement(), this._ratedList.getElement());
 
-    render(this._filmsWrapper.getElement(), this._commentedList.getElement(), Position.AFTERBEGIN);
-    render(this._filmsWrapper.getElement(), this._ratedList.getElement(), Position.AFTERBEGIN);
-    render(this._filmsWrapper.getElement(), this._filmsList.getElement(), Position.AFTERBEGIN);
-
-    if (this._showedFilms < this._originalFilmCards.length) {
+    if (this._showedFilms < films.length) {
       this._renderShowButton();
     }
 
     this._filmListController.setFilms(films.slice(0, this._showedFilms));
-    this._filmListRatedController.setFilms(this._originalFilmCards);
-    return this._filmListCommentedController.setFilms(this._originalFilmCards);
+    this._filmListRatedController.setFilms(films.slice());
+    return this._filmListCommentedController.setFilms(films.slice());
   }
 
   _renderShowButton() {
@@ -112,9 +121,9 @@ class PageController {
 
   _onClickShowButton(evt) {
     evt.preventDefault();
-    this._filmListController.addFilms(this._originalFilmCards.slice(this._showedFilms, this._showedFilms + ADD_MORE_CARD));
+    this._filmListController.addFilms(this._films.slice(this._showedFilms, this._showedFilms + ADD_MORE_CARD));
     this._showedFilms += ADD_MORE_CARD;
-    if (this._showedFilms >= this._originalFilmCards.length) {
+    if (this._showedFilms >= this._films.length) {
       unrender(this._showMoreButton.getElement());
       this._showMoreButton.removeElement();
     }
@@ -132,7 +141,7 @@ class PageController {
 
         switch (evt.target.dataset.sortType) {
           case Sorted.DATE:
-            const sortedByDateUpFilms = this._films.slice().sort((a, b) => a.date - b.date);
+            const sortedByDateUpFilms = this._films.slice().sort((a, b) => b.date - a.date);
             this._films = [...sortedByDateUpFilms];
             this._renderFilmsList(this._films);
             break;
@@ -142,7 +151,9 @@ class PageController {
             this._renderFilmsList(sortedByRatingsFilms);
             break;
           case Sorted.DEFAULT:
-            this._renderFilmsList(this._originalFilmCards);
+            const defaultFilms = this._films.slice().sort((a, b) => Number(a.id) - Number(b.id));
+            this._films = [...defaultFilms];
+            this._renderFilmsList(this._films);
             break;
           default:
             throw new Error(`Incorrect dataset`);
@@ -154,9 +165,9 @@ class PageController {
   }
 
   _renderEmptyResult() {
-    const emptyResult = new EmptyResult();
+    this._emptyResult = new EmptyResult();
     this._unrenderFilmList();
-    render(this._filmsWrapper.getElement(), emptyResult.getElement());
+    render(this._filmsWrapper.getElement(), this._emptyResult.getElement());
   }
 
 }
