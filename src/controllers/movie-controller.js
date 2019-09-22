@@ -1,7 +1,7 @@
 import FilmCard from '../components/film-card';
 import DetailsPopup from '../components/details-popup';
 import CommentController from './comment-controller';
-import {render, unrender} from '../utils';
+import {render} from '../utils';
 import {AUTHORIZATION, SERVER, ActionType} from '../constants';
 import API from '../api';
 

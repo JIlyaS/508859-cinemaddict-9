@@ -1,5 +1,5 @@
 import SearchInfo from '../components/search-info';
-import SearchNoResult from '../components/search-no-result';
+import EmptyResult from '../components/empty-result';
 import FilmsWrapper from '../components/films-wrapper';
 import FilmListController from './film-list-controller';
 import {render, unrender} from '../utils';
@@ -16,11 +16,11 @@ class SearchController {
 
     this._films = [];
     this._isSearch = false;
+    this._emptyResult = null;
 
     this._filmsSearchWrapper = new FilmsWrapper();
     this._filmsSearchList = new FilmsList();
     this._searchInfo = new SearchInfo({});
-    this._searcNoResult = new SearchNoResult();
 
     this._filmListController = new FilmListController(this._filmsSearchWrapper, this._filmsSearchList, this._popupWrapper, this._onDataChangeMain);
 
@@ -80,6 +80,11 @@ class SearchController {
 
     render(this._container, this._searchInfo.getElement(), Position.AFTERBEGIN);
 
+    if (this._emptyResult !== null) {
+      unrender(this._emptyResult.getElement());
+      this._emptyResult.removeElement();
+    }
+
     if (films.length === 0) {
       return this._renderEmptyResult();
     }
@@ -113,9 +118,10 @@ class SearchController {
   }
 
   _renderEmptyResult() {
+    this._emptyResult = new EmptyResult();
     this._unrenderFindedFilmsWrapper();
     this._renderFindedFilmsWrapper();
-    render(this._filmsSearchList.getElement(), this._searcNoResult.getElement());
+    render(this._filmsSearchList.getElement(), this._emptyResult.getElement());
   }
 }
 

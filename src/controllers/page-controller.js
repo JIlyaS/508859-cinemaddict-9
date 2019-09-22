@@ -51,8 +51,6 @@ class PageController {
     this._renderSort();
     render(this._container, this._filmsWrapper.getElement());
     render(this._filmsWrapper.getElement(), this._filmsList.getElement());
-    render(this._filmsWrapper.getElement(), this._ratedList.getElement());
-    render(this._filmsWrapper.getElement(), this._commentedList.getElement());
     render(this._footer, this._popupWrapper.getElement(), Position.AFTEREND);
   }
 
@@ -93,20 +91,19 @@ class PageController {
   }
 
   _renderFilmsList(films) {
-    if (films.length === 0) {
-      return this._renderEmptyResult();
-    }
-
     if (this._emptyResult !== null) {
       unrender(this._emptyResult.getElement());
       this._emptyResult.removeElement();
     }
 
-    this._unrenderFilmList();
+    if (films.length === 0) {
+      return this._renderEmptyResult();
+    }
 
-    render(this._filmsWrapper.getElement(), this._commentedList.getElement(), Position.AFTERBEGIN);
-    render(this._filmsWrapper.getElement(), this._ratedList.getElement(), Position.AFTERBEGIN);
-    render(this._filmsWrapper.getElement(), this._filmsList.getElement(), Position.AFTERBEGIN);
+    this._unrenderFilmList();
+    render(this._filmsWrapper.getElement(), this._filmsList.getElement());
+    // render(this._filmsWrapper.getElement(), this._commentedList.getElement());
+    // render(this._filmsWrapper.getElement(), this._ratedList.getElement());
 
     if (this._showedFilms < films.length) {
       this._renderShowButton();
