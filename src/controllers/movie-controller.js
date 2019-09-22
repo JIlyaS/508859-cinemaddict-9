@@ -41,9 +41,7 @@ class MovieController {
   }
 
   _hideDetailsPopup() {
-    this._commentController.hide();
-    unrender(this._detailsPopup.getElement());
-    this._detailsPopup.removeElement();
+    this._popupContainer.getElement().innerHTML = ``;
   }
 
   _renderCommentsBlock() {

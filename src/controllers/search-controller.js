@@ -7,10 +7,11 @@ import {MIN_SEARCH_SYMBOLS, Position} from '../constants';
 import FilmsList from '../components/films-list';
 
 class SearchController {
-  constructor(container, popupWrapper, search, onSearchCloseButtonClick) {
+  constructor(container, popupWrapper, search, onDataChangeMain, onSearchCloseButtonClick) {
     this._container = container;
     this._popupWrapper = popupWrapper;
     this._search = search;
+    this._onDataChangeMain = onDataChangeMain;
     this._onSearchCloseButtonClick = onSearchCloseButtonClick;
 
     this._films = [];
@@ -20,7 +21,7 @@ class SearchController {
     this._searchInfo = new SearchInfo({});
     this._searcNoResult = new SearchNoResult();
 
-    this._filmListController = new FilmListController(this._filmsSearchWrapper, this._filmsSearchList, this._popupWrapper, this._onDataChange.bind(this));
+    this._filmListController = new FilmListController(this._filmsSearchWrapper, this._filmsSearchList, this._popupWrapper, this._onDataChangeMain);
 
     this._init();
     this.hide();
@@ -53,7 +54,7 @@ class SearchController {
   }
 
   show(films) {
-    this._films = films;
+    this._films = films.slice();
     const value = this._search.getElement().querySelector(`.search__field`).value;
     this._renderFindedFilmsWrapper();
     const filteredFilms = this._films.filter((film) => {
@@ -79,14 +80,7 @@ class SearchController {
     this._unrenderFindedFilmsWrapper();
     render(this._container, this._searchInfo.getElement());
     this._renderFindedFilmsWrapper();
-
     return this._filmListController.setFilms(films);
-  }
-
-  _onDataChange(films) {
-    this._films = films;
-
-    this._renderFilmsList(this._films);
   }
 
   _unrenderFindedFilmsWrapper() {

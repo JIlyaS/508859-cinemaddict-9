@@ -33,14 +33,14 @@ const onDataChange = (actionType, updated, callback) => {
       })
       .then(() => api.getMovies())
       .then((movies) => {
-        menuController.show(movies.slice());
-        pageController.show(movies.slice());
+        menuController.show(movies);
+        pageController.show(movies);
       });
       break;
     case ActionType.CREATE:
       api.getMovies().then((movies) => {
-        menuController.show(movies.slice());
-        pageController.show(movies.slice());
+        menuController.show(movies);
+        pageController.show(movies);
         footerFilmCountBlock.textContent = `${movies.length} movies inside`;
       });
       break;
@@ -79,7 +79,7 @@ api.getMovies().then((movies) => {
 });
 
 const pageController = new PageController(mainWrapper, popupWrapper, onDataChange);
-const searchController = new SearchController(mainWrapper, popupWrapper, search, onSearchCloseButtonClick);
+const searchController = new SearchController(mainWrapper, popupWrapper, search, onDataChange, onSearchCloseButtonClick);
 const chartController = new ChartController(mainWrapper);
 const menuController = new MenuController(mainWrapper, pageController, searchController, chartController);
 
@@ -88,7 +88,7 @@ search.getElement().querySelector(`.search__field`).addEventListener(`keyup`, (e
     menuController.hide();
     chartController.hide();
     pageController.hide();
-    api.getMovies().then((movies) => searchController.show(movies.slice()));
+    api.getMovies().then((movies) => searchController.show(movies));
   } else if (evt.target.value.length === 0) {
     chartController.hide();
     searchController.hide();

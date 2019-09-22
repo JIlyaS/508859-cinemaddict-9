@@ -27,7 +27,7 @@ class CommentController {
   }
 
   _setFilms(films) {
-    this._films = films;
+    this._films = films.slice();
 
     this._renderMenu(this._films);
   }
@@ -56,7 +56,7 @@ class CommentController {
           this._getActiveMenuElement(evt);
           this._chartController.hide();
           this._searchController.hide();
-          this._pageController.show(this._films.slice());
+          this._pageController.show(this._films);
           break;
         case MenuName.WATCHLIST:
           this._chartController.hide();
@@ -77,7 +77,7 @@ class CommentController {
           this._getActiveMenuElement(evt);
           this._pageController.hide();
           this._searchController.hide();
-          this._chartController.show(this._films.slice());
+          this._chartController.show(this._films);
           break;
         default:
           break;
