@@ -266,7 +266,8 @@ export const ActionType = {
   UPDATE: `update`,
   CREATE: `create`,
   CREATE_COMMENT: `create_comment`,
-  DELETE_COMMENT: `delete_comment`
+  DELETE_COMMENT: `delete_comment`,
+  UPDATE_RATING: `update_rating`
 };
 export const AUTHORIZATION = `Basic eo0w590ik29889a=${Math.random()}`;
 export const SERVER = `https://htmlacademy-es-9.appspot.com/cinemaddict/`;

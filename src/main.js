@@ -31,7 +31,7 @@ const onSearchCloseButtonClick = () => {
   onDataChange(ActionType.CREATE);
 };
 
-const onDataChange = (actionType, updated, callback) => {
+const onDataChange = (actionType, updated, callback, callbackError) => {
   switch (actionType) {
     case ActionType.UPDATE:
       api.updateMovie({
@@ -72,6 +72,21 @@ const onDataChange = (actionType, updated, callback) => {
       .then((movies) => {
         pageController.show(movies);
         callback();
+      });
+      break;
+    case ActionType.UPDATE_RATING:
+      api.updateMovie({
+        id: updated.id,
+        data: updated.toRAW()
+      })
+      .then(() => api.getMovies())
+      .then((movies) => {
+        menuController.show(movies);
+        pageController.show(movies);
+        searchController.show(movies);
+        callback();
+      }).catch(() => {
+        callbackError();
       });
       break;
     default:

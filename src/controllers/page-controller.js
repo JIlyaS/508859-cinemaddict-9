@@ -102,8 +102,6 @@ class PageController {
 
     this._unrenderFilmList();
     render(this._filmsWrapper.getElement(), this._filmsList.getElement());
-    // render(this._filmsWrapper.getElement(), this._commentedList.getElement());
-    // render(this._filmsWrapper.getElement(), this._ratedList.getElement());
 
     if (this._showedFilms < films.length) {
       this._renderShowButton();

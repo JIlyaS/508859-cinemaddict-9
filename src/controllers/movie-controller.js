@@ -2,7 +2,7 @@ import FilmCard from '../components/film-card';
 import DetailsPopup from '../components/details-popup';
 import CommentController from './comment-controller';
 import {render} from '../utils';
-import {AUTHORIZATION, SERVER, ActionType} from '../constants';
+import {AUTHORIZATION, SERVER, ANIMATION_TIMEOUT, ANIMATION, ActionType} from '../constants';
 import API from '../api';
 
 class MovieController {
@@ -15,7 +15,17 @@ class MovieController {
     this._filmCard = new FilmCard(this._dataFilm);
     this._detailsPopup = new DetailsPopup(this._dataFilm);
     this._api = new API({authorization: AUTHORIZATION, server: SERVER});
-    this._commentController = new CommentController(this._detailsPopup, this._dataFilm, this.getState, this._onDataChangeMain, this._queryAddComment.bind(this), this._queryDeleteComment.bind(this));
+    this._commentController = new CommentController(
+        this._detailsPopup,
+        this._dataFilm,
+        this.getState,
+        this._onDataChangeMain,
+        this._queryAddComment.bind(this),
+        this._queryDeleteComment.bind(this)
+    );
+    this._nodeRatingBlock = this._detailsPopup.getElement().querySelector(`.film-details__user-rating-wrap`);
+    this._nodeRatingElements = this._detailsPopup.getElement().querySelectorAll(`.film-details__user-rating-input`);
+    this._elemRating = null;
   }
 
   getState() {
@@ -66,6 +76,39 @@ class MovieController {
     this._api.getMovieComments({movieId: this._dataFilm.id}).then((comments) => {
       this._commentController.hide();
       this._commentController.show(comments);
+    });
+  }
+
+  _queryUpdateRating() {
+    this._enabledRatingBlock();
+  }
+
+  _queryUpdateRatingError() {
+    this._shakeErrorComponent();
+    this._viewErrorRating();
+    this._enabledRatingBlock();
+  }
+
+  _viewErrorRating() {
+    this._elemRating.classList.add(`film-details__user-rating-input--error`);
+  }
+
+  _shakeErrorComponent() {
+    this._nodeRatingBlock.style.animation = ANIMATION;
+    setTimeout(() => {
+      this._nodeRatingBlock.style.animation = ``;
+    }, ANIMATION_TIMEOUT);
+  }
+
+  _disabledRatingBlock() {
+    this._nodeRatingElements.forEach((elem) => {
+      elem.disabled = true;
+    });
+  }
+
+  _enabledRatingBlock() {
+    this._nodeRatingElements.forEach((elem) => {
+      elem.disabled = false;
     });
   }
 
@@ -184,9 +227,12 @@ class MovieController {
       });
 
     this._detailsPopup.getElement().querySelectorAll(`.film-details__user-rating-input`).forEach((elem) => {
-      elem.addEventListener(`click`, () => {
+      elem.addEventListener(`click`, (evt) => {
         const newData = Object.assign(this._dataFilm, this.getFormData());
-        this._onDataChangeMain(ActionType.UPDATE, Object.assign(newData, this.getState()));
+        this._disabledRatingBlock();
+        this._elemRating = evt.target;
+        this._elemRating.classList.remove(`ilm-details__user-rating-input--error`);
+        this._onDataChangeMain(ActionType.UPDATE_RATING, Object.assign(newData, this.getState()), this._queryUpdateRating.bind(this), this._queryUpdateRatingError.bind(this));
       });
     });
 

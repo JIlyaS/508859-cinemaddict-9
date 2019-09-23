@@ -993,6 +993,9 @@ button {
 .film-details__user-rating-input:checked + .film-details__user-rating-label {
   background-color: #ffe800;
 }
+.film-details__user-rating-input--error:checked + .film-details__user-rating-label {
+  background-color: red;
+}
 
 .statistic {
   padding-top: 30px;

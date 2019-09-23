@@ -49,7 +49,6 @@ class API {
     return fetch(`${this._server}/${url}`, {method, body, headers})
       .then(checkStatus)
       .catch((err) => {
-        // console.error(`fetch error: ${err}`);
         throw err;
       });
   }

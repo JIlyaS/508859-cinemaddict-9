@@ -23,7 +23,7 @@ class ModelMovie {
       genres: {name: `Genre`, value: data[`film_info`][`genre`]}
     };
 
-    this.personalRating = data[`user_details`][`personal_rating`] || null;
+    this.personalRating = Number(data[`user_details`][`personal_rating`]) || null;
     this.isFavorite = Boolean(data[`user_details`][`favorite`]);
     this.isWatchlist = Boolean(data[`user_details`][`watchlist`]);
     this.isViewed = Boolean(data[`user_details`][`already_watched`]);
