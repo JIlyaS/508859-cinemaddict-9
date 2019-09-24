@@ -43,6 +43,7 @@ export const ANIMATION_TIMEOUT = 600;
 export const ANIMATION_DURATION = ANIMATION_TIMEOUT / 1000;
 export const ANIMATION = `shake ${ANIMATION_DURATION}s`;
 export const Position = {
+  BEFOREBEGIN: `beforebegin`,
   AFTERBEGIN: `afterbegin`,
   BEFOREEND: `beforeend`,
   AFTEREND: `afterend`

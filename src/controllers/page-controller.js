@@ -3,11 +3,11 @@ import FilmsList from '../components/films-list';
 import RatedList from '../components/rated-list';
 import CommentedList from '../components/commented-list';
 import EmptyResult from '../components/empty-result';
-import Sort from '../components/sort';
 import ShowButton from '../components/show-button';
+import SortController from './sort-controller';
 import FilmListController from './film-list-controller';
 import {render, unrender} from '../utils';
-import {COUNT_FILM_CARDS, ADD_MORE_CARD, Position, Sorted, RenderPosition} from '../constants';
+import {COUNT_FILM_CARDS, ADD_MORE_CARD, Position, RenderPosition} from '../constants';
 
 class PageController {
   constructor(container, popupWrapper, onDataChangeMain) {
@@ -15,7 +15,6 @@ class PageController {
     this._popupWrapper = popupWrapper;
     this._filmsWrapper = new FilmsWrapper();
     this._filmsList = new FilmsList();
-    this._sortBlock = new Sort();
     this._showMoreButton = new ShowButton();
     this._films = [];
 
@@ -30,7 +29,7 @@ class PageController {
     this._showedFilms = COUNT_FILM_CARDS;
 
     this._onDataChangeMain = onDataChangeMain;
-
+    this._sortController = new SortController(this._filmsWrapper, this._renderFilmsList.bind(this));
     this._filmListController = new FilmListController(this._filmsWrapper, this._filmsList, this._popupWrapper, this._onDataChangeMain);
     this._filmListRatedController = new FilmListController(this._filmsWrapper, this._ratedList, this._popupWrapper, this._onDataChangeMain, RenderPosition.RATED);
     this._filmListCommentedController = new FilmListController(this._filmsWrapper, this._commentedList, this._popupWrapper, this._onDataChangeMain, RenderPosition.COMMENTED);
@@ -48,14 +47,15 @@ class PageController {
   }
 
   _init() {
-    this._renderSort();
     render(this._container, this._filmsWrapper.getElement());
+    this._sortController.init();
+    this._sortController.hide();
     render(this._filmsWrapper.getElement(), this._filmsList.getElement());
     render(this._footer, this._popupWrapper.getElement(), Position.AFTEREND);
   }
 
   hide() {
-    this._sortBlock.getElement().classList.add(`visually-hidden`);
+    this._sortController.hide();
     this._filmsWrapper.getElement().classList.add(`visually-hidden`);
   }
 
@@ -70,7 +70,8 @@ class PageController {
       if (films !== this._films) {
         this._setFilms(films);
       }
-      this._sortBlock.getElement().classList.remove(`visually-hidden`);
+
+      this._sortController.show(films);
       this._filmsWrapper.getElement().classList.remove(`visually-hidden`);
     }
   }
@@ -95,13 +96,14 @@ class PageController {
       unrender(this._emptyResult.getElement());
       this._emptyResult.removeElement();
     }
-
     if (films.length === 0) {
+      this._sortController.hide();
       return this._renderEmptyResult();
     }
 
     this._unrenderFilmList();
     render(this._filmsWrapper.getElement(), this._filmsList.getElement());
+    this._sortController.showViewSort();
 
     if (this._showedFilms < films.length) {
       this._renderShowButton();
@@ -125,41 +127,6 @@ class PageController {
       unrender(this._showMoreButton.getElement());
       this._showMoreButton.removeElement();
     }
-  }
-
-  _renderSort() {
-    this._sortBlock.getElement().querySelectorAll(`.sort__button`).forEach((elem) => {
-      elem.addEventListener(`click`, (evt) => {
-        evt.preventDefault();
-        const sortButtons = this._sortBlock.getElement().querySelectorAll(`.sort__button`);
-        sortButtons.forEach((sortButton) => {
-          sortButton.classList.remove(`sort__button--active`);
-        });
-        evt.target.classList.add(`sort__button--active`);
-
-        switch (evt.target.dataset.sortType) {
-          case Sorted.DATE:
-            const sortedByDateUpFilms = this._films.slice().sort((a, b) => b.date - a.date);
-            this._films = [...sortedByDateUpFilms];
-            this._renderFilmsList(this._films);
-            break;
-          case Sorted.RATING:
-            const sortedByRatingsFilms = this._films.slice().sort((a, b) => b.rating - a.rating);
-            this._films = [...sortedByRatingsFilms];
-            this._renderFilmsList(sortedByRatingsFilms);
-            break;
-          case Sorted.DEFAULT:
-            const defaultFilms = this._films.slice().sort((a, b) => Number(a.id) - Number(b.id));
-            this._films = [...defaultFilms];
-            this._renderFilmsList(this._films);
-            break;
-          default:
-            throw new Error(`Incorrect dataset`);
-        }
-      });
-    });
-
-    render(this._container, this._sortBlock.getElement());
   }
 
   _renderEmptyResult() {

@@ -1,11 +1,12 @@
 import Search from './components/search';
 import Profile from './components/profile';
 import PopupWrapper from './components/popup-wrapper';
+import Loading from './components/loading';
 import API from './api';
 import PageController from './controllers/page-controller';
 import SearchController from './controllers/search-controller';
 import MenuController from './controllers/menu-controller';
-import {render} from './utils';
+import {render, unrender} from './utils';
 import {MIN_SEARCH_SYMBOLS, AUTHORIZATION, SERVER, ActionType} from './constants';
 import {getRang} from './components/data';
 import ChartController from './controllers/chart-controller';
@@ -17,6 +18,7 @@ const footerFilmCountBlock = document.querySelector(`.footer__statistics p`);
 const api = new API({authorization: AUTHORIZATION, server: SERVER});
 const search = new Search();
 const popupWrapper = new PopupWrapper();
+const loading = new Loading();
 
 const changeSearchInfo = (isSearch) => {
   menuController.setSearch(isSearch);
@@ -46,7 +48,10 @@ const onDataChange = (actionType, updated, callback, callbackError) => {
       });
       break;
     case ActionType.CREATE:
+      render(mainWrapper, loading.getElement());
       api.getMovies().then((movies) => {
+        unrender(loading.getElement());
+        loading.removeElement();
         menuController.show(movies);
         pageController.show(movies);
         searchController.show(movies);
