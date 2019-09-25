@@ -11,11 +11,10 @@ import {render, unrender} from '../utils';
 import {COUNT_FILM_CARDS, ADD_MORE_CARD, Position, RenderPosition} from '../constants';
 
 class PageController {
-  constructor(container, popupWrapper, onDataChangeMain, changeShowedFilms) {
+  constructor(container, popupWrapper, onDataChangeMain) {
     this._container = container;
     this._popupWrapper = popupWrapper;
     this._onDataChangeMain = onDataChangeMain;
-    this._changeShowedFilms = changeShowedFilms;
 
     this._filmsWrapper = new FilmsWrapper();
     this._filmsList = new FilmsList();
@@ -26,6 +25,7 @@ class PageController {
     this._emptyResult = null;
     this._emptyData = null;
     this._isSearch = false;
+    this._isFilter = false;
     this._films = [];
     this._footer = document.querySelector(`.footer`);
 
@@ -70,7 +70,9 @@ class PageController {
     this._renderFilmsList(this._films);
   }
 
-  show(films) {
+  show(films, isFilter = false) {
+    this._isFilter = isFilter;
+
     if (!this._isSearch) {
       if (films !== this._films) {
         this._setFilms(films);
@@ -83,6 +85,10 @@ class PageController {
 
   setSearch(isSearch) {
     this._isSearch = isSearch;
+  }
+
+  setFilter(isFilter) {
+    this._isFilter = isFilter;
   }
 
   _onChangeView() {
@@ -102,9 +108,18 @@ class PageController {
       this._emptyResult.removeElement();
     }
 
-    if (films.length === 0) {
+    if (this._emptyData !== null) {
+      unrender(this._emptyData.getElement());
+      this._emptyData.removeElement();
+    }
+    if (this._isFilter && films.length === 0) {
       this._sortController.hide();
       return this._renderEmptyResult();
+    }
+
+    if (!this._isFilter && films.length === 0) {
+      this._sortController.hide();
+      return this._renderEmptyData();
     }
 
     this._unrenderFilmList();

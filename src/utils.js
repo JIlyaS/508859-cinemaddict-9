@@ -1,9 +1,25 @@
 import moment from 'moment';
-import {MILLISECONDS_YEAR, COUNT_FILMS, COUNT_FILM_CARDS, MILLISECONDS_DAY, DAY_AGO, YEAR_AGO, STATS_DAYS_AGO, SHORT_DESCRIPTION_LENGTH, Position} from './constants';
+import {
+  SHORT_DESCRIPTION_LENGTH,
+  COUNT_GENRES,
+  MINUS_INDEX,
+  NUNBER_SYSTEM,
+  HOUR,
+  LESS_MINUTES,
+  MIN_COUNT_NOVICE,
+  MAX_COUNT_NOVICE,
+  MIN_COUNT_FAN,
+  MAX_COUNT_FAN,
+  MIN_COUNT_BUFF,
+  Position,
+  FilterTitles,
+  Rang,
+  StatusSuccess,
+  MomentSettings} from './constants';
 
-moment.updateLocale(`en`, {
+moment.updateLocale(MomentSettings.LANGUAGE, {
   week: {
-    dow: 1
+    dow: MomentSettings.START_DAY_WEEK
   }
 });
 
@@ -38,50 +54,8 @@ export const unrender = (element) => {
   }
 };
 
-export const getRandomArray = (elements) => {
-  return shuffleElements(elements)[0];
-};
-
-export const getRandomTime = (maxHours, minMinutes, maxMinutes) => {
-  const randomHours = getRandomValue(maxHours);
-  const randomMinutes = getRandomValue(maxMinutes, minMinutes);
-  return {hours: randomHours, minutes: randomMinutes};
-};
-
-export const getRandomValue = (max = 1, min = 0) => {
-  return Math.round(Math.random() * max + min);
-};
-
-export const shuffleElements = (array) => {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-  return array;
-};
-
-export const getCommentDate = () => {
-  return Date.now() + Math.floor(Math.random() * getRandomValue(0, -DAY_AGO) * MILLISECONDS_DAY);
-};
-
-export const getReleaseDate = () => {
-  return Date.now() + Math.floor(Math.random() * getRandomValue(0, -YEAR_AGO) * MILLISECONDS_YEAR);
-};
-
-export const getViewedDate = () => {
-  return Date.now() + Math.floor(Math.random() * getRandomValue(0, -STATS_DAYS_AGO) * MILLISECONDS_DAY);
-};
-
-export const getCountFilmsToRender = (count) => {
-  if (COUNT_FILMS < count) {
-    return COUNT_FILM_CARDS - (count - COUNT_FILMS);
-  }
-
-  return count;
-};
-
 export const checkStatus = (response) => {
-  if (response.status >= 200 && response.status < 300) {
+  if (response.status >= StatusSuccess.MIN && response.status < StatusSuccess.MAX) {
     return response;
   } else {
     throw new Error(`${response.status}: ${response.statusText}`);
@@ -93,22 +67,18 @@ export const toJSON = (response) => {
 };
 
 export const getShortDescription = (description) => {
-  return description.length >= SHORT_DESCRIPTION_LENGTH ? description.slice(0, SHORT_DESCRIPTION_LENGTH - 1) + `...` : description;
+  return description.length >= SHORT_DESCRIPTION_LENGTH ? description.slice(0, SHORT_DESCRIPTION_LENGTH - MINUS_INDEX) + `...` : description;
 };
 
 export const getTransformRuntime = (runtime) => {
-  const hours = parseInt(runtime / 60, 10);
-  let minutes = runtime % 60;
+  const hours = parseInt(runtime / HOUR, NUNBER_SYSTEM);
+  let minutes = runtime % HOUR;
   if (minutes === 0) {
     minutes = `00`;
-  } else if (minutes < 10) {
+  } else if (minutes < LESS_MINUTES) {
     minutes = `0${minutes}`;
   }
   return hours !== 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
-};
-
-export const getCorrectDataArray = (dataArray) => {
-  return dataArray.length !== 0 ? dataArray : ``;
 };
 
 export const getCorrectData = (data) => {
@@ -116,5 +86,45 @@ export const getCorrectData = (data) => {
 };
 
 export const getGenreTitle = (genres) => {
-  return genres.value.length > 1 ? `Genres` : `Genre`;
+  return genres.value.length > COUNT_GENRES ? `Genres` : `Genre`;
+};
+
+export const getRang = (countFilms) => {
+  if (countFilms >= MIN_COUNT_NOVICE && countFilms <= MAX_COUNT_NOVICE) {
+    return Rang.NOVICE;
+  } else if (countFilms >= MIN_COUNT_FAN && countFilms <= MAX_COUNT_FAN) {
+    return Rang.FAN;
+  } else if (countFilms >= MIN_COUNT_BUFF) {
+    return Rang.BUFF;
+  }
+
+  return ``;
+};
+
+export const getDataFilter = (filterName, dataFilms) => {
+  let filteredData;
+  const {title, href} = filterName;
+  switch (title) {
+    case FilterTitles.ALL:
+      filteredData = dataFilms;
+      break;
+    case FilterTitles.WATCHLIST:
+      filteredData = dataFilms.filter((task) => task.isWatchlist === true);
+      break;
+    case FilterTitles.HISTORY:
+      filteredData = dataFilms.filter((task) => task.isViewed === true);
+      break;
+    case FilterTitles.FAVORITES:
+      filteredData = dataFilms.filter((task) => task.isFavorite === true);
+      break;
+    default:
+      filteredData = 0;
+      break;
+  }
+
+  return {
+    title,
+    href,
+    count: filteredData.length
+  };
 };

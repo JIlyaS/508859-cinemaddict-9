@@ -1,19 +1,19 @@
 import Menu from '../components/menu';
-import {NAME_FILTERS, MenuName, Position} from '../constants';
+import {NAME_FILTERS, MenuName, Position, MenuFilters} from '../constants';
 import {render, unrender} from '../utils';
-import {getDataFilter} from '../components/data';
+import {getDataFilter} from '../utils';
 
 class CommentController {
   constructor(container, pageController, searchController, chartController) {
     this._container = container;
-    this._dataFilters = {};
-    this._menu = null;
     this._pageController = pageController;
     this._searchController = searchController;
     this._chartController = chartController;
 
-    this._films = [];
     this._isSearch = false;
+    this._menu = null;
+    this._dataFilters = {};
+    this._films = [];
   }
 
   show(films) {
@@ -68,17 +68,17 @@ class CommentController {
         case MenuName.WATCHLIST:
           this._chartController.hide();
           this._searchController.hide();
-          this._changeFilter(evt, `isWatchlist`);
+          this._changeFilter(evt, MenuFilters.IS_WATCHLIST);
           break;
         case MenuName.HISTORY:
           this._chartController.hide();
           this._searchController.hide();
-          this._changeFilter(evt, `isViewed`);
+          this._changeFilter(evt, MenuFilters.IS_VIEWED);
           break;
         case MenuName.FAVORITES:
           this._chartController.hide();
           this._searchController.hide();
-          this._changeFilter(evt, `isFavorite`);
+          this._changeFilter(evt, MenuFilters.IS_FAVORITE);
           break;
         case MenuName.STATS:
           this._getActiveMenuElement(evt);
@@ -105,7 +105,7 @@ class CommentController {
   _changeFilter(evt, filterName) {
     this._getActiveMenuElement(evt);
     const filteredFilmCards = this._films.slice().filter((elem) => elem[filterName] === true);
-    this._pageController.show(filteredFilmCards);
+    this._pageController.show(filteredFilmCards, true);
   }
 }
 

@@ -1,3 +1,4 @@
+import DOMPurify from 'dompurify';
 import Comments from '../components/comments';
 import {ENTER_KEY, ANIMATION_TIMEOUT, ANIMATION, ActionType} from '../constants';
 import {render, unrender} from '../utils';
@@ -6,10 +7,10 @@ class CommentController {
   constructor(detailsPopup, dataFilm, getState, onDataChangeMain, queryAddComment, queryDeleteComment) {
     this._detailsPopup = detailsPopup;
     this._dataFilm = dataFilm;
+    this._getState = getState;
     this._onDataChangeMain = onDataChangeMain;
     this._queryAddComment = queryAddComment;
     this._queryDeleteComment = queryDeleteComment;
-    this._getState = getState;
 
     this._comments = [];
 
@@ -22,7 +23,7 @@ class CommentController {
     return {
       comment: {
         emotion: formData.get(`comment-emoji`) !== null ? formData.get(`comment-emoji`) : `smile`,
-        comment: formData.get(`comment`),
+        comment: DOMPurify.sanitize(formData.get(`comment`), {SAFE_FOR_JQUERY: true}) ? DOMPurify.sanitize(formData.get(`comment`), {SAFE_FOR_JQUERY: true}) : ` `,
         date: new Date(Date.now())
       }
     };
@@ -61,9 +62,9 @@ class CommentController {
   }
 
   enabledBtnDelete() {
-    this._commentComponent.getElement().querySelectorAll(`.film-details__comment-delete`).forEach((elem) => {
-      elem.textContent = `Delete`;
-      elem.disabled = false;
+    this._commentComponent.getElement().querySelectorAll(`.film-details__comment-delete`).forEach((btnElem) => {
+      btnElem.textContent = `Delete`;
+      btnElem.disabled = false;
     });
   }
 

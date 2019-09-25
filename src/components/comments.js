@@ -12,7 +12,7 @@ class Comments extends AbstractComponent {
           <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${this._comments.length}</span></h3>
 
           <ul class="film-details__comments-list">
-            ${this._comments.sort((a, b) => a.date - b.date)
+            ${this._comments.sort((prevComment, currComment) => prevComment.date - currComment.date)
               .map(({emotion, comment, author, date}) => `<li class="film-details__comment">
             <span class="film-details__comment-emoji">
               <img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji">

@@ -12,6 +12,7 @@ class MovieController {
     this._popupContainer = popupContainer;
     this._onDataChangeMain = onDataChangeMain;
     this._onChangeView = onChangeView;
+
     this._filmCard = new FilmCard(this._dataFilm);
     this._detailsPopup = new DetailsPopup(this._dataFilm);
     this._api = new API({authorization: AUTHORIZATION, server: SERVER});
@@ -23,6 +24,7 @@ class MovieController {
         this._queryAddComment.bind(this),
         this._queryDeleteComment.bind(this)
     );
+
     this._nodeRatingBlock = this._detailsPopup.getElement().querySelector(`.film-details__user-rating-wrap`);
     this._nodeRatingElements = this._detailsPopup.getElement().querySelectorAll(`.film-details__user-rating-input`);
     this._elemRating = null;

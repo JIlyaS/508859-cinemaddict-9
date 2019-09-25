@@ -1,27 +1,30 @@
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import moment from 'moment';
+
 import Statistics from '../components/statistics';
 import StatisticInfo from '../components/statistic-info';
 import StatisticChart from '../components/statistic-chart';
 import StatisticRang from '../components/statistic-rang';
-import {render, unrender} from '../utils';
-import {HOUR, PeriodStats, Position} from '../constants';
-import {getRang} from '../components/data';
+
+import {render, unrender, getRang} from '../utils';
+import {HOUR, ONLY_GENRE, PeriodStats, Position} from '../constants';
 
 class ChartController {
   constructor(container) {
     this._container = container;
+
     this._statistic = new Statistics();
     this._statisticRang = new StatisticRang({rang: {}});
     this._statisticInfo = new StatisticInfo({watchedMovies: {}, totalDuration: {}, topGenre: {}});
     this._statisticChart = new StatisticChart();
+
     this._chart = null;
+    this._rang = null;
 
     this._films = [];
     this._originalFilms = [];
     this._onlyGenres = {};
-    this._rang = null;
 
     this.hide();
   }
@@ -175,7 +178,7 @@ class ChartController {
       if (acc.hasOwnProperty(item)) {
         acc[item]++;
       } else {
-        acc[item] = 1;
+        acc[item] = ONLY_GENRE;
       }
       return acc;
     }, {});

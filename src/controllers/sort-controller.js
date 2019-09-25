@@ -10,8 +10,8 @@ class SortController {
   }
 
   init() {
-    this._sortBlock.getElement().querySelectorAll(`.sort__button`).forEach((elem) => {
-      elem.addEventListener(`click`, (evt) => {
+    this._sortBlock.getElement().querySelectorAll(`.sort__button`).forEach((elemBtnSort) => {
+      elemBtnSort.addEventListener(`click`, (evt) => {
         evt.preventDefault();
         const sortButtons = this._sortBlock.getElement().querySelectorAll(`.sort__button`);
         sortButtons.forEach((sortButton) => {
@@ -21,17 +21,17 @@ class SortController {
 
         switch (evt.target.dataset.sortType) {
           case Sorted.DATE:
-            const sortedByDateUpFilms = this._films.slice().sort((a, b) => b.date - a.date);
+            const sortedByDateUpFilms = this._films.slice().sort((prevFilm, currFilm) => currFilm.date - prevFilm.date);
             this._films = [...sortedByDateUpFilms];
             this._renderFilmsList(this._films);
             break;
           case Sorted.RATING:
-            const sortedByRatingsFilms = this._films.slice().sort((a, b) => b.rating - a.rating);
+            const sortedByRatingsFilms = this._films.slice().sort((prevFilm, currFilm) => currFilm.rating - prevFilm.rating);
             this._films = [...sortedByRatingsFilms];
             this._renderFilmsList(sortedByRatingsFilms);
             break;
           case Sorted.DEFAULT:
-            const defaultFilms = this._films.slice().sort((a, b) => Number(a.id) - Number(b.id));
+            const defaultFilms = this._films.slice().sort((prevFilm, currFilm) => Number(prevFilm.id) - Number(currFilm.id));
             this._films = [...defaultFilms];
             this._renderFilmsList(this._films);
             break;

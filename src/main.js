@@ -8,7 +8,7 @@ import SearchController from './controllers/search-controller';
 import MenuController from './controllers/menu-controller';
 import {render, unrender} from './utils';
 import {MIN_SEARCH_SYMBOLS, AUTHORIZATION, SERVER, ActionType} from './constants';
-import {getRang} from './components/data';
+import {getRang} from './utils';
 import ChartController from './controllers/chart-controller';
 
 const headerWrapper = document.querySelector(`.header`);
@@ -19,13 +19,6 @@ const api = new API({authorization: AUTHORIZATION, server: SERVER});
 const search = new Search();
 const popupWrapper = new PopupWrapper();
 const loading = new Loading();
-
-let menuFilterName;
-
-const getMenuFilter = (filter) => {
-  menuFilterName = filter;
-  return menuFilterName;
-};
 
 const changeSearchInfo = (isSearch) => {
   menuController.setSearch(isSearch);

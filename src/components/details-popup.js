@@ -1,6 +1,6 @@
 import moment from 'moment';
 import AbstractComponent from './abstract-component';
-import {PERSONAL_RATING_COUNT} from '../constants';
+import {PERSONAL_RATING_COUNT, CORRENT_RATING} from '../constants';
 import {getGenreTitle, getTransformRuntime} from '../utils';
 
 class DetailsPopup extends AbstractComponent {
@@ -112,8 +112,8 @@ class DetailsPopup extends AbstractComponent {
             <p class="film-details__user-rating-feelings">How you feel it?</p>
 
             <div class="film-details__user-rating-score">
-              ${new Array(PERSONAL_RATING_COUNT).fill().map((_, id) => `<input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="${id + 1}" id="rating-${id + 1}" ${Number(this._personalRating) === (id + 1) ? `checked` : ``}>
-                <label class="film-details__user-rating-label" for="rating-${id + 1}">${id + 1}</label>`).join(` `)}
+              ${new Array(PERSONAL_RATING_COUNT).fill().map((_, id) => `<input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="${id + CORRENT_RATING}" id="rating-${id + CORRENT_RATING}" ${Number(this._personalRating) === (id + CORRENT_RATING) ? `checked` : ``}>
+                <label class="film-details__user-rating-label" for="rating-${id + CORRENT_RATING}">${id + CORRENT_RATING}</label>`).join(` `)}
             </div>
           </section>
         </div>
