@@ -1,26 +1,28 @@
 import moment from 'moment';
+import DOMPurify from 'dompurify';
+import {screeningArray} from '../utils';
 
 class ModelMovie {
   constructor(movie) {
     this.id = movie[`id`];
-    this.title = movie[`film_info`][`title`];
-    this.titleOriginal = movie[`film_info`][`alternative_title`] || ``;
-    this.poster = movie[`film_info`][`poster`];
-    this.description = movie[`film_info`][`description`];
-    this.rating = movie[`film_info`][`total_rating`];
+    this.title = DOMPurify.sanitize(movie[`film_info`][`title`]);
+    this.titleOriginal = DOMPurify.sanitize(movie[`film_info`][`alternative_title`]) || ``;
+    this.poster = DOMPurify.sanitize(movie[`film_info`][`poster`]);
+    this.description = DOMPurify.sanitize(movie[`film_info`][`description`]);
+    this.rating = Number(movie[`film_info`][`total_rating`]);
     this.date = Number(moment(movie[`film_info`][`release`][`date`]).format(`x`));
-    this.genres = movie[`film_info`][`genre`];
-    this.ageRating = movie[`film_info`][`age_rating`];
-    this.runtime = movie[`film_info`][`runtime`];
-    this.comments = movie[`comments`];
+    this.genres = screeningArray(movie[`film_info`][`genre`]);
+    this.ageRating = Number(movie[`film_info`][`age_rating`]);
+    this.runtime = Number(movie[`film_info`][`runtime`]);
+    this.comments = screeningArray(movie[`comments`]);
     this.details = {
-      director: {name: `Director`, value: movie[`film_info`][`director`]},
-      writers: {name: `Writers`, value: movie[`film_info`][`writers`]},
-      actors: {name: `Actors`, value: movie[`film_info`][`actors`]},
+      director: {name: `Director`, value: DOMPurify.sanitize(movie[`film_info`][`director`])},
+      writers: {name: `Writers`, value: screeningArray(movie[`film_info`][`writers`])},
+      actors: {name: `Actors`, value: screeningArray(movie[`film_info`][`actors`])},
       date: {name: `Release Date`, value: new Date(movie[`film_info`][`release`][`date`])},
-      runtime: {name: `Runtime`, value: movie[`film_info`][`runtime`]},
-      country: {name: `Country`, value: movie[`film_info`][`release`][`release_country`]},
-      genres: {name: `Genre`, value: movie[`film_info`][`genre`]}
+      runtime: {name: `Runtime`, value: Number(movie[`film_info`][`runtime`])},
+      country: {name: `Country`, value: DOMPurify.sanitize(movie[`film_info`][`release`][`release_country`])},
+      genres: {name: `Genre`, value: screeningArray(movie[`film_info`][`genre`])}
     };
 
     this.personalRating = Number(movie[`user_details`][`personal_rating`]) || null;
