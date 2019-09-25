@@ -10,7 +10,6 @@ class SortController {
   }
 
   init() {
-
     const onSortBtnClick = (evt) => {
       evt.preventDefault();
       const sortButtons = this._sortBlock.getElement().querySelectorAll(`.sort__button`);
@@ -28,7 +27,7 @@ class SortController {
         case SortName.RATING:
           const sortedByRatingsFilms = this._films.slice().sort((prevFilm, currFilm) => currFilm.rating - prevFilm.rating);
           this._films = [...sortedByRatingsFilms];
-          this._renderFilmsList(sortedByRatingsFilms);
+          this._renderFilmsList(this._films);
           break;
         case SortName.DEFAULT:
           const defaultFilms = this._films.slice().sort((prevFilm, currFilm) => Number(prevFilm.id) - Number(currFilm.id));

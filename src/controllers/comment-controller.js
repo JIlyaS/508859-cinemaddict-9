@@ -19,17 +19,6 @@ class CommentController {
     this._nodeTextareaComment = null;
   }
 
-  _getFormData() {
-    const formData = new FormData(this._detailsPopup.getElement().querySelector(`.film-details__inner`));
-    return {
-      comment: {
-        emotion: formData.get(`comment-emoji`) !== null ? formData.get(`comment-emoji`) : `smile`,
-        comment: DOMPurify.sanitize(formData.get(`comment`), {SAFE_FOR_JQUERY: true}),
-        date: new Date(Date.now())
-      }
-    };
-  }
-
   show(comments) {
     this._comments = comments;
     this._commentsBlock = new CommentList({comments: this._comments});
@@ -119,6 +108,17 @@ class CommentController {
     });
 
     render(this._containerComments, this._commentsBlock.getElement());
+  }
+
+  _getFormData() {
+    const formData = new FormData(this._detailsPopup.getElement().querySelector(`.film-details__inner`));
+    return {
+      comment: {
+        emotion: formData.get(`comment-emoji`) !== null ? formData.get(`comment-emoji`) : `smile`,
+        comment: DOMPurify.sanitize(formData.get(`comment`), {SAFE_FOR_JQUERY: true}),
+        date: new Date(Date.now())
+      }
+    };
   }
 }
 

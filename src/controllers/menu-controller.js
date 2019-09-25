@@ -51,6 +51,26 @@ class MenuController {
     this._init();
   }
 
+  _getActiveMenuElement(evt) {
+    this._menu.getElement().querySelectorAll(`.main-navigation__item`)
+      .forEach((elem) => {
+        elem.classList.remove(`main-navigation__item--active`);
+      });
+    evt.target.classList.add(`main-navigation__item--active`);
+  }
+
+  _changeFilter(evt, filterName) {
+    this._getActiveMenuElement(evt);
+    const filteredFilmCards = this._films.slice().filter((elem) => elem[filterName] === true);
+    this._pageController.show(filteredFilmCards, true);
+  }
+
+  _renderFilterData(evt, filterName) {
+    this._chartController.hide();
+    this._searchController.hide();
+    this._changeFilter(evt, filterName);
+  }
+
   _init() {
     const onMenuElemClick = (evt) => {
       evt.preventDefault();
@@ -66,19 +86,13 @@ class MenuController {
           this._pageController.show(this._films);
           break;
         case MenuName.WATCHLIST:
-          this._chartController.hide();
-          this._searchController.hide();
-          this._changeFilter(evt, MenuFilter.IS_WATCHLIST);
+          this._renderFilterData(evt, MenuFilter.IS_WATCHLIST);
           break;
         case MenuName.HISTORY:
-          this._chartController.hide();
-          this._searchController.hide();
-          this._changeFilter(evt, MenuFilter.IS_VIEWED);
+          this._renderFilterData(evt, MenuFilter.IS_VIEWED);
           break;
         case MenuName.FAVORITES:
-          this._chartController.hide();
-          this._searchController.hide();
-          this._changeFilter(evt, MenuFilter.IS_FAVORITE);
+          this._renderFilterData(evt, MenuFilter.IS_FAVORITE);
           break;
         case MenuName.STATS:
           this._getActiveMenuElement(evt);
@@ -94,20 +108,6 @@ class MenuController {
     this._menu.getElement().addEventListener(`click`, onMenuElemClick);
 
     render(this._container, this._menu.getElement(), Position.AFTERBEGIN);
-  }
-
-  _getActiveMenuElement(evt) {
-    this._menu.getElement().querySelectorAll(`.main-navigation__item`)
-      .forEach((elem) => {
-        elem.classList.remove(`main-navigation__item--active`);
-      });
-    evt.target.classList.add(`main-navigation__item--active`);
-  }
-
-  _changeFilter(evt, filterName) {
-    this._getActiveMenuElement(evt);
-    const filteredFilmCards = this._films.slice().filter((elem) => elem[filterName] === true);
-    this._pageController.show(filteredFilmCards, true);
   }
 }
 

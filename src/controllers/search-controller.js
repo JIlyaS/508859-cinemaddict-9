@@ -28,6 +28,26 @@ class SearchController {
     this.hide();
   }
 
+  hide() {
+    this._unrenderFindedFilmsWrapper();
+  }
+
+  show(films) {
+    if (this._isSearch) {
+      this._films = films.slice();
+      const value = this._search.getElement().querySelector(`.search__field`).value;
+      this._renderFindedFilmsWrapper();
+      const filteredFilms = this._films.filter((film) => {
+        return film.title.toLowerCase().includes(value.toLowerCase());
+      });
+      this._showSearchResult(value, filteredFilms);
+    }
+  }
+
+  setSearch(isSearch) {
+    this._isSearch = isSearch;
+  }
+
   _init() {
     render(this._container, this._searchInfo.getElement());
     this._renderFindedFilmsWrapper();
@@ -52,26 +72,6 @@ class SearchController {
 
     this._search.getElement().querySelector(`.search__field`)
       .addEventListener(`keyup`, onSearchInputKeyUp);
-  }
-
-  hide() {
-    this._unrenderFindedFilmsWrapper();
-  }
-
-  show(films) {
-    if (this._isSearch) {
-      this._films = films.slice();
-      const value = this._search.getElement().querySelector(`.search__field`).value;
-      this._renderFindedFilmsWrapper();
-      const filteredFilms = this._films.filter((film) => {
-        return film.title.toLowerCase().includes(value.toLowerCase());
-      });
-      this._showSearchResult(value, filteredFilms);
-    }
-  }
-
-  setSearch(isSearch) {
-    this._isSearch = isSearch;
   }
 
   _showSearchResult(_, films) {

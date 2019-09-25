@@ -41,14 +41,6 @@ class PageController {
     this._init();
   }
 
-  _init() {
-    render(this._container, this._filmsWrapper.getElement());
-    this._sortController.init();
-    this._sortController.hide();
-    render(this._filmsWrapper.getElement(), this._filmList.getElement());
-    render(this._footer, this._popupWrapper.getElement(), Position.AFTEREND);
-  }
-
   hide() {
     this._sortController.hide();
     this._filmsWrapper.getElement().classList.add(`visually-hidden`);
@@ -73,6 +65,14 @@ class PageController {
 
   setFilter(isFilter) {
     this._isFilter = isFilter;
+  }
+
+  _init() {
+    render(this._container, this._filmsWrapper.getElement());
+    this._sortController.init();
+    this._sortController.hide();
+    render(this._filmsWrapper.getElement(), this._filmList.getElement());
+    render(this._footer, this._popupWrapper.getElement(), Position.AFTEREND);
   }
 
   _onDataChange(films) {

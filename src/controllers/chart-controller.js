@@ -184,35 +184,6 @@ class ChartController {
     }, {});
   }
 
-  _getStatisticActions() {
-    const onMenuElemClick = (evt) => {
-      switch (evt.target.value) {
-        case StatsPeriod.ALL_TIME:
-          this._films = this._originalFilms;
-          this._showStatistics();
-          break;
-        case StatsPeriod.TODAY:
-          this._getFilteredStatsFilms(this._originalFilms, `day`);
-          break;
-        case StatsPeriod.WEEK:
-          this._getFilteredStatsFilms(this._originalFilms, `week`);
-          break;
-        case StatsPeriod.MONTH:
-          this._getFilteredStatsFilms(this._originalFilms, `month`);
-          break;
-        case StatsPeriod.YEAR:
-          this._getFilteredStatsFilms(this._originalFilms, `year`);
-          break;
-        default:
-          throw new Error(`Incorrect value`);
-      }
-    };
-
-    this._statistic.getElement().querySelectorAll(`.statistic__filters-input`).forEach((elem) => {
-      elem.addEventListener(`click`, onMenuElemClick);
-    });
-  }
-
   _getFilteredStatsFilms(filteredFilms, period) {
     const startDate = moment().startOf(period).format(`YYYY-MM-DD`);
     this._films = filteredFilms.filter((elem) => {
@@ -242,6 +213,35 @@ class ChartController {
   _unrenderStatisticRang() {
     unrender(this._statisticRang.getElement());
     this._statisticRang.removeElement();
+  }
+
+  _getStatisticActions() {
+    const onMenuElemClick = (evt) => {
+      switch (evt.target.value) {
+        case StatsPeriod.ALL_TIME:
+          this._films = this._originalFilms;
+          this._showStatistics();
+          break;
+        case StatsPeriod.TODAY:
+          this._getFilteredStatsFilms(this._originalFilms, `day`);
+          break;
+        case StatsPeriod.WEEK:
+          this._getFilteredStatsFilms(this._originalFilms, `week`);
+          break;
+        case StatsPeriod.MONTH:
+          this._getFilteredStatsFilms(this._originalFilms, `month`);
+          break;
+        case StatsPeriod.YEAR:
+          this._getFilteredStatsFilms(this._originalFilms, `year`);
+          break;
+        default:
+          throw new Error(`Incorrect value`);
+      }
+    };
+
+    this._statistic.getElement().querySelectorAll(`.statistic__filters-input`).forEach((elem) => {
+      elem.addEventListener(`click`, onMenuElemClick);
+    });
   }
 }
 

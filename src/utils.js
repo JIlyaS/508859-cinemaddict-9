@@ -107,13 +107,13 @@ export const getDataFilter = (filterName, dataFilms) => {
       filteredData = dataFilms;
       break;
     case FilterTitle.WATCHLIST:
-      filteredData = dataFilms.filter((task) => task.isWatchlist === true);
+      filteredData = dataFilms.filter((task) => task.isWatchlist);
       break;
     case FilterTitle.HISTORY:
-      filteredData = dataFilms.filter((task) => task.isViewed === true);
+      filteredData = dataFilms.filter((task) => task.isViewed);
       break;
     case FilterTitle.FAVORITES:
-      filteredData = dataFilms.filter((task) => task.isFavorite === true);
+      filteredData = dataFilms.filter((task) => task.isFavorite);
       break;
     default:
       filteredData = 0;
