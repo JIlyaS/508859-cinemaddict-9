@@ -61,7 +61,7 @@ class MenuController {
 
   _changeFilter(evt, filterName) {
     this._getActiveMenuElement(evt);
-    const filteredFilmCards = this._films.slice().filter((elem) => elem[filterName] === true);
+    const filteredFilmCards = this._films.slice().filter((elem) => elem[filterName]);
     this._pageController.show(filteredFilmCards, true);
   }
 

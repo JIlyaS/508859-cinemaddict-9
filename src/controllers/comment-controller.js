@@ -11,7 +11,7 @@ class CommentController {
     this._onDataChangeMain = onDataChangeMain;
     this._queryAddComment = queryAddComment;
     this._queryDeleteComment = queryDeleteComment;
-    this._commentsBlock = new CommentList({comments: {}});
+    this._commentsBlock = null;
 
     this._comments = [];
 
@@ -20,6 +20,10 @@ class CommentController {
   }
 
   show(comments) {
+    if (this._commentsBlock !== null) {
+      this.hide();
+    }
+
     this._comments = comments;
     this._commentsBlock = new CommentList({comments: this._comments});
     this._nodeTextareaComment = this._commentsBlock.getElement().querySelector(`.film-details__comment-input`);

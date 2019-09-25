@@ -102,7 +102,7 @@ const onDataChange = (actionType, updated, cb, cbError) => {
 render(headerWrapper, search.getElement());
 
 api.getMovies().then((movies) => {
-  const watchedFilms = movies.filter((elem) => elem.isViewed === true);
+  const watchedFilms = movies.filter((elem) => elem.isViewed);
   const profile = new Profile(getRang(watchedFilms.length));
   render(headerWrapper, profile.getElement());
 });
