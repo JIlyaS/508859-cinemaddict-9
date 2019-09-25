@@ -20,6 +20,13 @@ const search = new Search();
 const popupWrapper = new PopupWrapper();
 const loading = new Loading();
 
+let menuFilterName;
+
+const getMenuFilter = (filter) => {
+  menuFilterName = filter;
+  return menuFilterName;
+};
+
 const changeSearchInfo = (isSearch) => {
   menuController.setSearch(isSearch);
   pageController.setSearch(isSearch);

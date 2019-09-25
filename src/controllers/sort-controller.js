@@ -44,7 +44,7 @@ class SortController {
     render(this._container.getElement(), this._sortBlock.getElement(), Position.BEFOREBEGIN);
   }
 
-  show(films) {
+  setFilms(films) {
     this._films = films;
   }
 

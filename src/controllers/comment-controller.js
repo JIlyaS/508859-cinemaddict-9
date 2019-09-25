@@ -60,6 +60,18 @@ class CommentController {
     this._nodeTextareaComment.disabled = false;
   }
 
+  enabledBtnDelete() {
+    this._commentComponent.getElement().querySelectorAll(`.film-details__comment-delete`).forEach((elem) => {
+      elem.textContent = `Delete`;
+      elem.disabled = false;
+    });
+  }
+
+  disabledBtnDelete(evt) {
+    evt.target.textContent = `Delete...`;
+    evt.target.disabled = true;
+  }
+
   _init() {
     this._commentComponent.getElement().querySelector(`.film-details__add-emoji-label`).innerHTML = `<img src="images/emoji/smile.png" width="55" height="55" alt="emoji">`;
 
@@ -85,6 +97,7 @@ class CommentController {
     this._commentComponent.getElement().querySelectorAll(`.film-details__comment-delete`).forEach((elem, id) => {
       elem.addEventListener(`click`, (evt) => {
         evt.preventDefault();
+        this.disabledBtnDelete(evt);
         this._onDataChangeMain(ActionType.DELETE_COMMENT, {id: this._comments[id].id}, this._queryDeleteComment);
       });
     });

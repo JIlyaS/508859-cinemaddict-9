@@ -32,8 +32,7 @@ class MovieController {
     return {
       isWatchlist: this._dataFilm.isWatchlist,
       isViewed: this._dataFilm.isViewed,
-      isFavorite: this._dataFilm.isFavorite,
-      isFilmDetails: this._dataFilm.isFilmDetails
+      isFavorite: this._dataFilm.isFavorite
     };
   }
 
@@ -74,8 +73,11 @@ class MovieController {
 
   _queryDeleteComment() {
     this._api.getMovieComments({movieId: this._dataFilm.id}).then((comments) => {
+      this._commentController.enabledBtnDelete();
       this._commentController.hide();
       this._commentController.show(comments);
+    }).catch(() => {
+      this._commentController.enabledBtnDelete();
     });
   }
 
@@ -115,10 +117,7 @@ class MovieController {
   init() {
     const onEscKeyDown = (evt) => {
       if (evt.key === `Escape` || evt.key === `Esc`) {
-        const newState = Object.assign(this.getState(), {isFilmDetails: !this._dataFilm.isFilmDetails});
         this._hideDetailsPopup();
-        this._onDataChangeMain(ActionType.UPDATE, Object.assign(this._dataFilm, newState));
-
         document.removeEventListener(`keydown`, onEscKeyDown);
       }
     };
@@ -127,11 +126,8 @@ class MovieController {
     .querySelector(`.film-card__poster`)
     .addEventListener(`click`, () => {
       this._onChangeView();
-      const newState = Object.assign(this.getState(), {isFilmDetails: !this._dataFilm.isFilmDetails});
       this._renderCommentsBlock();
       render(this._popupContainer.getElement(), this._detailsPopup.getElement());
-      this._onDataChangeMain(ActionType.UPDATE, Object.assign(this._dataFilm, newState));
-
       document.addEventListener(`keydown`, onEscKeyDown);
     });
 
@@ -139,12 +135,8 @@ class MovieController {
       .querySelector(`.film-card__title`)
       .addEventListener(`click`, () => {
         this._onChangeView();
-        const newState = Object.assign(this.getState(), {isFilmDetails: !this._dataFilm.isFilmDetails});
-
         this._renderCommentsBlock();
         render(this._popupContainer.getElement(), this._detailsPopup.getElement());
-        this._onDataChangeMain(ActionType.UPDATE, Object.assign(this._dataFilm, newState));
-
         document.addEventListener(`keydown`, onEscKeyDown);
       });
 
@@ -152,12 +144,8 @@ class MovieController {
       .querySelector(`.film-card__comments`)
       .addEventListener(`click`, () => {
         this._onChangeView();
-        const newState = Object.assign(this.getState(), {isFilmDetails: !this._dataFilm.isFilmDetails});
-
         this._renderCommentsBlock();
         render(this._popupContainer.getElement(), this._detailsPopup.getElement());
-        this._onDataChangeMain(ActionType.UPDATE, Object.assign(this._dataFilm, newState));
-
         document.addEventListener(`keydown`, onEscKeyDown);
       });
 
@@ -194,9 +182,7 @@ class MovieController {
 
     this._detailsPopup.getElement().querySelector(`.film-details__close-btn`)
       .addEventListener(`click`, () => {
-        const newState = Object.assign(this.getState(), {isFilmDetails: !this._dataFilm.isFilmDetails});
         this._hideDetailsPopup();
-        this._onDataChangeMain(ActionType.UPDATE, Object.assign(this._dataFilm, newState));
         document.removeEventListener(`keydown`, onEscKeyDown);
       });
 

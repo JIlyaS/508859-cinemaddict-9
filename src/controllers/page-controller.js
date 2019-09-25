@@ -2,6 +2,7 @@ import FilmsWrapper from '../components/films-wrapper';
 import FilmsList from '../components/films-list';
 import RatedList from '../components/rated-list';
 import CommentedList from '../components/commented-list';
+import EmptyData from '../components/empty-data';
 import EmptyResult from '../components/empty-result';
 import ShowButton from '../components/show-button';
 import SortController from './sort-controller';
@@ -10,25 +11,29 @@ import {render, unrender} from '../utils';
 import {COUNT_FILM_CARDS, ADD_MORE_CARD, Position, RenderPosition} from '../constants';
 
 class PageController {
-  constructor(container, popupWrapper, onDataChangeMain) {
+  constructor(container, popupWrapper, onDataChangeMain, changeShowedFilms) {
     this._container = container;
     this._popupWrapper = popupWrapper;
+    this._onDataChangeMain = onDataChangeMain;
+    this._changeShowedFilms = changeShowedFilms;
+
     this._filmsWrapper = new FilmsWrapper();
     this._filmsList = new FilmsList();
     this._showMoreButton = new ShowButton();
-    this._films = [];
-
     this._ratedList = new RatedList();
     this._commentedList = new CommentedList();
+
     this._emptyResult = null;
-    this._footer = document.querySelector(`.footer`);
+    this._emptyData = null;
     this._isSearch = false;
+    this._films = [];
+    this._footer = document.querySelector(`.footer`);
 
     this._onClickShowButton = this._onClickShowButton.bind(this);
 
     this._showedFilms = COUNT_FILM_CARDS;
+    this._filterName = null;
 
-    this._onDataChangeMain = onDataChangeMain;
     this._sortController = new SortController(this._filmsWrapper, this._renderFilmsList.bind(this));
     this._filmListController = new FilmListController(this._filmsWrapper, this._filmsList, this._popupWrapper, this._onDataChangeMain);
     this._filmListRatedController = new FilmListController(this._filmsWrapper, this._ratedList, this._popupWrapper, this._onDataChangeMain, RenderPosition.RATED);
@@ -71,7 +76,7 @@ class PageController {
         this._setFilms(films);
       }
 
-      this._sortController.show(films);
+      this._sortController.setFilms(films);
       this._filmsWrapper.getElement().classList.remove(`visually-hidden`);
     }
   }
@@ -96,6 +101,7 @@ class PageController {
       unrender(this._emptyResult.getElement());
       this._emptyResult.removeElement();
     }
+
     if (films.length === 0) {
       this._sortController.hide();
       return this._renderEmptyResult();
@@ -135,6 +141,11 @@ class PageController {
     render(this._filmsWrapper.getElement(), this._emptyResult.getElement());
   }
 
+  _renderEmptyData() {
+    this._emptyData = new EmptyData();
+    this._unrenderFilmList();
+    render(this._filmsWrapper.getElement(), this._emptyData.getElement());
+  }
 }
 
 export default PageController;

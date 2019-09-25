@@ -28,8 +28,6 @@ class ModelMovie {
     this.isWatchlist = Boolean(data[`user_details`][`watchlist`]);
     this.isViewed = Boolean(data[`user_details`][`already_watched`]);
     this.viewedDate = data[`user_details`][`watching_date`];
-
-    this.isFilmDetails = false;
   }
 
   static parseMovie(data) {

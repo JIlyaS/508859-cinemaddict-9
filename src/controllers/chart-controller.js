@@ -4,6 +4,7 @@ import moment from 'moment';
 import Statistics from '../components/statistics';
 import StatisticInfo from '../components/statistic-info';
 import StatisticChart from '../components/statistic-chart';
+import StatisticRang from '../components/statistic-rang';
 import {render, unrender} from '../utils';
 import {HOUR, PeriodStats, Position} from '../constants';
 import {getRang} from '../components/data';
@@ -11,7 +12,8 @@ import {getRang} from '../components/data';
 class ChartController {
   constructor(container) {
     this._container = container;
-    this._statistic = new Statistics({rang: {}});
+    this._statistic = new Statistics();
+    this._statisticRang = new StatisticRang({rang: {}});
     this._statisticInfo = new StatisticInfo({watchedMovies: {}, totalDuration: {}, topGenre: {}});
     this._statisticChart = new StatisticChart();
     this._chart = null;
@@ -19,6 +21,7 @@ class ChartController {
     this._films = [];
     this._originalFilms = [];
     this._onlyGenres = {};
+    this._rang = null;
 
     this.hide();
   }
@@ -37,11 +40,18 @@ class ChartController {
 
   _showStatisticBlock() {
     this._unrenderStatistics();
-    this._statistic = new Statistics({rang: getRang(this._originalFilms.length)});
+    this._statistic = new Statistics();
     this._getStatisticActions();
     render(this._container, this._statistic.getElement());
 
     this._showStatistics();
+  }
+
+  _showStatisticRang() {
+    this._unrenderStatisticRang();
+    this._rang = this._films.length ? getRang(this._films.length) : `-`;
+    this._statisticRang = new StatisticRang({rang: this._rang});
+    render(this._statistic.getElement(), this._statisticRang.getElement(), Position.AFTERBEGIN);
   }
 
   _showStatsInfo() {
@@ -74,11 +84,12 @@ class ChartController {
     }
 
     if (this._films.length === 0) {
-      this._unrenderStatistics();
+      this._unrenderStatisticChart();
       return this._showStatsInfo();
     }
 
     this._onlyGenres = this._getObjectGenres(this._films);
+    this._showStatisticRang();
     this._showStatsInfo();
     render(this._statistic.getElement().querySelector(`.statistic__chart-wrap`), this._statisticChart.getElement());
 
@@ -207,15 +218,25 @@ class ChartController {
   }
 
   _unrenderStatistics() {
-    unrender(this._statisticChart.getElement());
+    this._unrenderStatisticRang();
+    this._unrenderStatisticChart();
     unrender(this._statistic.getElement());
-    this._statisticChart.removeElement();
     this._statistic.removeElement();
+  }
+
+  _unrenderStatisticChart() {
+    unrender(this._statisticChart.getElement());
+    this._statisticChart.removeElement();
   }
 
   _unrenderStatisticInfo() {
     unrender(this._statisticInfo.getElement());
     this._statisticInfo.removeElement();
+  }
+
+  _unrenderStatisticRang() {
+    unrender(this._statisticRang.getElement());
+    this._statisticRang.removeElement();
   }
 }
 
