@@ -119,7 +119,7 @@ class CommentController {
     return {
       comment: {
         emotion: formData.get(`comment-emoji`) !== null ? formData.get(`comment-emoji`) : `smile`,
-        comment: DOMPurify.sanitize(formData.get(`comment`), {SAFE_FOR_JQUERY: true}),
+        comment: DOMPurify.sanitize(formData.get(`comment`)),
         date: new Date(Date.now())
       }
     };

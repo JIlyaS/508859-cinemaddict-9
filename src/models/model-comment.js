@@ -1,11 +1,12 @@
 import moment from 'moment';
+import DOMPurify from 'dompurify';
 
 class ModelComment {
   constructor(comment) {
     this.id = comment[`id`];
-    this.author = comment[`author`];
-    this.emotion = comment[`emotion`];
-    this.comment = comment[`comment`];
+    this.author = DOMPurify.sanitize(comment[`author`]);
+    this.emotion = DOMPurify.sanitize(comment[`emotion`]);
+    this.comment = DOMPurify.sanitize(comment[`comment`]);
     this.date = Number(moment(comment[`date`]).format(`x`));
   }
 
