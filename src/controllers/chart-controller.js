@@ -1,28 +1,30 @@
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import moment from 'moment';
+
 import Statistics from '../components/statistics';
+import StatisticInfo from '../components/statistic-info';
 import StatisticChart from '../components/statistic-chart';
-import {render, unrender} from '../utils';
-import {FILM_GENRES, HOUR, PeriodStats} from '../constants';
-import {getRang} from '../components/data';
+import StatisticRang from '../components/statistic-rang';
+
+import {render, unrender, getRang, flat} from '../utils';
+import {HOUR, ONLY_GENRE, StatsPeriod, Position} from '../constants';
 
 class ChartController {
   constructor(container) {
     this._container = container;
-    this._statistic = new Statistics({rang: {}, watchedMovies: {}, totalDuration: {}, topGenre: {}});
+
+    this._statistic = new Statistics();
+    this._statisticRang = new StatisticRang({rang: {}});
+    this._statisticInfo = new StatisticInfo({watchedMovies: {}, totalDuration: {}, topGenre: {}});
     this._statisticChart = new StatisticChart();
+
     this._chart = null;
+    this._rang = null;
 
     this._films = [];
     this._originalFilms = [];
     this._onlyGenres = {};
-    this._genresObj = {};
-
-    this._genresObj = FILM_GENRES.reduce((acc, item) => {
-      acc[item] = 0;
-      return acc;
-    }, {});
 
     this.hide();
   }
@@ -36,23 +38,35 @@ class ChartController {
     this._originalFilms = films.slice().filter((elem) => elem.isViewed);
     this._statistic.getElement().classList.remove(`visually-hidden`);
 
-    this._showChart();
+    this._showStatisticBlock();
   }
 
-  _showChart() {
-    if (this._statistic) {
-      this._unrenderStatistics();
-    }
+  _showStatisticBlock() {
+    this._unrenderStatistics();
+    this._statistic = new Statistics();
+    this._getStatisticActions();
+    render(this._container, this._statistic.getElement());
 
-    this._onlyGenres = this._getObjectGenres(this._films);
+    this._showStatistics();
+  }
 
-    const topGenre = this._originalFilms.length !== 0 ? Object.entries(this._onlyGenres).reduce(function (prev, current) {
+  _showStatisticRang() {
+    this._unrenderStatisticRang();
+    this._rang = this._films.length ? getRang(this._films.length) : `-`;
+    this._statisticRang = new StatisticRang({rang: this._rang});
+    render(this._statistic.getElement(), this._statisticRang.getElement(), Position.AFTERBEGIN);
+  }
+
+  _showStatsInfo() {
+    this._unrenderStatisticInfo();
+
+    const topGenre = this._films.length !== 0 ? Object.entries(this._onlyGenres).reduce(function (prev, current) {
       return (prev[1] > current[1]) ? prev : current;
     }) : `-`;
 
     const result = {hours: 0, minutes: 0};
 
-    const totalDuration = this._originalFilms.length !== 0 ? this._originalFilms.reduce((_, item) => {
+    const totalDuration = this._films.length !== 0 ? this._films.reduce((_, item) => {
       result.hours += Math.trunc(item.runtime / HOUR);
       result.minutes += Math.trunc(item.runtime % HOUR);
       return result;
@@ -63,27 +77,23 @@ class ChartController {
     totalDuration.hours += addHours;
     totalDuration.minutes = realMonutes;
 
-    this._statistic = new Statistics({rang: getRang(this._films.length), watchedMovies: this._films.length, totalDuration, topGenre: topGenre[0]});
-
-    this._getStatisticActions();
-
-    render(this._container, this._statistic.getElement());
-    this._changeStatistics();
+    this._statisticInfo = new StatisticInfo({watchedMovies: this._films.length, totalDuration, topGenre: topGenre[0]});
+    render(this._statistic.getElement().querySelector(`.statistic__filters`), this._statisticInfo.getElement(), Position.AFTEREND);
   }
 
-  _changeStatistics() {
+  _showStatistics() {
+    if (this._chart !== null) {
+      this._chart.destroy();
+    }
+
     if (this._films.length === 0) {
-      unrender(this._statisticChart.getElement());
-      return this._statisticChart.removeElement();
+      this._unrenderStatisticChart();
+      return this._showStatsInfo();
     }
 
-    if (this._statisticChart) {
-      unrender(this._statisticChart.getElement());
-      this._statisticChart.removeElement();
-    }
-
-    this._onlyGenres = this._getObjectGenres(this._films);
-
+    this._onlyGenres = this._getGenres(this._films);
+    this._showStatisticRang();
+    this._showStatsInfo();
     render(this._statistic.getElement().querySelector(`.statistic__chart-wrap`), this._statisticChart.getElement());
 
     const ctx = this._statisticChart.getElement();
@@ -162,43 +172,16 @@ class ChartController {
     return 0;
   }
 
-  _getObjectGenres(films) {
+  _getGenres(films) {
     const filmGenres = films.map((film) => Object.values(film.genres));
-    return filmGenres.flat().reduce((acc, item) => {
+    return (flat(filmGenres)).reduce((acc, item) => {
       if (acc.hasOwnProperty(item)) {
         acc[item]++;
       } else {
-        acc[item] = 1;
+        acc[item] = ONLY_GENRE;
       }
       return acc;
     }, {});
-  }
-
-  _getStatisticActions() {
-    this._statistic.getElement().querySelectorAll(`.statistic__filters-input`).forEach((elem) => {
-      elem.addEventListener(`click`, (evt) => {
-        switch (evt.target.value) {
-          case PeriodStats.ALL_TIME:
-            this._films = this._originalFilms;
-            this._changeStatistics();
-            break;
-          case PeriodStats.TODAY:
-            this._getFilteredStatsFilms(this._originalFilms, `day`);
-            break;
-          case PeriodStats.WEEK:
-            this._getFilteredStatsFilms(this._originalFilms, `week`);
-            break;
-          case PeriodStats.MONTH:
-            this._getFilteredStatsFilms(this._originalFilms, `month`);
-            break;
-          case PeriodStats.YEAR:
-            this._getFilteredStatsFilms(this._originalFilms, `year`);
-            break;
-          default:
-            throw new Error(`Incorrect value`);
-        }
-      });
-    });
   }
 
   _getFilteredStatsFilms(filteredFilms, period) {
@@ -207,15 +190,58 @@ class ChartController {
       const dateViewed = moment(elem.viewedDate).format(`YYYY-MM-DD`);
       return moment(dateViewed).isSame(startDate, period) && elem;
     });
-
-    this._changeStatistics();
+    this._showStatistics();
   }
 
   _unrenderStatistics() {
+    this._unrenderStatisticRang();
+    this._unrenderStatisticChart();
     unrender(this._statistic.getElement());
-    unrender(this._statisticChart.getElement());
     this._statistic.removeElement();
+  }
+
+  _unrenderStatisticChart() {
+    unrender(this._statisticChart.getElement());
     this._statisticChart.removeElement();
+  }
+
+  _unrenderStatisticInfo() {
+    unrender(this._statisticInfo.getElement());
+    this._statisticInfo.removeElement();
+  }
+
+  _unrenderStatisticRang() {
+    unrender(this._statisticRang.getElement());
+    this._statisticRang.removeElement();
+  }
+
+  _getStatisticActions() {
+    const onMenuElemClick = (evt) => {
+      switch (evt.target.value) {
+        case StatsPeriod.ALL_TIME:
+          this._films = this._originalFilms;
+          this._showStatistics();
+          break;
+        case StatsPeriod.TODAY:
+          this._getFilteredStatsFilms(this._originalFilms, `day`);
+          break;
+        case StatsPeriod.WEEK:
+          this._getFilteredStatsFilms(this._originalFilms, `week`);
+          break;
+        case StatsPeriod.MONTH:
+          this._getFilteredStatsFilms(this._originalFilms, `month`);
+          break;
+        case StatsPeriod.YEAR:
+          this._getFilteredStatsFilms(this._originalFilms, `year`);
+          break;
+        default:
+          throw new Error(`Incorrect value`);
+      }
+    };
+
+    this._statistic.getElement().querySelectorAll(`.statistic__filters-input`).forEach((elem) => {
+      elem.addEventListener(`click`, onMenuElemClick);
+    });
   }
 }
 

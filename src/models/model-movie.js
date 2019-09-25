@@ -1,43 +1,41 @@
 import moment from 'moment';
 
 class ModelMovie {
-  constructor(data) {
-    this.id = data[`id`];
-    this.title = data[`film_info`][`title`];
-    this.titleOriginal = data[`film_info`][`alternative_title`] || ``;
-    this.poster = data[`film_info`][`poster`];
-    this.description = data[`film_info`][`description`];
-    this.rating = data[`film_info`][`total_rating`];
-    this.date = Number(moment(data[`film_info`][`release`][`date`]).format(`x`));
-    this.genres = data[`film_info`][`genre`];
-    this.ageRating = data[`film_info`][`age_rating`];
-    this.runtime = data[`film_info`][`runtime`];
-    this.comments = data[`comments`];
+  constructor(movie) {
+    this.id = movie[`id`];
+    this.title = movie[`film_info`][`title`];
+    this.titleOriginal = movie[`film_info`][`alternative_title`] || ``;
+    this.poster = movie[`film_info`][`poster`];
+    this.description = movie[`film_info`][`description`];
+    this.rating = movie[`film_info`][`total_rating`];
+    this.date = Number(moment(movie[`film_info`][`release`][`date`]).format(`x`));
+    this.genres = movie[`film_info`][`genre`];
+    this.ageRating = movie[`film_info`][`age_rating`];
+    this.runtime = movie[`film_info`][`runtime`];
+    this.comments = movie[`comments`];
     this.details = {
-      director: {name: `Director`, value: data[`film_info`][`director`]},
-      writers: {name: `Writers`, value: data[`film_info`][`writers`]},
-      actors: {name: `Actors`, value: data[`film_info`][`actors`]},
-      date: {name: `Release Date`, value: new Date(data[`film_info`][`release`][`date`])},
-      runtime: {name: `Runtime`, value: data[`film_info`][`runtime`]},
-      country: {name: `Country`, value: data[`film_info`][`release`][`release_country`]},
-      genres: {name: `Genre`, value: data[`film_info`][`genre`]}
+      director: {name: `Director`, value: movie[`film_info`][`director`]},
+      writers: {name: `Writers`, value: movie[`film_info`][`writers`]},
+      actors: {name: `Actors`, value: movie[`film_info`][`actors`]},
+      date: {name: `Release Date`, value: new Date(movie[`film_info`][`release`][`date`])},
+      runtime: {name: `Runtime`, value: movie[`film_info`][`runtime`]},
+      country: {name: `Country`, value: movie[`film_info`][`release`][`release_country`]},
+      genres: {name: `Genre`, value: movie[`film_info`][`genre`]}
     };
 
-    this.personalRating = data[`user_details`][`personal_rating`] || null;
-    this.isFavorite = Boolean(data[`user_details`][`favorite`]);
-    this.isWatchlist = Boolean(data[`user_details`][`watchlist`]);
-    this.isViewed = Boolean(data[`user_details`][`already_watched`]);
-    this.viewedDate = data[`user_details`][`watching_date`];
-
-    this.isFilmDetails = false;
+    this.personalRating = Number(movie[`user_details`][`personal_rating`]) || null;
+    this.isFavorite = Boolean(movie[`user_details`][`favorite`]);
+    this.isWatchlist = Boolean(movie[`user_details`][`watchlist`]);
+    this.isViewed = Boolean(movie[`user_details`][`already_watched`]);
+    this.viewedDate = movie[`user_details`][`watching_date`];
   }
 
-  static parseMovie(data) {
-    return new ModelMovie(data);
+  static parseMovie(movie) {
+    return new ModelMovie(movie);
   }
 
-  static parseMovies(data) {
-    return data.map(ModelMovie.parseMovie);
+  static parseMovies(movie) {
+    return movie.map(ModelMovie.parseMovie);
   }
 
   toRAW() {

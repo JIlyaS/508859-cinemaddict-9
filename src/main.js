@@ -1,14 +1,15 @@
 import Search from './components/search';
 import Profile from './components/profile';
 import PopupWrapper from './components/popup-wrapper';
+import Loading from './components/loading';
 import API from './api';
 import PageController from './controllers/page-controller';
 import SearchController from './controllers/search-controller';
 import MenuController from './controllers/menu-controller';
-import {render} from './utils';
-import {MIN_SEARCH_SYMBOLS, AUTHORIZATION, SERVER, ActionType} from './constants';
-import {getRang} from './components/data';
 import ChartController from './controllers/chart-controller';
+import {render, unrender} from './utils';
+import {MIN_SEARCH_SYMBOLS, AUTHORIZATION, SERVER, ActionType} from './constants';
+import {getRang} from './utils';
 
 const headerWrapper = document.querySelector(`.header`);
 const mainWrapper = document.querySelector(`.main`);
@@ -17,6 +18,7 @@ const footerFilmCountBlock = document.querySelector(`.footer__statistics p`);
 const api = new API({authorization: AUTHORIZATION, server: SERVER});
 const search = new Search();
 const popupWrapper = new PopupWrapper();
+const loading = new Loading();
 
 const changeSearchInfo = (isSearch) => {
   menuController.setSearch(isSearch);
@@ -31,12 +33,12 @@ const onSearchCloseButtonClick = () => {
   onDataChange(ActionType.CREATE);
 };
 
-const onDataChange = (actionType, updated, callback) => {
+const onDataChange = (actionType, updated, cb, cbError) => {
   switch (actionType) {
     case ActionType.UPDATE:
       api.updateMovie({
         id: updated.id,
-        data: updated.toRAW()
+        movie: updated.toRAW()
       })
       .then(() => api.getMovies())
       .then((movies) => {
@@ -46,7 +48,10 @@ const onDataChange = (actionType, updated, callback) => {
       });
       break;
     case ActionType.CREATE:
+      render(mainWrapper, loading.getElement());
       api.getMovies().then((movies) => {
+        unrender(loading.getElement());
+        loading.removeElement();
         menuController.show(movies);
         pageController.show(movies);
         searchController.show(movies);
@@ -61,7 +66,7 @@ const onDataChange = (actionType, updated, callback) => {
       .then(() => api.getMovies())
       .then((movies) => {
         pageController.show(movies);
-        callback();
+        cb();
       });
       break;
     case ActionType.DELETE_COMMENT:
@@ -71,7 +76,22 @@ const onDataChange = (actionType, updated, callback) => {
       .then(() => api.getMovies())
       .then((movies) => {
         pageController.show(movies);
-        callback();
+        cb();
+      });
+      break;
+    case ActionType.UPDATE_RATING:
+      api.updateMovie({
+        id: updated.id,
+        movie: updated.toRAW()
+      })
+      .then(() => api.getMovies())
+      .then((movies) => {
+        menuController.show(movies);
+        pageController.show(movies);
+        searchController.show(movies);
+        cb();
+      }).catch(() => {
+        cbError();
       });
       break;
     default:
@@ -82,15 +102,10 @@ const onDataChange = (actionType, updated, callback) => {
 render(headerWrapper, search.getElement());
 
 api.getMovies().then((movies) => {
-  const watchedFilms = movies.filter((elem) => elem.isViewed === true);
+  const watchedFilms = movies.filter((elem) => elem.isViewed);
   const profile = new Profile(getRang(watchedFilms.length));
   render(headerWrapper, profile.getElement());
 });
-
-const pageController = new PageController(mainWrapper, popupWrapper, onDataChange);
-const searchController = new SearchController(mainWrapper, popupWrapper, search, onDataChange, onSearchCloseButtonClick);
-const chartController = new ChartController(mainWrapper);
-const menuController = new MenuController(mainWrapper, pageController, searchController, chartController);
 
 search.getElement().querySelector(`.search__field`).addEventListener(`keyup`, (evt) => {
   if (evt.target.value.length >= MIN_SEARCH_SYMBOLS) {
@@ -106,5 +121,10 @@ search.getElement().querySelector(`.search__field`).addEventListener(`keyup`, (e
     onDataChange(ActionType.CREATE);
   }
 });
+
+const pageController = new PageController(mainWrapper, popupWrapper, onDataChange);
+const searchController = new SearchController(mainWrapper, popupWrapper, search, onDataChange, onSearchCloseButtonClick);
+const chartController = new ChartController(mainWrapper);
+const menuController = new MenuController(mainWrapper, pageController, searchController, chartController);
 
 onDataChange(ActionType.CREATE);

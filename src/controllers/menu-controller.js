@@ -1,19 +1,19 @@
 import Menu from '../components/menu';
-import {NAME_FILTERS, MenuName, Position} from '../constants';
+import {NAME_FILTERS, MenuName, Position, MenuFilter} from '../constants';
 import {render, unrender} from '../utils';
-import {getDataFilter} from '../components/data';
+import {getDataFilter} from '../utils';
 
-class CommentController {
+class MenuController {
   constructor(container, pageController, searchController, chartController) {
     this._container = container;
-    this._dataFilters = {};
-    this._menu = null;
     this._pageController = pageController;
     this._searchController = searchController;
     this._chartController = chartController;
 
-    this._films = [];
     this._isSearch = false;
+    this._menu = null;
+    this._dataFilters = {};
+    this._films = [];
   }
 
   show(films) {
@@ -51,8 +51,28 @@ class CommentController {
     this._init();
   }
 
+  _getActiveMenuElement(evt) {
+    this._menu.getElement().querySelectorAll(`.main-navigation__item`)
+      .forEach((elem) => {
+        elem.classList.remove(`main-navigation__item--active`);
+      });
+    evt.target.classList.add(`main-navigation__item--active`);
+  }
+
+  _changeFilter(evt, filterName) {
+    this._getActiveMenuElement(evt);
+    const filteredFilmCards = this._films.slice().filter((elem) => elem[filterName]);
+    this._pageController.show(filteredFilmCards, true);
+  }
+
+  _renderFilterData(evt, filterName) {
+    this._chartController.hide();
+    this._searchController.hide();
+    this._changeFilter(evt, filterName);
+  }
+
   _init() {
-    this._menu.getElement().addEventListener(`click`, (evt) => {
+    const onMenuElemClick = (evt) => {
       evt.preventDefault();
       if (!evt.target.classList.contains(`main-navigation__item`)) {
         return;
@@ -66,19 +86,13 @@ class CommentController {
           this._pageController.show(this._films);
           break;
         case MenuName.WATCHLIST:
-          this._chartController.hide();
-          this._searchController.hide();
-          this._changeFilter(evt, `isWatchlist`);
+          this._renderFilterData(evt, MenuFilter.IS_WATCHLIST);
           break;
         case MenuName.HISTORY:
-          this._chartController.hide();
-          this._searchController.hide();
-          this._changeFilter(evt, `isViewed`);
+          this._renderFilterData(evt, MenuFilter.IS_VIEWED);
           break;
         case MenuName.FAVORITES:
-          this._chartController.hide();
-          this._searchController.hide();
-          this._changeFilter(evt, `isFavorite`);
+          this._renderFilterData(evt, MenuFilter.IS_FAVORITE);
           break;
         case MenuName.STATS:
           this._getActiveMenuElement(evt);
@@ -89,24 +103,12 @@ class CommentController {
         default:
           break;
       }
-    });
+    };
+
+    this._menu.getElement().addEventListener(`click`, onMenuElemClick);
 
     render(this._container, this._menu.getElement(), Position.AFTERBEGIN);
   }
-
-  _getActiveMenuElement(evt) {
-    this._menu.getElement().querySelectorAll(`.main-navigation__item`)
-      .forEach((elem) => {
-        elem.classList.remove(`main-navigation__item--active`);
-      });
-    evt.target.classList.add(`main-navigation__item--active`);
-  }
-
-  _changeFilter(evt, filterName) {
-    this._getActiveMenuElement(evt);
-    const filteredFilmCards = this._films.slice().filter((elem) => elem[filterName] === true);
-    this._pageController.show(filteredFilmCards);
-  }
 }
 
-export default CommentController;
+export default MenuController;

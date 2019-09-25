@@ -1,10 +1,10 @@
 import SearchInfo from '../components/search-info';
 import EmptyResult from '../components/empty-result';
 import FilmsWrapper from '../components/films-wrapper';
+import FilmList from '../components/film-list';
 import FilmListController from './film-list-controller';
 import {render, unrender} from '../utils';
 import {MIN_SEARCH_SYMBOLS, Position} from '../constants';
-import FilmsList from '../components/films-list';
 
 class SearchController {
   constructor(container, popupWrapper, search, onDataChangeMain, onSearchCloseButtonClick) {
@@ -19,35 +19,13 @@ class SearchController {
     this._emptyResult = null;
 
     this._filmsSearchWrapper = new FilmsWrapper();
-    this._filmsSearchList = new FilmsList();
+    this._filmSearchList = new FilmList();
     this._searchInfo = new SearchInfo({});
 
-    this._filmListController = new FilmListController(this._filmsSearchWrapper, this._filmsSearchList, this._popupWrapper, this._onDataChangeMain);
+    this._filmListController = new FilmListController(this._filmsSearchWrapper, this._filmSearchList, this._popupWrapper, this._onDataChangeMain);
 
     this._init();
     this.hide();
-  }
-
-  _init() {
-    render(this._container, this._searchInfo.getElement());
-    this._renderFindedFilmsWrapper();
-
-    this._search.getElement().querySelector(`.search__reset`)
-      .addEventListener(`click`, () => {
-        this._search.getElement().querySelector(`.search__field`).value = ``;
-        this._onSearchCloseButtonClick();
-      });
-
-    this._search.getElement().querySelector(`.search__field`)
-      .addEventListener(`keyup`, (evt) => {
-        const {value} = evt.target;
-        if (value.length >= MIN_SEARCH_SYMBOLS) {
-          const films = this._films.filter((film) => {
-            return film.title.includes(value);
-          });
-          this._showSearchResult(value, films);
-        }
-      });
   }
 
   hide() {
@@ -68,6 +46,32 @@ class SearchController {
 
   setSearch(isSearch) {
     this._isSearch = isSearch;
+  }
+
+  _init() {
+    render(this._container, this._searchInfo.getElement());
+    this._renderFindedFilmsWrapper();
+
+    const onSearchResetBtnClick = () => {
+      this._search.getElement().querySelector(`.search__field`).value = ``;
+      this._onSearchCloseButtonClick();
+    };
+
+    const onSearchInputKeyUp = (evt) => {
+      const {value} = evt.target;
+      if (value.length >= MIN_SEARCH_SYMBOLS) {
+        const films = this._films.filter((film) => {
+          return film.title.includes(value);
+        });
+        this._showSearchResult(value, films);
+      }
+    };
+
+    this._search.getElement().querySelector(`.search__reset`)
+      .addEventListener(`click`, onSearchResetBtnClick);
+
+    this._search.getElement().querySelector(`.search__field`)
+      .addEventListener(`keyup`, onSearchInputKeyUp);
   }
 
   _showSearchResult(_, films) {
@@ -95,18 +99,9 @@ class SearchController {
     return this._filmListController.setFilms(films);
   }
 
-  _unrenderFindedFilmsWrapper() {
-    unrender(this._filmsSearchList.getElement());
-    unrender(this._filmsSearchWrapper.getElement());
-    unrender(this._searchInfo.getElement());
-    this._searchInfo.removeElement();
-    this._filmsSearchList.removeElement();
-    this._filmsSearchWrapper.removeElement();
-  }
-
   _renderFindedFilmsWrapper() {
     render(this._container, this._filmsSearchWrapper.getElement());
-    render(this._filmsSearchWrapper.getElement(), this._filmsSearchList.getElement());
+    render(this._filmsSearchWrapper.getElement(), this._filmSearchList.getElement());
   }
 
   _renderFilmsList(films) {
@@ -121,7 +116,16 @@ class SearchController {
     this._emptyResult = new EmptyResult();
     this._unrenderFindedFilmsWrapper();
     this._renderFindedFilmsWrapper();
-    render(this._filmsSearchList.getElement(), this._emptyResult.getElement());
+    render(this._filmSearchList.getElement(), this._emptyResult.getElement());
+  }
+
+  _unrenderFindedFilmsWrapper() {
+    unrender(this._filmSearchList.getElement());
+    unrender(this._filmsSearchWrapper.getElement());
+    unrender(this._searchInfo.getElement());
+    this._searchInfo.removeElement();
+    this._filmSearchList.removeElement();
+    this._filmsSearchWrapper.removeElement();
   }
 }
 

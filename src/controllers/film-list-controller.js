@@ -1,5 +1,5 @@
 import MovieController from './movie-controller';
-import {RenderPosition} from '../constants';
+import {MAX_COUNT_FILMS, RenderPosition} from '../constants';
 import {render} from '../utils';
 
 class FilmListController {
@@ -14,7 +14,6 @@ class FilmListController {
     this._subscriptions = [];
 
     this._onChangeView = this._onChangeView.bind(this);
-    // this._onDataChange = this._onDataChange.bind(this);
   }
 
   setFilms(films) {
@@ -23,14 +22,14 @@ class FilmListController {
 
     switch (this._renderPosition) {
       case RenderPosition.RATED:
-        this._ratedFilms = (this._films.sort((prevFilm, currFilm) => currFilm.rating - prevFilm.rating).slice(0, 2));
+        this._ratedFilms = (this._films.sort((prevFilm, currFilm) => currFilm.rating - prevFilm.rating).slice(0, MAX_COUNT_FILMS));
         if (this._ratedFilms.length !== 0) {
           this._ratedFilms.forEach((film) => this._renderFilmsCard(film, this._container, this._popupWrapper));
           render(this._filmsWrapper.getElement(), this._container.getElement());
         }
         break;
       case RenderPosition.COMMENTED:
-        this._commentedFilms = (this._films.sort((prevFilm, currFilm) => currFilm.comments.length - prevFilm.comments.length)).slice(0, 2);
+        this._commentedFilms = (this._films.sort((prevFilm, currFilm) => currFilm.comments.length - prevFilm.comments.length)).slice(0, MAX_COUNT_FILMS);
         if (this._commentedFilms.length !== 0) {
           this._commentedFilms.forEach((film) => this._renderFilmsCard(film, this._container, this._popupWrapper));
           render(this._filmsWrapper.getElement(), this._container.getElement());

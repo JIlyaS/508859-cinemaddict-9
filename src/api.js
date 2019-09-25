@@ -13,11 +13,11 @@ class API {
     return this._load({url: `movies`}).then(toJSON).then(ModelMovie.parseMovies);
   }
 
-  updateMovie({id, data}) {
+  updateMovie({id, movie}) {
     return this._load({
       url: `movies/${id}`,
       method: Method.PUT,
-      body: JSON.stringify(data),
+      body: JSON.stringify(movie),
       headers: new Headers({'Content-Type': `application/json`})
     })
       .then(toJSON)
@@ -49,7 +49,6 @@ class API {
     return fetch(`${this._server}/${url}`, {method, body, headers})
       .then(checkStatus)
       .catch((err) => {
-        // console.error(`fetch error: ${err}`);
         throw err;
       });
   }

@@ -1,6 +1,6 @@
 import AbstractComponent from './abstract-component';
 
-class RatedList extends AbstractComponent {
+class CommentedList extends AbstractComponent {
   getTemplate() {
     return `<section class="films-list--extra">
         <h2 class="films-list__title">Most commented</h2>
@@ -11,4 +11,4 @@ class RatedList extends AbstractComponent {
   }
 }
 
-export default RatedList;
+export default CommentedList;
