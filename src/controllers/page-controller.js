@@ -1,5 +1,5 @@
 import FilmsWrapper from '../components/films-wrapper';
-import FilmsList from '../components/films-list';
+import FilmsList from '../components/film-list';
 import RatedList from '../components/rated-list';
 import CommentedList from '../components/commented-list';
 import EmptyData from '../components/empty-data';

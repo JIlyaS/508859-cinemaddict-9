@@ -8,7 +8,7 @@ import StatisticChart from '../components/statistic-chart';
 import StatisticRang from '../components/statistic-rang';
 
 import {render, unrender, getRang} from '../utils';
-import {HOUR, ONLY_GENRE, PeriodStats, Position} from '../constants';
+import {HOUR, ONLY_GENRE, StatsPeriod, Position} from '../constants';
 
 class ChartController {
   constructor(container) {
@@ -91,7 +91,7 @@ class ChartController {
       return this._showStatsInfo();
     }
 
-    this._onlyGenres = this._getObjectGenres(this._films);
+    this._onlyGenres = this._getGenres(this._films);
     this._showStatisticRang();
     this._showStatsInfo();
     render(this._statistic.getElement().querySelector(`.statistic__chart-wrap`), this._statisticChart.getElement());
@@ -172,7 +172,7 @@ class ChartController {
     return 0;
   }
 
-  _getObjectGenres(films) {
+  _getGenres(films) {
     const filmGenres = films.map((film) => Object.values(film.genres));
     return filmGenres.flat().reduce((acc, item) => {
       if (acc.hasOwnProperty(item)) {
@@ -188,20 +188,20 @@ class ChartController {
     this._statistic.getElement().querySelectorAll(`.statistic__filters-input`).forEach((elem) => {
       elem.addEventListener(`click`, (evt) => {
         switch (evt.target.value) {
-          case PeriodStats.ALL_TIME:
+          case StatsPeriod.ALL_TIME:
             this._films = this._originalFilms;
             this._showStatistics();
             break;
-          case PeriodStats.TODAY:
+          case StatsPeriod.TODAY:
             this._getFilteredStatsFilms(this._originalFilms, `day`);
             break;
-          case PeriodStats.WEEK:
+          case StatsPeriod.WEEK:
             this._getFilteredStatsFilms(this._originalFilms, `week`);
             break;
-          case PeriodStats.MONTH:
+          case StatsPeriod.MONTH:
             this._getFilteredStatsFilms(this._originalFilms, `month`);
             break;
-          case PeriodStats.YEAR:
+          case StatsPeriod.YEAR:
             this._getFilteredStatsFilms(this._originalFilms, `year`);
             break;
           default:

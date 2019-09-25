@@ -6,13 +6,11 @@ import {
   NUNBER_SYSTEM,
   HOUR,
   LESS_MINUTES,
-  MIN_COUNT_NOVICE,
-  MAX_COUNT_NOVICE,
-  MIN_COUNT_FAN,
-  MAX_COUNT_FAN,
+  NoviceCount,
+  FanCount,
   MIN_COUNT_BUFF,
   Position,
-  FilterTitles,
+  FilterTitle,
   Rang,
   StatusSuccess,
   MomentSettings} from './constants';
@@ -81,8 +79,8 @@ export const getTransformRuntime = (runtime) => {
   return hours !== 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
 };
 
-export const getCorrectData = (data) => {
-  return data ? data : ``;
+export const getCorrectGenre = (genre) => {
+  return genre ? genre : ``;
 };
 
 export const getGenreTitle = (genres) => {
@@ -90,9 +88,9 @@ export const getGenreTitle = (genres) => {
 };
 
 export const getRang = (countFilms) => {
-  if (countFilms >= MIN_COUNT_NOVICE && countFilms <= MAX_COUNT_NOVICE) {
+  if (countFilms >= NoviceCount.MIN && countFilms <= NoviceCount.MAX) {
     return Rang.NOVICE;
-  } else if (countFilms >= MIN_COUNT_FAN && countFilms <= MAX_COUNT_FAN) {
+  } else if (countFilms >= FanCount.MIN && countFilms <= FanCount.MAX) {
     return Rang.FAN;
   } else if (countFilms >= MIN_COUNT_BUFF) {
     return Rang.BUFF;
@@ -105,16 +103,16 @@ export const getDataFilter = (filterName, dataFilms) => {
   let filteredData;
   const {title, href} = filterName;
   switch (title) {
-    case FilterTitles.ALL:
+    case FilterTitle.ALL:
       filteredData = dataFilms;
       break;
-    case FilterTitles.WATCHLIST:
+    case FilterTitle.WATCHLIST:
       filteredData = dataFilms.filter((task) => task.isWatchlist === true);
       break;
-    case FilterTitles.HISTORY:
+    case FilterTitle.HISTORY:
       filteredData = dataFilms.filter((task) => task.isViewed === true);
       break;
-    case FilterTitles.FAVORITES:
+    case FilterTitle.FAVORITES:
       filteredData = dataFilms.filter((task) => task.isFavorite === true);
       break;
     default:

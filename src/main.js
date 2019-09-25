@@ -6,10 +6,10 @@ import API from './api';
 import PageController from './controllers/page-controller';
 import SearchController from './controllers/search-controller';
 import MenuController from './controllers/menu-controller';
+import ChartController from './controllers/chart-controller';
 import {render, unrender} from './utils';
 import {MIN_SEARCH_SYMBOLS, AUTHORIZATION, SERVER, ActionType} from './constants';
 import {getRang} from './utils';
-import ChartController from './controllers/chart-controller';
 
 const headerWrapper = document.querySelector(`.header`);
 const mainWrapper = document.querySelector(`.main`);
@@ -33,12 +33,12 @@ const onSearchCloseButtonClick = () => {
   onDataChange(ActionType.CREATE);
 };
 
-const onDataChange = (actionType, updated, callback, callbackError) => {
+const onDataChange = (actionType, updated, cb, cbError) => {
   switch (actionType) {
     case ActionType.UPDATE:
       api.updateMovie({
         id: updated.id,
-        data: updated.toRAW()
+        movie: updated.toRAW()
       })
       .then(() => api.getMovies())
       .then((movies) => {
@@ -66,7 +66,7 @@ const onDataChange = (actionType, updated, callback, callbackError) => {
       .then(() => api.getMovies())
       .then((movies) => {
         pageController.show(movies);
-        callback();
+        cb();
       });
       break;
     case ActionType.DELETE_COMMENT:
@@ -76,22 +76,22 @@ const onDataChange = (actionType, updated, callback, callbackError) => {
       .then(() => api.getMovies())
       .then((movies) => {
         pageController.show(movies);
-        callback();
+        cb();
       });
       break;
     case ActionType.UPDATE_RATING:
       api.updateMovie({
         id: updated.id,
-        data: updated.toRAW()
+        movie: updated.toRAW()
       })
       .then(() => api.getMovies())
       .then((movies) => {
         menuController.show(movies);
         pageController.show(movies);
         searchController.show(movies);
-        callback();
+        cb();
       }).catch(() => {
-        callbackError();
+        cbError();
       });
       break;
     default:
@@ -107,11 +107,6 @@ api.getMovies().then((movies) => {
   render(headerWrapper, profile.getElement());
 });
 
-const pageController = new PageController(mainWrapper, popupWrapper, onDataChange);
-const searchController = new SearchController(mainWrapper, popupWrapper, search, onDataChange, onSearchCloseButtonClick);
-const chartController = new ChartController(mainWrapper);
-const menuController = new MenuController(mainWrapper, pageController, searchController, chartController);
-
 search.getElement().querySelector(`.search__field`).addEventListener(`keyup`, (evt) => {
   if (evt.target.value.length >= MIN_SEARCH_SYMBOLS) {
     menuController.hide();
@@ -126,5 +121,10 @@ search.getElement().querySelector(`.search__field`).addEventListener(`keyup`, (e
     onDataChange(ActionType.CREATE);
   }
 });
+
+const pageController = new PageController(mainWrapper, popupWrapper, onDataChange);
+const searchController = new SearchController(mainWrapper, popupWrapper, search, onDataChange, onSearchCloseButtonClick);
+const chartController = new ChartController(mainWrapper);
+const menuController = new MenuController(mainWrapper, pageController, searchController, chartController);
 
 onDataChange(ActionType.CREATE);

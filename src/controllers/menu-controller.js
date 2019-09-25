@@ -1,5 +1,5 @@
 import Menu from '../components/menu';
-import {NAME_FILTERS, MenuName, Position, MenuFilters} from '../constants';
+import {NAME_FILTERS, MenuName, Position, MenuFilter} from '../constants';
 import {render, unrender} from '../utils';
 import {getDataFilter} from '../utils';
 
@@ -68,17 +68,17 @@ class CommentController {
         case MenuName.WATCHLIST:
           this._chartController.hide();
           this._searchController.hide();
-          this._changeFilter(evt, MenuFilters.IS_WATCHLIST);
+          this._changeFilter(evt, MenuFilter.IS_WATCHLIST);
           break;
         case MenuName.HISTORY:
           this._chartController.hide();
           this._searchController.hide();
-          this._changeFilter(evt, MenuFilters.IS_VIEWED);
+          this._changeFilter(evt, MenuFilter.IS_VIEWED);
           break;
         case MenuName.FAVORITES:
           this._chartController.hide();
           this._searchController.hide();
-          this._changeFilter(evt, MenuFilters.IS_FAVORITE);
+          this._changeFilter(evt, MenuFilter.IS_FAVORITE);
           break;
         case MenuName.STATS:
           this._getActiveMenuElement(evt);

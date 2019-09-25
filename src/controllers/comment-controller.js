@@ -1,6 +1,6 @@
 import DOMPurify from 'dompurify';
-import Comments from '../components/comments';
-import {ENTER_KEY, ANIMATION_TIMEOUT, ANIMATION, ActionType} from '../constants';
+import Comments from '../components/comment-list';
+import {ENTER_KEY, Animation, ActionType} from '../constants';
 import {render, unrender} from '../utils';
 
 class CommentController {
@@ -43,10 +43,10 @@ class CommentController {
   }
 
   shakeErrorComponent() {
-    this._nodeTextareaComment.style.animation = ANIMATION;
+    this._nodeTextareaComment.style.animation = Animation.STYLE;
     setTimeout(() => {
       this._nodeTextareaComment.style.animation = ``;
-    }, ANIMATION_TIMEOUT);
+    }, Animation.TIMEOUT);
   }
 
   viewErrorComponent() {

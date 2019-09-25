@@ -4,7 +4,7 @@ import FilmsWrapper from '../components/films-wrapper';
 import FilmListController from './film-list-controller';
 import {render, unrender} from '../utils';
 import {MIN_SEARCH_SYMBOLS, Position} from '../constants';
-import FilmsList from '../components/films-list';
+import FilmsList from '../components/film-list';
 
 class SearchController {
   constructor(container, popupWrapper, search, onDataChangeMain, onSearchCloseButtonClick) {

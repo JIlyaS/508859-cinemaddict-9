@@ -1,7 +1,7 @@
 import moment from 'moment';
 import AbstractComponent from './abstract-component';
 import {FIXED_RATING} from '../constants';
-import {getShortDescription, getCorrectData, getTransformRuntime} from '../utils';
+import {getShortDescription, getCorrectGenre, getTransformRuntime} from '../utils';
 
 class FilmCard extends AbstractComponent {
   constructor(card) {
@@ -26,7 +26,7 @@ class FilmCard extends AbstractComponent {
     <p class="film-card__info">
       <span class="film-card__year">${moment(this._date).format(`YYYY`)}</span>
       <span class="film-card__duration">${getTransformRuntime(this._runtime)}</span>
-      <span class="film-card__genre">${getCorrectData(this._genres[0])}</span>
+      <span class="film-card__genre">${getCorrectGenre(this._genres[0])}</span>
     </p>
     <img src="./${this._poster}" alt="" class="film-card__poster">
     <p class="film-card__description">${getShortDescription(this._description)}</p>

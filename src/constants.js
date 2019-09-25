@@ -1,3 +1,22 @@
+export const MIN_COUNT_BUFF = 21;
+export const HOUR = 60;
+export const COUNT_FILM_CARDS = 5;
+export const COUNT_DAYS_COMMENTS = 10;
+export const ADD_MORE_CARD = 5;
+export const PERSONAL_RATING_COUNT = 9;
+export const ENTER_KEY = 13;
+export const MIN_SEARCH_SYMBOLS = 3;
+export const SHORT_DESCRIPTION_LENGTH = 140;
+export const CORRENT_RATING = 1;
+export const FIXED_RATING = 1;
+export const ONLY_GENRE = 1;
+export const MAX_COUNT_FILMS = 2;
+export const COUNT_GENRES = 1;
+export const MINUS_INDEX = 1;
+export const NUNBER_SYSTEM = 10;
+export const LESS_MINUTES = 10;
+export const AUTHORIZATION = `Basic eo0w590ik29889a=${Math.random()}`;
+export const SERVER = `https://htmlacademy-es-9.appspot.com/cinemaddict/`;
 export const NAME_FILTERS = [
   {title: `All movies`, href: `all`},
   {title: `Watchlist`, href: `watchlist`},
@@ -5,14 +24,14 @@ export const NAME_FILTERS = [
   {title: `Favorites`, href: `favorites`},
   {title: `Stats`, href: `stats`}
 ];
-export const MENU_STATISTIC = [
+export const MENU_STATISTICS = [
   {id: `all-time`, title: `All time`, checked: true},
   {id: `today`, title: `Today`},
   {id: `week`, title: `Week`},
   {id: `month`, title: `Month`},
   {id: `year`, title: `Year`}
 ];
-export const FilterTitles = {
+export const FilterTitle = {
   ALL: `All movies`,
   WATCHLIST: `Watchlist`,
   HISTORY: `History`,
@@ -27,30 +46,19 @@ export const StatusSuccess = {
   MIN: 200,
   MAX: 300
 };
-export const MIN_COUNT_NOVICE = 1;
-export const MAX_COUNT_NOVICE = 10;
-export const MIN_COUNT_FAN = 11;
-export const MAX_COUNT_FAN = 20;
-export const MIN_COUNT_BUFF = 21;
-export const HOUR = 60;
-export const COUNT_FILM_CARDS = 5;
-export const COUNT_DAYS_COMMENTS = 10;
-export const ADD_MORE_CARD = 5;
-export const PERSONAL_RATING_COUNT = 9;
-export const ENTER_KEY = 13;
-export const MIN_SEARCH_SYMBOLS = 3;
-export const SHORT_DESCRIPTION_LENGTH = 140;
-export const ANIMATION_TIMEOUT = 600;
-export const ANIMATION_DURATION = ANIMATION_TIMEOUT / 1000;
-export const ANIMATION = `shake ${ANIMATION_DURATION}s`;
-export const CORRENT_RATING = 1;
-export const FIXED_RATING = 1;
-export const ONLY_GENRE = 1;
-export const MAX_COUNT_FILMS = 2;
-export const COUNT_GENRES = 1;
-export const MINUS_INDEX = 1;
-export const NUNBER_SYSTEM = 10;
-export const LESS_MINUTES = 10;
+export const NoviceCount = {
+  MIN: 1,
+  MAX: 10
+};
+export const FanCount = {
+  MIN: 11,
+  MAX: 20
+};
+export const Animation = {
+  TIMEOUT: 600,
+  DURATION: 0.6,
+  STYLE: `shake 0.6s`
+};
 export const MomentSettings = {
   LANGUAGE: `en`,
   START_DAY_WEEK: 1,
@@ -66,7 +74,7 @@ export const RenderPosition = {
   RATED: `rated`,
   COMMENTED: `commented`
 };
-export const Sorted = {
+export const SortName = {
   DATE: `date`,
   RATING: `rating`,
   DEFAULT: `default`
@@ -78,13 +86,13 @@ export const MenuName = {
   FAVORITES: `favorites`,
   STATS: `stats`
 };
-export const MenuFilters = {
+export const MenuFilter = {
   IS_WATCHLIST: `isWatchlist`,
   IS_VIEWED: `isViewed`,
   IS_FAVORITE: `isFavorite`
 };
 
-export const PeriodStats = {
+export const StatsPeriod = {
   ALL_TIME: `all-time`,
   TODAY: `today`,
   WEEK: `week`,
@@ -104,5 +112,3 @@ export const ActionType = {
   DELETE_COMMENT: `delete_comment`,
   UPDATE_RATING: `update_rating`
 };
-export const AUTHORIZATION = `Basic eo0w590ik29889a=${Math.random()}`;
-export const SERVER = `https://htmlacademy-es-9.appspot.com/cinemaddict/`;

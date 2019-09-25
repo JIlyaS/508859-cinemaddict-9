@@ -2,7 +2,7 @@ import FilmCard from '../components/film-card';
 import DetailsPopup from '../components/details-popup';
 import CommentController from './comment-controller';
 import {render} from '../utils';
-import {AUTHORIZATION, SERVER, ANIMATION_TIMEOUT, ANIMATION, ActionType} from '../constants';
+import {AUTHORIZATION, SERVER, Animation, ActionType} from '../constants';
 import API from '../api';
 
 class MovieController {
@@ -98,10 +98,10 @@ class MovieController {
   }
 
   _shakeErrorComponent() {
-    this._nodeRatingBlock.style.animation = ANIMATION;
+    this._nodeRatingBlock.style.animation = Animation.STYLE;
     setTimeout(() => {
       this._nodeRatingBlock.style.animation = ``;
-    }, ANIMATION_TIMEOUT);
+    }, Animation.TIMEOUT);
   }
 
   _disabledRatingBlock() {
