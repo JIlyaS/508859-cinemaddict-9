@@ -38,7 +38,7 @@ export const FilterTitle = {
   FAVORITES: `Favorites`
 };
 export const Rang = {
-  Novice: `Novice`,
+  NOVICE: `Novice`,
   FAN: `Fan`,
   BUFF: `Movie Buff`
 };

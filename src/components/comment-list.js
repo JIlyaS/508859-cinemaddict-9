@@ -1,7 +1,7 @@
 import moment from 'moment';
 import AbstractComponent from './abstract-component';
 
-class Comments extends AbstractComponent {
+class CommentList extends AbstractComponent {
   constructor({comments}) {
     super();
     this._comments = comments;
@@ -61,4 +61,4 @@ class Comments extends AbstractComponent {
   }
 }
 
-export default Comments;
+export default CommentList;

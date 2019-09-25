@@ -7,7 +7,7 @@ import StatisticInfo from '../components/statistic-info';
 import StatisticChart from '../components/statistic-chart';
 import StatisticRang from '../components/statistic-rang';
 
-import {render, unrender, getRang} from '../utils';
+import {render, unrender, getRang, flat} from '../utils';
 import {HOUR, ONLY_GENRE, StatsPeriod, Position} from '../constants';
 
 class ChartController {
@@ -174,7 +174,7 @@ class ChartController {
 
   _getGenres(films) {
     const filmGenres = films.map((film) => Object.values(film.genres));
-    return filmGenres.flat().reduce((acc, item) => {
+    return (flat(filmGenres)).reduce((acc, item) => {
       if (acc.hasOwnProperty(item)) {
         acc[item]++;
       } else {
@@ -185,29 +185,31 @@ class ChartController {
   }
 
   _getStatisticActions() {
+    const onMenuElemClick = (evt) => {
+      switch (evt.target.value) {
+        case StatsPeriod.ALL_TIME:
+          this._films = this._originalFilms;
+          this._showStatistics();
+          break;
+        case StatsPeriod.TODAY:
+          this._getFilteredStatsFilms(this._originalFilms, `day`);
+          break;
+        case StatsPeriod.WEEK:
+          this._getFilteredStatsFilms(this._originalFilms, `week`);
+          break;
+        case StatsPeriod.MONTH:
+          this._getFilteredStatsFilms(this._originalFilms, `month`);
+          break;
+        case StatsPeriod.YEAR:
+          this._getFilteredStatsFilms(this._originalFilms, `year`);
+          break;
+        default:
+          throw new Error(`Incorrect value`);
+      }
+    };
+
     this._statistic.getElement().querySelectorAll(`.statistic__filters-input`).forEach((elem) => {
-      elem.addEventListener(`click`, (evt) => {
-        switch (evt.target.value) {
-          case StatsPeriod.ALL_TIME:
-            this._films = this._originalFilms;
-            this._showStatistics();
-            break;
-          case StatsPeriod.TODAY:
-            this._getFilteredStatsFilms(this._originalFilms, `day`);
-            break;
-          case StatsPeriod.WEEK:
-            this._getFilteredStatsFilms(this._originalFilms, `week`);
-            break;
-          case StatsPeriod.MONTH:
-            this._getFilteredStatsFilms(this._originalFilms, `month`);
-            break;
-          case StatsPeriod.YEAR:
-            this._getFilteredStatsFilms(this._originalFilms, `year`);
-            break;
-          default:
-            throw new Error(`Incorrect value`);
-        }
-      });
+      elem.addEventListener(`click`, onMenuElemClick);
     });
   }
 

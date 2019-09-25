@@ -65,7 +65,7 @@ export const toJSON = (response) => {
 };
 
 export const getShortDescription = (description) => {
-  return description.length >= SHORT_DESCRIPTION_LENGTH ? description.slice(0, SHORT_DESCRIPTION_LENGTH - MINUS_INDEX) + `...` : description;
+  return description.length >= SHORT_DESCRIPTION_LENGTH ? `${description.slice(0, SHORT_DESCRIPTION_LENGTH - MINUS_INDEX)}...` : description;
 };
 
 export const getTransformRuntime = (runtime) => {
@@ -125,4 +125,18 @@ export const getDataFilter = (filterName, dataFilms) => {
     href,
     count: filteredData.length
   };
+};
+
+export const flat = (input) => {
+  const stack = [...input];
+  const result = [];
+  while (stack.length) {
+    const next = stack.pop();
+    if (Array.isArray(next)) {
+      stack.push(...next);
+    } else {
+      result.push(next);
+    }
+  }
+  return result.reverse();
 };

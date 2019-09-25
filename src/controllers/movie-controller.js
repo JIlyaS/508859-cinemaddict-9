@@ -19,7 +19,7 @@ class MovieController {
     this._commentController = new CommentController(
         this._detailsPopup,
         this._dataFilm,
-        this.getState,
+        this._getState,
         this._onDataChangeMain,
         this._queryAddComment.bind(this),
         this._queryDeleteComment.bind(this)
@@ -30,7 +30,7 @@ class MovieController {
     this._elemRating = null;
   }
 
-  getState() {
+  _getState() {
     return {
       isWatchlist: this._dataFilm.isWatchlist,
       isViewed: this._dataFilm.isViewed,
@@ -38,7 +38,7 @@ class MovieController {
     };
   }
 
-  getFormData() {
+  _getFormData() {
     const formData = new FormData(this._detailsPopup.getElement().querySelector(`.film-details__inner`));
     return {
       personalRating: formData.get(`score`),
@@ -124,115 +124,139 @@ class MovieController {
       }
     };
 
-    this._filmCard.getElement()
-    .querySelector(`.film-card__poster`)
-    .addEventListener(`click`, () => {
+    const onPosterClick = () => {
       this._onChangeView();
       this._renderCommentsBlock();
       render(this._popupContainer.getElement(), this._detailsPopup.getElement());
       document.addEventListener(`keydown`, onEscKeyDown);
-    });
+    };
+
+    const onTitleClick = () => {
+      this._onChangeView();
+      this._renderCommentsBlock();
+      render(this._popupContainer.getElement(), this._detailsPopup.getElement());
+      document.addEventListener(`keydown`, onEscKeyDown);
+    };
+
+    const onCommentsClick = () => {
+      this._onChangeView();
+      this._renderCommentsBlock();
+      render(this._popupContainer.getElement(), this._detailsPopup.getElement());
+      document.addEventListener(`keydown`, onEscKeyDown);
+    };
+
+    const onWatchlistBtnClick = (evt) => {
+      evt.preventDefault();
+      const newState = Object.assign(this._getState(), {isWatchlist: !this._dataFilm.isWatchlist});
+      this._onDataChangeMain(ActionType.UPDATE, Object.assign(this._dataFilm, newState));
+    };
+
+    const onViewedBtnClick = (evt) => {
+      evt.preventDefault();
+      const isViewed = !this._dataFilm.isViewed;
+      if (isViewed === false) {
+        this._detailsPopup.getElement().querySelectorAll(`.film-details__user-rating-input`).forEach((elem) => {
+          elem.checked = false;
+        });
+      }
+      const newState = Object.assign(this._getState(), {isViewed});
+      const newData = Object.assign(this._dataFilm, {personalRating: null});
+      this._onDataChangeMain(ActionType.UPDATE, Object.assign(newData, newState));
+    };
+
+    const onFavoriteBtnClick = (evt) => {
+      evt.preventDefault();
+      const newState = Object.assign(this._getState(), {isFavorite: !this._dataFilm.isFavorite});
+      this._onDataChangeMain(ActionType.UPDATE, Object.assign(this._dataFilm, newState));
+    };
+
+    const onCloseBtnClick = () => {
+      this._hideDetailsPopup();
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    };
+
+    const onWatchlistPopupBtnClick = () => {
+      const newState = Object.assign(this._getState(), {isWatchlist: !this._dataFilm.isWatchlist});
+      this._onDataChangeMain(ActionType.UPDATE, Object.assign(this._dataFilm, newState));
+    };
+
+    const onViewedPopupBtnClick = () => {
+      const isViewed = !this._dataFilm.isViewed;
+      if (isViewed === false) {
+        this._detailsPopup.getElement().querySelectorAll(`.film-details__user-rating-input`).forEach((elem) => {
+          elem.checked = false;
+        });
+      }
+      const newState = Object.assign(this._getState(), {isViewed});
+      const newData = Object.assign(this._dataFilm, {personalRating: null});
+      this._detailsPopup.getElement().querySelector(`.form-details__middle-container`).classList.toggle(`visually-hidden`);
+      this._onDataChangeMain(ActionType.UPDATE, Object.assign(newData, newState));
+    };
+
+    const onFavoritePopupBtnClick = () => {
+      const newState = Object.assign(this._getState(), {isFavorite: !this._dataFilm.isFavorite});
+      this._onDataChangeMain(ActionType.UPDATE, Object.assign(this._dataFilm, newState));
+    };
+
+    const onUserRatingInputClick = (evt) => {
+      const newData = Object.assign(this._dataFilm, this._getFormData());
+      this._disabledRatingBlock();
+      this._elemRating = evt.target;
+      this._elemRating.classList.remove(`ilm-details__user-rating-input--error`);
+      this._onDataChangeMain(ActionType.UPDATE_RATING, Object.assign(newData, this._getState()), this._queryUpdateRating.bind(this), this._queryUpdateRatingError.bind(this));
+    };
+
+    const onUserRatingResetBtnClick = () => {
+      this._detailsPopup.getElement().querySelectorAll(`.film-details__user-rating-input`).forEach((elem) => {
+        elem.checked = false;
+      });
+      const newData = Object.assign(this._dataFilm, {personalRating: null});
+      this._onDataChangeMain(ActionType.UPDATE, Object.assign(newData, this._getState()));
+    };
+
+    this._filmCard.getElement()
+    .querySelector(`.film-card__poster`)
+    .addEventListener(`click`, onPosterClick);
 
     this._filmCard.getElement()
       .querySelector(`.film-card__title`)
-      .addEventListener(`click`, () => {
-        this._onChangeView();
-        this._renderCommentsBlock();
-        render(this._popupContainer.getElement(), this._detailsPopup.getElement());
-        document.addEventListener(`keydown`, onEscKeyDown);
-      });
+      .addEventListener(`click`, onTitleClick);
 
     this._filmCard.getElement()
       .querySelector(`.film-card__comments`)
-      .addEventListener(`click`, () => {
-        this._onChangeView();
-        this._renderCommentsBlock();
-        render(this._popupContainer.getElement(), this._detailsPopup.getElement());
-        document.addEventListener(`keydown`, onEscKeyDown);
-      });
+      .addEventListener(`click`, onCommentsClick);
 
     this._filmCard.getElement()
       .querySelector(`.film-card__controls-item--add-to-watchlist`)
-      .addEventListener(`click`, (evt) => {
-        evt.preventDefault();
-        const newState = Object.assign(this.getState(), {isWatchlist: !this._dataFilm.isWatchlist});
-        this._onDataChangeMain(ActionType.UPDATE, Object.assign(this._dataFilm, newState));
-      });
+      .addEventListener(`click`, onWatchlistBtnClick);
 
     this._filmCard.getElement()
       .querySelector(`.film-card__controls-item--mark-as-watched`)
-      .addEventListener(`click`, (evt) => {
-        evt.preventDefault();
-        const isViewed = !this._dataFilm.isViewed;
-        if (isViewed === false) {
-          this._detailsPopup.getElement().querySelectorAll(`.film-details__user-rating-input`).forEach((elem) => {
-            elem.checked = false;
-          });
-        }
-        const newState = Object.assign(this.getState(), {isViewed});
-        const newData = Object.assign(this._dataFilm, {personalRating: null});
-        this._onDataChangeMain(ActionType.UPDATE, Object.assign(newData, newState));
-      });
+      .addEventListener(`click`, onViewedBtnClick);
 
     this._filmCard.getElement()
       .querySelector(`.film-card__controls-item--favorite`)
-      .addEventListener(`click`, (evt) => {
-        evt.preventDefault();
-        const newState = Object.assign(this.getState(), {isFavorite: !this._dataFilm.isFavorite});
-        this._onDataChangeMain(ActionType.UPDATE, Object.assign(this._dataFilm, newState));
-      });
+      .addEventListener(`click`, onFavoriteBtnClick);
 
     this._detailsPopup.getElement().querySelector(`.film-details__close-btn`)
-      .addEventListener(`click`, () => {
-        this._hideDetailsPopup();
-        document.removeEventListener(`keydown`, onEscKeyDown);
-      });
+      .addEventListener(`click`, onCloseBtnClick);
 
     this._detailsPopup.getElement().querySelector(`.film-details__control-label--watchlist`)
-      .addEventListener(`click`, () => {
-        const newState = Object.assign(this.getState(), {isWatchlist: !this._dataFilm.isWatchlist});
-        this._onDataChangeMain(ActionType.UPDATE, Object.assign(this._dataFilm, newState));
-      });
+      .addEventListener(`click`, onWatchlistPopupBtnClick);
 
     this._detailsPopup.getElement().querySelector(`.film-details__control-label--watched`)
-      .addEventListener(`click`, () => {
-        const isViewed = !this._dataFilm.isViewed;
-        if (isViewed === false) {
-          this._detailsPopup.getElement().querySelectorAll(`.film-details__user-rating-input`).forEach((elem) => {
-            elem.checked = false;
-          });
-        }
-        const newState = Object.assign(this.getState(), {isViewed});
-        const newData = Object.assign(this._dataFilm, {personalRating: null});
-        this._detailsPopup.getElement().querySelector(`.form-details__middle-container`).classList.toggle(`visually-hidden`);
-        this._onDataChangeMain(ActionType.UPDATE, Object.assign(newData, newState));
-      });
+      .addEventListener(`click`, onViewedPopupBtnClick);
 
     this._detailsPopup.getElement().querySelector(`.film-details__control-label--favorite`)
-      .addEventListener(`click`, () => {
-        const newState = Object.assign(this.getState(), {isFavorite: !this._dataFilm.isFavorite});
-        this._onDataChangeMain(ActionType.UPDATE, Object.assign(this._dataFilm, newState));
-      });
+      .addEventListener(`click`, onFavoritePopupBtnClick);
 
     this._detailsPopup.getElement().querySelectorAll(`.film-details__user-rating-input`).forEach((elem) => {
-      elem.addEventListener(`click`, (evt) => {
-        const newData = Object.assign(this._dataFilm, this.getFormData());
-        this._disabledRatingBlock();
-        this._elemRating = evt.target;
-        this._elemRating.classList.remove(`ilm-details__user-rating-input--error`);
-        this._onDataChangeMain(ActionType.UPDATE_RATING, Object.assign(newData, this.getState()), this._queryUpdateRating.bind(this), this._queryUpdateRatingError.bind(this));
-      });
+      elem.addEventListener(`click`, onUserRatingInputClick);
     });
 
     if (this._detailsPopup.getElement().querySelector(`.film-details__watched-reset`) !== null) {
       this._detailsPopup.getElement().querySelector(`.film-details__watched-reset`)
-      .addEventListener(`click`, () => {
-        this._detailsPopup.getElement().querySelectorAll(`.film-details__user-rating-input`).forEach((elem) => {
-          elem.checked = false;
-        });
-        const newData = Object.assign(this._dataFilm, {personalRating: null});
-        this._onDataChangeMain(ActionType.UPDATE, Object.assign(newData, this.getState()));
-      });
+      .addEventListener(`click`, onUserRatingResetBtnClick);
     }
 
     render(this._container.getElement().querySelector(`.films-list__container`), this._filmCard.getElement());

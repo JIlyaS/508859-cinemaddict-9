@@ -3,7 +3,7 @@ import {NAME_FILTERS, MenuName, Position, MenuFilter} from '../constants';
 import {render, unrender} from '../utils';
 import {getDataFilter} from '../utils';
 
-class CommentController {
+class MenuController {
   constructor(container, pageController, searchController, chartController) {
     this._container = container;
     this._pageController = pageController;
@@ -52,7 +52,7 @@ class CommentController {
   }
 
   _init() {
-    this._menu.getElement().addEventListener(`click`, (evt) => {
+    const onMenuElemClick = (evt) => {
       evt.preventDefault();
       if (!evt.target.classList.contains(`main-navigation__item`)) {
         return;
@@ -89,7 +89,9 @@ class CommentController {
         default:
           break;
       }
-    });
+    };
+
+    this._menu.getElement().addEventListener(`click`, onMenuElemClick);
 
     render(this._container, this._menu.getElement(), Position.AFTERBEGIN);
   }
@@ -109,4 +111,4 @@ class CommentController {
   }
 }
 
-export default CommentController;
+export default MenuController;

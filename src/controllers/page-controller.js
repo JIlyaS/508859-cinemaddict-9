@@ -1,5 +1,5 @@
 import FilmsWrapper from '../components/films-wrapper';
-import FilmsList from '../components/film-list';
+import FilmList from '../components/film-list';
 import RatedList from '../components/rated-list';
 import CommentedList from '../components/commented-list';
 import EmptyData from '../components/empty-data';
@@ -17,7 +17,7 @@ class PageController {
     this._onDataChangeMain = onDataChangeMain;
 
     this._filmsWrapper = new FilmsWrapper();
-    this._filmsList = new FilmsList();
+    this._filmList = new FilmList();
     this._showMoreButton = new ShowButton();
     this._ratedList = new RatedList();
     this._commentedList = new CommentedList();
@@ -34,40 +34,24 @@ class PageController {
     this._showedFilms = COUNT_FILM_CARDS;
     this._filterName = null;
 
-    this._sortController = new SortController(this._filmsWrapper, this._renderFilmsList.bind(this));
-    this._filmListController = new FilmListController(this._filmsWrapper, this._filmsList, this._popupWrapper, this._onDataChangeMain);
+    this._sortController = new SortController(this._filmsWrapper, this._renderFilmList.bind(this));
+    this._filmListController = new FilmListController(this._filmsWrapper, this._filmList, this._popupWrapper, this._onDataChangeMain);
     this._filmListRatedController = new FilmListController(this._filmsWrapper, this._ratedList, this._popupWrapper, this._onDataChangeMain, RenderPosition.RATED);
     this._filmListCommentedController = new FilmListController(this._filmsWrapper, this._commentedList, this._popupWrapper, this._onDataChangeMain, RenderPosition.COMMENTED);
     this._init();
-  }
-
-  _unrenderFilmList() {
-    unrender(this._filmsList.getElement());
-    unrender(this._ratedList.getElement());
-    unrender(this._commentedList.getElement());
-
-    this._filmsList.removeElement();
-    this._ratedList.removeElement();
-    this._commentedList.removeElement();
   }
 
   _init() {
     render(this._container, this._filmsWrapper.getElement());
     this._sortController.init();
     this._sortController.hide();
-    render(this._filmsWrapper.getElement(), this._filmsList.getElement());
+    render(this._filmsWrapper.getElement(), this._filmList.getElement());
     render(this._footer, this._popupWrapper.getElement(), Position.AFTEREND);
   }
 
   hide() {
     this._sortController.hide();
     this._filmsWrapper.getElement().classList.add(`visually-hidden`);
-  }
-
-  _onDataChange(films) {
-    this._films = films;
-
-    this._renderFilmsList(this._films);
   }
 
   show(films, isFilter = false) {
@@ -91,6 +75,12 @@ class PageController {
     this._isFilter = isFilter;
   }
 
+  _onDataChange(films) {
+    this._films = films;
+
+    this._renderFilmList(this._films);
+  }
+
   _onChangeView() {
     this._subscriptions.forEach((subscription) => subscription());
   }
@@ -99,10 +89,10 @@ class PageController {
     this._films = films.slice();
     this._showedFilms = COUNT_FILM_CARDS;
 
-    this._renderFilmsList(this._films);
+    this._renderFilmList(this._films);
   }
 
-  _renderFilmsList(films) {
+  _renderFilmList(films) {
     if (this._emptyResult !== null) {
       unrender(this._emptyResult.getElement());
       this._emptyResult.removeElement();
@@ -123,8 +113,8 @@ class PageController {
     }
 
     this._unrenderFilmList();
-    render(this._filmsWrapper.getElement(), this._filmsList.getElement());
-    this._sortController.showViewSort();
+    render(this._filmsWrapper.getElement(), this._filmList.getElement());
+    this._sortController.show();
 
     if (this._showedFilms < films.length) {
       this._renderShowButton();
@@ -137,7 +127,7 @@ class PageController {
 
   _renderShowButton() {
     this._showMoreButton.getElement().addEventListener(`click`, this._onClickShowButton);
-    render(this._filmsList.getElement(), this._showMoreButton.getElement());
+    render(this._filmList.getElement(), this._showMoreButton.getElement());
   }
 
   _onClickShowButton(evt) {
@@ -160,6 +150,16 @@ class PageController {
     this._emptyData = new EmptyData();
     this._unrenderFilmList();
     render(this._filmsWrapper.getElement(), this._emptyData.getElement());
+  }
+
+  _unrenderFilmList() {
+    unrender(this._filmList.getElement());
+    unrender(this._ratedList.getElement());
+    unrender(this._commentedList.getElement());
+
+    this._filmList.removeElement();
+    this._ratedList.removeElement();
+    this._commentedList.removeElement();
   }
 }
 

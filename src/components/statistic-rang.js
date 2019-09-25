@@ -1,6 +1,6 @@
 import AbstractComponent from './abstract-component';
 
-class Statistics extends AbstractComponent {
+class StatisticRang extends AbstractComponent {
 
   constructor({rang}) {
     super();
@@ -16,4 +16,4 @@ class Statistics extends AbstractComponent {
   }
 }
 
-export default Statistics;
+export default StatisticRang;
