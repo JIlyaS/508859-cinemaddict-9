@@ -1,4 +1,5 @@
 import moment from 'moment';
+import DOMPurify from 'dompurify';
 import {
   SHORT_DESCRIPTION_LENGTH,
   COUNT_GENRES,
@@ -139,4 +140,12 @@ export const flat = (input) => {
     }
   }
   return result.reverse();
+};
+
+export const screeningArray = (array) => {
+  if (array.length === 0) {
+    return [];
+  }
+
+  return array.map((elem) => DOMPurify.sanitize(elem));
 };
