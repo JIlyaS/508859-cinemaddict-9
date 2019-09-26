@@ -13,10 +13,11 @@ export const ONLY_GENRE = 1;
 export const MAX_COUNT_FILMS = 2;
 export const COUNT_GENRES = 1;
 export const MINUS_INDEX = 1;
+export const START_INDEX = 1;
 export const NUNBER_SYSTEM = 10;
 export const LESS_MINUTES = 10;
 export const AUTHORIZATION = `Basic eo0w590ik29889a=${Math.random()}`;
-export const SERVER = `https://htmlacademy-es-9.appspot.com/cinemaddict/`;
+export const SERVER = `https://htmlacademy-es-9.appspot.com/cinemaddict`;
 export const NAME_FILTERS = [
   {title: `All movies`, href: `all`},
   {title: `Watchlist`, href: `watchlist`},

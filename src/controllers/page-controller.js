@@ -8,13 +8,14 @@ import ShowButton from '../components/show-button';
 import SortController from './sort-controller';
 import FilmListController from './film-list-controller';
 import {render, unrender} from '../utils';
-import {COUNT_FILM_CARDS, ADD_MORE_CARD, Position, RenderPosition} from '../constants';
+import {ADD_MORE_CARD, Position, RenderPosition} from '../constants';
 
 class PageController {
-  constructor(container, popupWrapper, onDataChangeMain) {
+  constructor(container, popupWrapper, onDataChangeMain, changeCountFilmCards) {
     this._container = container;
     this._popupWrapper = popupWrapper;
     this._onDataChangeMain = onDataChangeMain;
+    this._changeCountFilmCards = changeCountFilmCards;
 
     this._filmsWrapper = new FilmsWrapper();
     this._filmList = new FilmList();
@@ -31,7 +32,7 @@ class PageController {
 
     this._onClickShowButton = this._onClickShowButton.bind(this);
 
-    this._showedFilms = COUNT_FILM_CARDS;
+    this._showedFilms = null;
     this._filterName = null;
 
     this._sortController = new SortController(this._filmsWrapper, this._renderFilmList.bind(this));
@@ -67,6 +68,10 @@ class PageController {
     this._isFilter = isFilter;
   }
 
+  setCountFilmCard(countFilms) {
+    this._showedFilms = countFilms;
+  }
+
   _init() {
     render(this._container, this._filmsWrapper.getElement());
     this._sortController.init();
@@ -87,7 +92,6 @@ class PageController {
 
   _setFilms(films) {
     this._films = films.slice();
-    this._showedFilms = COUNT_FILM_CARDS;
 
     this._renderFilmList(this._films);
   }
@@ -132,8 +136,7 @@ class PageController {
 
   _onClickShowButton(evt) {
     evt.preventDefault();
-    this._filmListController.addFilms(this._films.slice(this._showedFilms, this._showedFilms + ADD_MORE_CARD));
-    this._showedFilms += ADD_MORE_CARD;
+    this._filmListController.addFilms(this._films.slice(this._showedFilms, this._showedFilms = this._changeCountFilmCards(ADD_MORE_CARD)));
     if (this._showedFilms >= this._films.length) {
       unrender(this._showMoreButton.getElement());
       this._showMoreButton.removeElement();
