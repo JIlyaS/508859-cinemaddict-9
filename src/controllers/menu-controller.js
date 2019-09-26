@@ -53,11 +53,15 @@ class MenuController {
     this._init();
   }
 
-  _getActiveMenuElement(evt) {
+  _disactivateAllMenuElement() {
     this._menu.getElement().querySelectorAll(`.main-navigation__item`)
-      .forEach((elem) => {
-        elem.classList.remove(`main-navigation__item--active`);
-      });
+    .forEach((elem) => {
+      elem.classList.remove(`main-navigation__item--active`);
+    });
+  }
+
+  _getActiveMenuElement(evt) {
+    this._disactivateAllMenuElement();
     evt.target.classList.add(`main-navigation__item--active`);
   }
 
@@ -68,10 +72,7 @@ class MenuController {
   }
 
   _changeCurrentFilter(currentMenu) {
-    this._menu.getElement().querySelectorAll(`.main-navigation__item`)
-      .forEach((elem) => {
-        elem.classList.remove(`main-navigation__item--active`);
-      });
+    this._disactivateAllMenuElement();
     this._menu.getElement().querySelector(`.main-navigation__item[href="#${currentMenu.menuName}"]`).classList.add(`main-navigation__item--active`);
     this._showFilteredMenu(currentMenu.filterName, currentMenu.menuName);
   }
