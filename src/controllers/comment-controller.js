@@ -36,35 +36,45 @@ class CommentController {
     this._commentsBlock.removeElement();
   }
 
-  shakeErrorComponent() {
-    this._nodeTextareaComment.style.animation = Animation.STYLE;
-    setTimeout(() => {
-      this._nodeTextareaComment.style.animation = ``;
-    }, Animation.TIMEOUT);
-  }
-
-  viewErrorComponent() {
-    this._nodeTextareaComment.classList.add(`film-details__comment-input--error`);
-  }
-
-  disabledCommentTextarea() {
+  disableCommentTextarea() {
     this._nodeTextareaComment.disabled = true;
   }
 
-  enabledCommentTextarea() {
+  enableCommentTextarea() {
     this._nodeTextareaComment.disabled = false;
   }
 
-  enabledBtnDelete() {
+  enableBtnDelete() {
     this._commentsBlock.getElement().querySelectorAll(`.film-details__comment-delete`).forEach((btnElem) => {
       btnElem.textContent = `Delete`;
       btnElem.disabled = false;
     });
   }
 
-  disabledBtnDelete(evt) {
+  disableBtnDelete(evt) {
     evt.target.textContent = `Delete...`;
     evt.target.disabled = true;
+  }
+
+  _viewCommentBlockError() {
+    this._viewErrorComponent();
+    this._shakeErrorComponent();
+    this.enableCommentTextarea();
+  }
+
+  _viewBtnDeteleCommentError() {
+    this.enableBtnDelete();
+  }
+
+  _shakeErrorComponent() {
+    this._nodeTextareaComment.style.animation = Animation.STYLE;
+    setTimeout(() => {
+      this._nodeTextareaComment.style.animation = ``;
+    }, Animation.TIMEOUT);
+  }
+
+  _viewErrorComponent() {
+    this._nodeTextareaComment.classList.add(`film-details__comment-input--error`);
   }
 
   _init() {
@@ -73,8 +83,9 @@ class CommentController {
     const onAddCommentKeyDown = (evt) => {
       if (evt.ctrlKey && evt.keyCode === ENTER_KEY && evt.target.value.length !== 0) {
         const formData = this._getFormData();
-        this.disabledCommentTextarea();
-        this._onDataChangeMain(ActionType.CREATE_COMMENT, {movieId: this._dataFilm.id, comment: formData.comment}, this._queryAddComment);
+        this.disableCommentTextarea();
+        this._onDataChangeMain(ActionType.CREATE_COMMENT, {movieId: this._dataFilm.id, comment: formData.comment}, this._queryAddComment, this._viewCommentBlockError.bind(this));
+        document.removeEventListener(`keydown`, onAddCommentKeyDown);
       }
     };
 
@@ -89,8 +100,8 @@ class CommentController {
 
     const onDeleteBtnClick = (evt, id) => {
       evt.preventDefault();
-      this.disabledBtnDelete(evt);
-      this._onDataChangeMain(ActionType.DELETE_COMMENT, {id: this._comments[id].id}, this._queryDeleteComment);
+      this.disableBtnDelete(evt);
+      this._onDataChangeMain(ActionType.DELETE_COMMENT, {id: this._comments[id].id}, this._queryDeleteComment, this._viewBtnDeteleCommentError.bind(this));
     };
 
     const onSelectEmojiClick = (evt) => {

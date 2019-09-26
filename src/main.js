@@ -8,8 +8,12 @@ import SearchController from './controllers/search-controller';
 import MenuController from './controllers/menu-controller';
 import ChartController from './controllers/chart-controller';
 import {render, unrender} from './utils';
-import {MIN_SEARCH_SYMBOLS, AUTHORIZATION, SERVER, ActionType} from './constants';
+import {MIN_SEARCH_SYMBOLS, COUNT_FILM_CARDS, AUTHORIZATION, SERVER, ActionType} from './constants';
 import {getRang} from './utils';
+
+let countFilmCard = COUNT_FILM_CARDS;
+let filterName = null;
+let menuName = null;
 
 const headerWrapper = document.querySelector(`.header`);
 const mainWrapper = document.querySelector(`.main`);
@@ -19,6 +23,22 @@ const api = new API({authorization: AUTHORIZATION, server: SERVER});
 const search = new Search();
 const popupWrapper = new PopupWrapper();
 const loading = new Loading();
+
+const changeCountFilmCard = (addCount) => {
+  if (addCount === null) {
+    countFilmCard = COUNT_FILM_CARDS;
+    return countFilmCard;
+  }
+  countFilmCard += addCount;
+  return countFilmCard;
+};
+
+const changeCurrentMenu = (filterNameItem, nameMenuItem) => {
+  filterName = filterNameItem;
+  menuName = nameMenuItem;
+
+  return {filterName, menuName};
+};
 
 const changeSearchInfo = (isSearch) => {
   menuController.setSearch(isSearch);
@@ -42,9 +62,10 @@ const onDataChange = (actionType, updated, cb, cbError) => {
       })
       .then(() => api.getMovies())
       .then((movies) => {
-        menuController.show(movies);
         pageController.show(movies);
+        menuController.show(movies);
         searchController.show(movies);
+        cb();
       });
       break;
     case ActionType.CREATE:
@@ -52,8 +73,8 @@ const onDataChange = (actionType, updated, cb, cbError) => {
       api.getMovies().then((movies) => {
         unrender(loading.getElement());
         loading.removeElement();
-        menuController.show(movies);
         pageController.show(movies);
+        menuController.show(movies);
         searchController.show(movies);
         footerFilmCountBlock.textContent = `${movies.length} movies inside`;
       });
@@ -63,9 +84,13 @@ const onDataChange = (actionType, updated, cb, cbError) => {
         id: updated.movieId,
         comment: updated.comment
       })
+      .catch(() => {
+        cbError();
+      })
       .then(() => api.getMovies())
       .then((movies) => {
         pageController.show(movies);
+        menuController.show(movies);
         cb();
       });
       break;
@@ -73,9 +98,13 @@ const onDataChange = (actionType, updated, cb, cbError) => {
       api.deleteComment({
         commentId: updated.id
       })
+      .catch(() => {
+        cbError();
+      })
       .then(() => api.getMovies())
       .then((movies) => {
         pageController.show(movies);
+        menuController.show(movies);
         cb();
       });
       break;
@@ -86,8 +115,8 @@ const onDataChange = (actionType, updated, cb, cbError) => {
       })
       .then(() => api.getMovies())
       .then((movies) => {
-        menuController.show(movies);
         pageController.show(movies);
+        menuController.show(movies);
         searchController.show(movies);
         cb();
       }).catch(() => {
@@ -122,9 +151,10 @@ search.getElement().querySelector(`.search__field`).addEventListener(`keyup`, (e
   }
 });
 
-const pageController = new PageController(mainWrapper, popupWrapper, onDataChange);
+const pageController = new PageController(mainWrapper, popupWrapper, onDataChange, changeCountFilmCard);
 const searchController = new SearchController(mainWrapper, popupWrapper, search, onDataChange, onSearchCloseButtonClick);
 const chartController = new ChartController(mainWrapper);
-const menuController = new MenuController(mainWrapper, pageController, searchController, chartController);
+const menuController = new MenuController(mainWrapper, pageController, searchController, chartController, changeCountFilmCard, changeCurrentMenu);
 
+pageController.setCountFilmCard(countFilmCard);
 onDataChange(ActionType.CREATE);
