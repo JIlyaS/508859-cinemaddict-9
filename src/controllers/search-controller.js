@@ -36,16 +36,21 @@ class SearchController {
     if (this._isSearch) {
       this._films = films.slice();
       const value = this._search.getElement().querySelector(`.search__field`).value;
+
       this._renderFindedFilmsWrapper();
-      const filteredFilms = this._films.filter((film) => {
-        return film.title.toLowerCase().includes(value.toLowerCase());
-      });
+      const filteredFilms = this._getSearchedFilms(value);
       this._showSearchResult(value, filteredFilms);
     }
   }
 
   setSearch(isSearch) {
     this._isSearch = isSearch;
+  }
+
+  _getSearchedFilms(value) {
+    return this._films.filter((film) => {
+      return film.title.toLowerCase().includes(value.toLowerCase());
+    });
   }
 
   _init() {

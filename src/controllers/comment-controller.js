@@ -105,7 +105,8 @@ class CommentController {
     };
 
     const onSelectEmojiClick = (evt) => {
-      this._commentsBlock.getElement().querySelector(`.film-details__add-emoji-label`).innerHTML = `<img src="images/emoji/${evt.target.value}.png" width="55" height="55" alt="emoji">`;
+      const emojiLabel = this._commentsBlock.getElement().querySelector(`.film-details__add-emoji-label`);
+      emojiLabel.innerHTML = `<img src="images/emoji/${evt.target.value}.png" width="55" height="55" alt="emoji">`;
     };
 
     this._commentsBlock.getElement().querySelector(`.film-details__comment-input`)

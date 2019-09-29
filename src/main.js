@@ -53,75 +53,95 @@ const onSearchCloseButtonClick = () => {
   onDataChange(ActionType.CREATE);
 };
 
+const fetchUpdatedMovie = (updated, cb) => {
+  api.updateMovie({
+    id: updated.id,
+    movie: updated.toRAW()
+  })
+  .then(() => api.getMovies())
+  .then((movies) => {
+    pageController.show(movies);
+    menuController.show(movies);
+    searchController.show(movies);
+    cb();
+  });
+};
+
+const fetchAllMovies = () => {
+  render(mainWrapper, loading.getElement());
+  api.getMovies().then((movies) => {
+    unrender(loading.getElement());
+    loading.removeElement();
+    pageController.show(movies);
+    menuController.show(movies);
+    searchController.show(movies);
+    footerFilmCountBlock.textContent = `${movies.length} movies inside`;
+  });
+};
+
+const fetchCreatedComment = (updated, cb, cbError) => {
+  api.createComment({
+    id: updated.movieId,
+    comment: updated.comment
+  })
+  .catch(() => {
+    cbError();
+  })
+  .then(() => api.getMovies())
+  .then((movies) => {
+    pageController.show(movies);
+    menuController.show(movies);
+    cb();
+  });
+};
+
+const fetchUndeletedComments = (updated, cb, cbError) => {
+  api.deleteComment({
+    commentId: updated.id
+  })
+  .catch(() => {
+    cbError();
+  })
+  .then(() => api.getMovies())
+  .then((movies) => {
+    pageController.show(movies);
+    menuController.show(movies);
+    cb();
+  });
+};
+
+const fetchUpdatedRating = (updated, cb, cbError) => {
+  api.updateMovie({
+    id: updated.id,
+    movie: updated.toRAW()
+  })
+  .then(() => api.getMovies())
+  .then((movies) => {
+    pageController.show(movies);
+    menuController.show(movies);
+    searchController.show(movies);
+    cb();
+  }).catch(() => {
+    cbError();
+  });
+};
+
 const onDataChange = (actionType, updated, cb, cbError) => {
   switch (actionType) {
     case ActionType.UPDATE:
-      api.updateMovie({
-        id: updated.id,
-        movie: updated.toRAW()
-      })
-      .then(() => api.getMovies())
-      .then((movies) => {
-        pageController.show(movies);
-        menuController.show(movies);
-        searchController.show(movies);
-        cb();
-      });
+      fetchUpdatedMovie(updated, cb);
       break;
     case ActionType.CREATE:
-      render(mainWrapper, loading.getElement());
-      api.getMovies().then((movies) => {
-        unrender(loading.getElement());
-        loading.removeElement();
-        pageController.show(movies);
-        menuController.show(movies);
-        searchController.show(movies);
-        footerFilmCountBlock.textContent = `${movies.length} movies inside`;
-      });
+      fetchAllMovies();
       break;
     case ActionType.CREATE_COMMENT:
-      api.createComment({
-        id: updated.movieId,
-        comment: updated.comment
-      })
-      .catch(() => {
-        cbError();
-      })
-      .then(() => api.getMovies())
-      .then((movies) => {
-        pageController.show(movies);
-        menuController.show(movies);
-        cb();
-      });
+      fetchCreatedComment(updated, cb, cbError);
       break;
     case ActionType.DELETE_COMMENT:
-      api.deleteComment({
-        commentId: updated.id
-      })
-      .catch(() => {
-        cbError();
-      })
-      .then(() => api.getMovies())
-      .then((movies) => {
-        pageController.show(movies);
-        menuController.show(movies);
-        cb();
-      });
+      fetchUndeletedComments(updated, cb, cbError);
       break;
     case ActionType.UPDATE_RATING:
-      api.updateMovie({
-        id: updated.id,
-        movie: updated.toRAW()
-      })
-      .then(() => api.getMovies())
-      .then((movies) => {
-        pageController.show(movies);
-        menuController.show(movies);
-        searchController.show(movies);
-        cb();
-      }).catch(() => {
-        cbError();
-      });
+      fetchUpdatedRating(updated, cb, cbError);
       break;
     default:
       throw new Error(`Incorrect ActionType property`);

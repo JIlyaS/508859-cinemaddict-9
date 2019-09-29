@@ -25,6 +25,12 @@ class ChartController {
     this._films = [];
     this._originalFilms = [];
     this._onlyGenres = {};
+    this._period = {
+      [StatsPeriod.TODAY]: `day`,
+      [StatsPeriod.WEEK]: `week`,
+      [StatsPeriod.MONTH]: `month`,
+      [StatsPeriod.YEAR]: `year`,
+    };
 
     this.hide();
   }
@@ -57,20 +63,35 @@ class ChartController {
     render(this._statistic.getElement(), this._statisticRang.getElement(), Position.AFTERBEGIN);
   }
 
-  _showStatsInfo() {
-    this._unrenderStatisticInfo();
+  _getGenreInfo() {
+    if (this._films.length === 0) {
+      return `-`;
+    }
 
-    const topGenre = this._films.length !== 0 ? Object.entries(this._onlyGenres).reduce(function (prev, current) {
+    return Object.entries(this._onlyGenres).reduce(function (prev, current) {
       return (prev[1] > current[1]) ? prev : current;
-    }) : `-`;
+    });
+  }
 
+  _getTotalDuration() {
     const result = {hours: 0, minutes: 0};
 
-    const totalDuration = this._films.length !== 0 ? this._films.reduce((_, item) => {
+    if (this._films.length === 0) {
+      return result;
+    }
+
+    return this._films.reduce((_, item) => {
       result.hours += Math.trunc(item.runtime / HOUR);
       result.minutes += Math.trunc(item.runtime % HOUR);
       return result;
-    }, {}) : result;
+    }, {});
+  }
+
+  _showStatsInfo() {
+    this._unrenderStatisticInfo();
+
+    const topGenre = this._getGenreInfo();
+    const totalDuration = this._getTotalDuration();
 
     const addHours = Math.trunc(totalDuration.minutes / HOUR);
     const realMonutes = totalDuration.minutes % HOUR;
@@ -96,6 +117,12 @@ class ChartController {
     this._showStatsInfo();
     render(this._statistic.getElement().querySelector(`.statistic__chart-wrap`), this._statisticChart.getElement());
 
+    this._createChart();
+
+    return 0;
+  }
+
+  _createChart() {
     const ctx = this._statisticChart.getElement();
 
     this._chart = new Chart(ctx, {
@@ -168,8 +195,6 @@ class ChartController {
         }
       }
     });
-
-    return 0;
   }
 
   _getGenres(films) {
@@ -217,25 +242,13 @@ class ChartController {
 
   _getStatisticActions() {
     const onMenuElemClick = (evt) => {
-      switch (evt.target.value) {
-        case StatsPeriod.ALL_TIME:
-          this._films = this._originalFilms;
-          this._showStatistics();
-          break;
-        case StatsPeriod.TODAY:
-          this._getFilteredStatsFilms(this._originalFilms, `day`);
-          break;
-        case StatsPeriod.WEEK:
-          this._getFilteredStatsFilms(this._originalFilms, `week`);
-          break;
-        case StatsPeriod.MONTH:
-          this._getFilteredStatsFilms(this._originalFilms, `month`);
-          break;
-        case StatsPeriod.YEAR:
-          this._getFilteredStatsFilms(this._originalFilms, `year`);
-          break;
-        default:
-          throw new Error(`Incorrect value`);
+      const statsPeriod = evt.target.value;
+
+      if (statsPeriod === StatsPeriod.ALL_TIME) {
+        this._films = this._originalFilms;
+        this._showStatistics();
+      } else {
+        this._getFilteredStatsFilms(this._originalFilms, this._period[statsPeriod]);
       }
     };
 

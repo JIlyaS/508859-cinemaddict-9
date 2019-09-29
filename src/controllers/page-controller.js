@@ -8,7 +8,7 @@ import ShowButton from '../components/show-button';
 import SortController from './sort-controller';
 import FilmListController from './film-list-controller';
 import {render, unrender} from '../utils';
-import {ADD_MORE_CARD, Position, RenderPosition} from '../constants';
+import {ADD_MORE_CARD, MAX_COUNT_FILMS, Position, RenderPosition} from '../constants';
 
 class PageController {
   constructor(container, popupWrapper, onDataChangeMain, changeCountFilmCards) {
@@ -125,8 +125,16 @@ class PageController {
     }
 
     this._filmListController.setFilms(films.slice(0, this._showedFilms));
-    this._filmListRatedController.setFilms(films.slice());
-    return this._filmListCommentedController.setFilms(films.slice());
+    this._filmListRatedController.setFilms(films.slice(), this._getRatedDataFilms);
+    return this._filmListCommentedController.setFilms(films.slice(), this._getCommentedDataFilms);
+  }
+
+  _getRatedDataFilms(films) {
+    return films.sort((prevFilm, currFilm) => currFilm.rating - prevFilm.rating).slice(0, MAX_COUNT_FILMS);
+  }
+
+  _getCommentedDataFilms(films) {
+    return films.sort((prevFilm, currFilm) => currFilm.comments.length - prevFilm.comments.length).slice(0, MAX_COUNT_FILMS);
   }
 
   _renderShowButton() {

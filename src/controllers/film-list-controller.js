@@ -1,5 +1,5 @@
 import MovieController from './movie-controller';
-import {MAX_COUNT_FILMS, RenderPosition} from '../constants';
+import {RenderPosition} from '../constants';
 import {render} from '../utils';
 
 class FilmListController {
@@ -11,35 +11,24 @@ class FilmListController {
     this._renderPosition = renderPosition;
 
     this._films = [];
+    this._filteredFilms = [];
     this._subscriptions = [];
 
     this._onChangeView = this._onChangeView.bind(this);
   }
 
-  setFilms(films) {
+  setFilms(films, getFilteredFilms) {
     this._films = films;
     this._subscriptions = [];
 
-    switch (this._renderPosition) {
-      case RenderPosition.RATED:
-        this._ratedFilms = (this._films.sort((prevFilm, currFilm) => currFilm.rating - prevFilm.rating).slice(0, MAX_COUNT_FILMS));
-        if (this._ratedFilms.length !== 0) {
-          this._ratedFilms.forEach((film) => this._renderFilmsCard(film, this._container, this._popupWrapper));
-          render(this._filmsWrapper.getElement(), this._container.getElement());
-        }
-        break;
-      case RenderPosition.COMMENTED:
-        this._commentedFilms = (this._films.sort((prevFilm, currFilm) => currFilm.comments.length - prevFilm.comments.length)).slice(0, MAX_COUNT_FILMS);
-        if (this._commentedFilms.length !== 0) {
-          this._commentedFilms.forEach((film) => this._renderFilmsCard(film, this._container, this._popupWrapper));
-          render(this._filmsWrapper.getElement(), this._container.getElement());
-        }
-        break;
-      case RenderPosition.DEFAULT:
-        this._films.forEach((film) => this._renderFilmsCard(film, this._container, this._popupWrapper));
-        break;
-      default:
-        throw new Error(`Incorrect render position`);
+    if (this._renderPosition === RenderPosition.DEFAULT) {
+      this._films.forEach((film) => this._renderFilmsCard(film, this._container, this._popupWrapper));
+    } else {
+      this._filteredFilms = getFilteredFilms(this._films);
+      if (this._filteredFilms.length !== 0) {
+        this._filteredFilms.forEach((film) => this._renderFilmsCard(film, this._container, this._popupWrapper));
+        render(this._filmsWrapper.getElement(), this._container.getElement());
+      }
     }
   }
 

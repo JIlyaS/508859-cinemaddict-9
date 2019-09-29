@@ -112,8 +112,15 @@ class DetailsPopup extends AbstractComponent {
             <p class="film-details__user-rating-feelings">How you feel it?</p>
 
             <div class="film-details__user-rating-score">
-              ${new Array(PERSONAL_RATING_COUNT).fill().map((_, id) => `<input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="${id + CORRENT_RATING}" id="rating-${id + CORRENT_RATING}" ${Number(this._personalRating) === (id + CORRENT_RATING) ? `checked` : ``}>
-                <label class="film-details__user-rating-label" for="rating-${id + CORRENT_RATING}">${id + CORRENT_RATING}</label>`).join(` `)}
+              ${new Array(PERSONAL_RATING_COUNT).fill().map((_, id) => (`
+                <input type="radio" name="score"
+                  class="film-details__user-rating-input visually-hidden"
+                  value="${id + CORRENT_RATING}"
+                  id="rating-${id + CORRENT_RATING}"
+                  ${Number(this._personalRating) === (id + CORRENT_RATING) ? `checked` : ``}
+                >
+                <label class="film-details__user-rating-label" for="rating-${id + CORRENT_RATING}">${id + CORRENT_RATING}</label>
+              `)).join(` `)}
             </div>
           </section>
         </div>

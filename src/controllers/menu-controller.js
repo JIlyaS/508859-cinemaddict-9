@@ -90,6 +90,24 @@ class MenuController {
     this._changeFilter(evt, filterName, menuNameItem);
   }
 
+  _renderAllMovies(evt) {
+    this._getActiveMenuElement(evt);
+    this._chartController.hide();
+    this._searchController.hide();
+    this._pageController.setCountFilmCard(COUNT_FILM_CARDS);
+    this._changeCountFilmCards(null);
+    this._currentMenu = null;
+    this._pageController.show(this._films);
+  }
+
+  _renderStatistics(evt) {
+    this._getActiveMenuElement(evt);
+    this._pageController.hide();
+    this._searchController.hide();
+    this._currentMenu = null;
+    this._chartController.show(this._films);
+  }
+
   _init() {
     if (this._currentMenu !== null) {
       this._changeCurrentFilter(this._currentMenu);
@@ -103,13 +121,7 @@ class MenuController {
 
       switch (evt.target.hash.slice(START_INDEX)) {
         case MenuName.ALL:
-          this._getActiveMenuElement(evt);
-          this._chartController.hide();
-          this._searchController.hide();
-          this._pageController.setCountFilmCard(COUNT_FILM_CARDS);
-          this._changeCountFilmCards(null);
-          this._currentMenu = null;
-          this._pageController.show(this._films);
+          this._renderAllMovies(evt);
           break;
         case MenuName.WATCHLIST:
           this._renderFilterData(evt, MenuFilter.IS_WATCHLIST, MenuName.WATCHLIST);
@@ -121,11 +133,7 @@ class MenuController {
           this._renderFilterData(evt, MenuFilter.IS_FAVORITE, MenuName.FAVORITES);
           break;
         case MenuName.STATS:
-          this._getActiveMenuElement(evt);
-          this._pageController.hide();
-          this._searchController.hide();
-          this._currentMenu = null;
-          this._chartController.show(this._films);
+          this._renderStatistics(evt);
           break;
         default:
           break;
