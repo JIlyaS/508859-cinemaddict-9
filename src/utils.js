@@ -149,3 +149,7 @@ export const screeningArray = (array) => {
 
   return array.map((elem) => DOMPurify.sanitize(elem));
 };
+
+export const objectToArray = (object) => {
+  return Object.keys(object).map((id) => object[id]);
+};

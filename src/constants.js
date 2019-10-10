@@ -18,6 +18,7 @@ export const NUNBER_SYSTEM = 10;
 export const LESS_MINUTES = 10;
 export const AUTHORIZATION = `Basic eo0w590ik29889a=${Math.random()}`;
 export const SERVER = `https://htmlacademy-es-9.appspot.com/cinemaddict`;
+export const MOVIES_STORE_KEY = `movies-store-key`;
 export const NAME_FILTERS = [
   {title: `All movies`, href: `all`},
   {title: `Watchlist`, href: `watchlist`},

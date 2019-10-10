@@ -8,8 +8,10 @@ import SearchController from './controllers/search-controller';
 import MenuController from './controllers/menu-controller';
 import ChartController from './controllers/chart-controller';
 import {render, unrender} from './utils';
-import {MIN_SEARCH_SYMBOLS, COUNT_FILM_CARDS, AUTHORIZATION, SERVER, ActionType} from './constants';
+import {MIN_SEARCH_SYMBOLS, COUNT_FILM_CARDS, AUTHORIZATION, SERVER, MOVIES_STORE_KEY, ActionType} from './constants';
 import {getRang} from './utils';
+import Provider from './provider';
+import Store from './store';
 
 let countFilmCard = COUNT_FILM_CARDS;
 let filterName = null;
@@ -20,6 +22,8 @@ const mainWrapper = document.querySelector(`.main`);
 const footerFilmCountBlock = document.querySelector(`.footer__statistics p`);
 
 const api = new API({authorization: AUTHORIZATION, server: SERVER});
+const store = new Store({keyStorage: MOVIES_STORE_KEY, store: window.localStorage});
+const provider = new Provider({api, store});
 const search = new Search();
 const popupWrapper = new PopupWrapper();
 const loading = new Loading();
@@ -54,11 +58,11 @@ const onSearchCloseButtonClick = () => {
 };
 
 const fetchUpdatedMovie = (updated, cb) => {
-  api.updateMovie({
+  provider.updateMovie({
     id: updated.id,
     movie: updated.toRAW()
   })
-  .then(() => api.getMovies())
+  .then(() => provider.getMovies())
   .then((movies) => {
     pageController.show(movies);
     menuController.show(movies);
@@ -69,7 +73,7 @@ const fetchUpdatedMovie = (updated, cb) => {
 
 const fetchAllMovies = () => {
   render(mainWrapper, loading.getElement());
-  api.getMovies().then((movies) => {
+  provider.getMovies().then((movies) => {
     unrender(loading.getElement());
     loading.removeElement();
     pageController.show(movies);
@@ -87,7 +91,7 @@ const fetchCreatedComment = (updated, cb, cbError) => {
   .catch(() => {
     cbError();
   })
-  .then(() => api.getMovies())
+  .then(() => provider.getMovies())
   .then((movies) => {
     pageController.show(movies);
     menuController.show(movies);
@@ -102,7 +106,7 @@ const fetchUndeletedComments = (updated, cb, cbError) => {
   .catch(() => {
     cbError();
   })
-  .then(() => api.getMovies())
+  .then(() => provider.getMovies())
   .then((movies) => {
     pageController.show(movies);
     menuController.show(movies);
@@ -111,11 +115,11 @@ const fetchUndeletedComments = (updated, cb, cbError) => {
 };
 
 const fetchUpdatedRating = (updated, cb, cbError) => {
-  api.updateMovie({
+  provider.updateMovie({
     id: updated.id,
     movie: updated.toRAW()
   })
-  .then(() => api.getMovies())
+  .then(() => provider.getMovies())
   .then((movies) => {
     pageController.show(movies);
     menuController.show(movies);
@@ -150,7 +154,7 @@ const onDataChange = (actionType, updated, cb, cbError) => {
 
 render(headerWrapper, search.getElement());
 
-api.getMovies().then((movies) => {
+provider.getMovies().then((movies) => {
   const watchedFilms = movies.filter((elem) => elem.isViewed);
   const profile = new Profile(getRang(watchedFilms.length));
   render(headerWrapper, profile.getElement());
@@ -162,13 +166,22 @@ search.getElement().querySelector(`.search__field`).addEventListener(`keyup`, (e
     chartController.hide();
     pageController.hide();
     changeSearchInfo(true);
-    api.getMovies().then((movies) => searchController.show(movies));
+    provider.getMovies().then((movies) => searchController.show(movies));
   } else if (evt.target.value.length === 0) {
     chartController.hide();
     searchController.hide();
     changeSearchInfo(false);
     onDataChange(ActionType.CREATE);
   }
+});
+
+window.addEventListener(`offline`, () => {
+  document.title = `${document.title}[OFFLINE]`;
+});
+
+window.addEventListener(`online`, () => {
+  document.title = document.title.split(`[OFFLINE]`)[0];
+  provider.syncMovies();
 });
 
 const pageController = new PageController(mainWrapper, popupWrapper, onDataChange, changeCountFilmCard);
